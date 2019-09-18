@@ -7,3 +7,5 @@ Werkzeug
 gunicorn
 itsdangerous
 psycopg2
+flask-bootstrap
+flask-wtf
