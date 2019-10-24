@@ -9,3 +9,6 @@ itsdangerous
 psycopg2
 flask-bootstrap
 flask-wtf
+flask-script
+flask-migrate
+flask-login

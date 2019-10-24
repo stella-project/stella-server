@@ -1,12 +1,9 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}STELLA{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Hello, {% if name %}{{ name }}{% else %}participant{% endif %}!</h1>
+    <h1>{% if current_user.is_authenticated %}Hello, {{ current_user.username }}{% else %}Welcome the STELLA dashboard service{% endif %}!</h1>
 </div>
-{{ wtf.quick_form(form) }}
 {% endblock %}
-
