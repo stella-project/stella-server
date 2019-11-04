@@ -12,3 +12,4 @@ flask-wtf
 flask-script
 flask-migrate
 flask-login
+flask-httpauth
