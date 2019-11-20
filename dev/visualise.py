@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 
 
-def traffic():
+def traffic(library):
     test1 = data.loadData()
     traffic={}
     time=[]
@@ -18,26 +18,36 @@ def traffic():
         time.append(key)
         visits.append(traffic.get(key))
 
+    if library == 'plotly':
+        fig = go.Figure(
+            data=[go.Bar(y=visits)],
+            layout_title_text="traffic",
+        )
+        htmlplot = fig.show(renderer="iframe")
+        py.plot(plot_func, output_type='div')
 
-    fig = go.Figure(
-        data=[go.Bar(y=visits)],
-        layout_title_text="traffic",
-    )
+    elif library == 'matplotlib' :
+        fig = plt.figure()  # Plot Variable
+        y_pos = time
+        plt.bar(y_pos, visits)  # Balken Plotten
+        plt.xticks(y_pos, time, rotation=90)
+        #plt.show()
+        htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
-    figHTML = fig.show(renderer="iframe")
 
+    htmlStart = """<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Titel der Seite | Name der Website</title>
+  </head>
 
+  <body>"""
 
-    # fig.show()
-
-    # fig = plt.figure()  # Plot Variable
-    # y_pos = time
-    # plt.bar(y_pos, visits)  # Balken Plotten
-    # plt.xticks(y_pos, time, rotation=90)
-    # #plt.show()
-    # htmlplot = mpld3.fig_to_html(fig, template_type='simple')
-
-    return figHTML.get('text/html')
+    htmlEnd = """  </body>
+</html>"""
+    # return htmlStart + htmlplot + htmlEnd
+    return htmlplot
 
 
 
