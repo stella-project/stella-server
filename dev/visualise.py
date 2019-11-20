@@ -2,6 +2,7 @@ from dev import data
 import matplotlib.pyplot as plt
 import mpld3
 import plotly.graph_objects as go
+import plotly.offline
 
 
 
@@ -23,8 +24,10 @@ def traffic(library):
             data=[go.Bar(y=visits)],
             layout_title_text="traffic",
         )
-        htmlplot = fig.show(renderer="iframe")
-        py.plot(plot_func, output_type='div')
+        # htmlplot = fig.show(renderer="iframe")
+        # htmlplot = fig.show(output_type='div')
+        skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
+        htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
     elif library == 'matplotlib' :
         fig = plt.figure()  # Plot Variable
