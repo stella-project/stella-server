@@ -16,7 +16,7 @@ def index():
 
 @main.route('/dashboard')
 def dashboard():
-    #traffic = visualise.traffic('plotly')
-    traffic = visualise.lineplot('plotly')
+    traffic = visualise.traffic('plotly')
+    clicks = visualise.lineplot('plotly')
 
-    return render_template('dashboard.html', traffic=traffic)
+    return render_template('dashboard.html', traffic=traffic, clicks=clicks)
