@@ -12,6 +12,7 @@ def traffic(library):
     time=[]
     visits= []
 
+    #Data processing
     for i in test1:
         traffic[test1.get(i).time[:10]] = traffic.get(test1.get(i).time[:10], 0) + 1
 
@@ -19,17 +20,18 @@ def traffic(library):
         time.append(key)
         visits.append(traffic.get(key))
 
+    #Data visualization
     if library == 'plotly':
         fig = go.Figure(
             data=[go.Bar(y=visits)],
-            layout_title_text="traffic",
+            #layout_title_text="traffic",
         )
         # htmlplot = fig.show(renderer="iframe")
         # htmlplot = fig.show(output_type='div')
         skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
         htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
-    elif library == 'matplotlib' :
+    elif library == 'matplotlib':
         fig = plt.figure()  # Plot Variable
         y_pos = time
         plt.bar(y_pos, visits)  # Balken Plotten
@@ -38,18 +40,6 @@ def traffic(library):
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
 
-    htmlStart = """<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Titel der Seite | Name der Website</title>
-  </head>
-
-  <body>"""
-
-    htmlEnd = """  </body>
-</html>"""
-    # return htmlStart + htmlplot + htmlEnd
     return htmlplot
 
 
@@ -57,9 +47,11 @@ def traffic(library):
 
 
 # Ausgabe als Lineplot
-def lineplot():
+def lineplot(library):
     test1 = data.loadData()
     site = {}
+
+    #Data processing
     for i in test1:
         site[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
 
@@ -71,13 +63,13 @@ def lineplot():
 
     participant = {}
     for i in test1:
-        participant[i['time'][:10]] = 0  # Nach Datum sortieren
+        participant[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
 
     for i in test1:
-        for doc in i.get('ranking'):
+        for doc in test1.get(i).ranking:
             if doc.get('clicked'):
                 if doc.get('team') == 'participant':
-                    participant[i['time'][:10]] += 1
+                    participant[test1.get(i).time[:10]] += 1
 
     SiteZeit = []
     for key in site:
@@ -93,19 +85,34 @@ def lineplot():
     for values in PartZeit:
         PartBesuche.append(participant.get(values))
 
-    fig = plt.figure()
-    plt.plot(SiteZeit, SiteBesuche, label='Site')
-    plt.plot(PartZeit, PartBesuche, label='Participant')
+    if library == 'matplotlib':
+        fig = plt.figure()
+        plt.plot(SiteZeit, SiteBesuche, label='Site')
+        plt.plot(PartZeit, PartBesuche, label='Participant')
 
-    plt.xticks(SiteZeit, SiteZeit, rotation=0)
+        plt.xticks(SiteZeit, SiteZeit, rotation=0)
 
-    plt.xlabel('Day')
-    plt.ylabel('Clicks')
-    plt.title('clicks per day and team')
-    plt.legend()
+        plt.xlabel('Day')
+        plt.ylabel('Clicks')
+        plt.title('clicks per day and team')
+        plt.legend()
 
-    plt.show()
-    mpld3.show()
+        htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
-    htmlplot = mpld3.fig_to_html(fig)
+    elif library == 'plotly':
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(x=SiteZeit ,y=SiteBesuche,
+            mode='lines',
+            name='lines'))
+
+        fig.add_trace(go.Scatter(x=PartZeit, y=PartBesuche,
+                                 mode='lines',
+                                 name='lines'))
+
+        skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
+        htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
+
+
+
+
     return htmlplot

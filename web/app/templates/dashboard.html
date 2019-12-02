@@ -10,6 +10,12 @@
     <div>
     <h2>Dashboard</h2>
 
+        {% if traffic %}
+
+
+
+        {% endif %}
+
         <iframe frameborder='0' noresize='noresize' style='position: absolute; background: transparent; width: 80%; height:80%;' src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{traffic}}%3C/body%3E%3C/html%3E" frameborder="0"></iframe>
 
 {#    <iframe>src={{traffic}}#}
