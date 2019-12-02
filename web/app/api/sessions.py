@@ -1,13 +1,15 @@
 from flask import jsonify
 from . import api
+from .authentication import auth
 
 
-@api.route('/sessions/')
+@api.route('/sessions/', methods=['GET', 'POST'])
 def get_sessions():
     return 'TODO: return all sessions'
 
 
-@api.route('/sessions/<int:id>')
+@api.route('/sessions/<int:id>', methods=['GET', 'PUT'])
+@auth.login_required
 def get_session(id):
     # TODO: implement Session Role with multiple rankings
 
@@ -26,13 +28,3 @@ def get_session(id):
                 }
 
     return jsonify(session)
-
-
-@api.route('/sessions/', methods=['POST'])
-def new_session():
-    return 'TODO: add new session'
-
-
-@api.route('/sessions/<int:id>', methods=['PUT'])
-def edit_session(id):
-    return 'TODO: edit session'

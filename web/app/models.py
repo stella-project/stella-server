@@ -39,3 +39,37 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+# class Session(db.Model):
+#     __tablename__ = 'sessions'
+#     id = db.Column(db.Integer, primary_key=True)
+#     timestamp = db.Column(db.String(64), unique=False)
+#     length = db.Column(db.Float, unique=False)
+#
+#
+# class Results(db.Model):
+#     __tablename__ = 'results'
+#     id = db.Column(db.Integer, primary_key=True)
+#     ranker_id = db.Column(db.Integer, db.ForeignKey('systems.id'))
+#
+#
+# class System(db.Model):
+#     __tablename__ = 'systems'
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#
+# class Entity(db.Model):
+#     __tablename__ = 'entities'
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#
+# class TextQuery(db.Model):
+#     __tablename__ = 'textqueries'
+#     id = db.Column(db.Integer, primary_key=True)
+#
+#
+# class SiteUser(db.Model):
+#     __tablename__ = 'siteusers'
+#     id = db.Column(db.Integer, primary_key=True)
+
