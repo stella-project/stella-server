@@ -6,49 +6,70 @@
 {% block page_content %}
 
     <h2>Dashboard</h2>
-    <dif class="container-fluid full-width">
-        <dif class="row row-no-gutters">
-
-            <dif class="col-sm-4 col-md-4">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{traffic}}%3C/body%3E%3C/html%3E" ></iframe>
-                </div>
-            </dif>
-
-            <dif class="col-sm-4 col-md-4">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>
-                </div>
-             </dif>
-
-            <dif class="col-sm-4 col-md-4">
-                <div class="embed-responsive embed-responsive-4by3">
-                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>
-                </div>
-            </dif>
-        </dif>
-    </dif>
-
-
-    </dif>
-
-
-
-        {% if traffic %}
-
-
-
-        {% endif %}
-
-
-
-{#    <iframe>src={{traffic}}#}
+{#    <dif class="container-fluid full-width">#}
+{#        <dif class="row row-no-gutters">#}
 {##}
-{#        name="Traffic" width=800px#}
-{#        height=800px#}
-{#        align=left#}
-{#        marginheight=3px#}
-{#        marginwidth=2px#}
-{#        frameborder=1>#}
-{#    </iframe>#}
+{#            <dif class="col-sm-4 col-md-4">#}
+{#                <div class="embed-responsive embed-responsive-4by3">#}
+{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{traffic}}%3C/body%3E%3C/html%3E" ></iframe>#}
+{#                </div>#}
+{#            </dif>#}
+{##}
+{#            <dif class="col-sm-4 col-md-4">#}
+{#                <div class="embed-responsive embed-responsive-4by3">#}
+{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>#}
+{#                </div>#}
+{#             </dif>#}
+{##}
+{#            <dif class="col-sm-4 col-md-4">#}
+{#                <div class="embed-responsive embed-responsive-4by3">#}
+{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>#}
+{#                </div>#}
+{#            </dif>#}
+{#        </dif>#}
+{#    </dif>#}
+{##}
+{##}
+{#    </dif>#}
+
+    {% for id in ids %}
+
+        <div id="{{id}}"></div>
+    {% endfor %}
+
+
+
+
+
+
+{#        {% if traffic %}#}
+{##}
+{##}
+{##}
+{#        {% endif %}#}
+
+
+<footer>
+    <!-- D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <script type="text/javascript">
+
+        var graphs = {{graphJSON | safe}};
+        var ids = {{ids | safe}};
+
+        for(var i in graphs) {
+            Plotly.plot(ids[i], // the ID of the div, created above
+                        graphs[i].data,
+                        graphs[i].layout || {});
+        }
+
+    </script>
+</footer>
+
 {% endblock %}
+

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import mpld3
 import plotly.graph_objects as go
 import plotly.offline
-
+import json
 
 
 def traffic(library):
@@ -22,14 +22,28 @@ def traffic(library):
 
     #Data visualization
     if library == 'plotly':
-        fig = go.Figure(
-            data=[go.Bar(y=visits)],
-            #layout_title_text="traffic",
+        # fig = go.Figure(
+        #     data=[go.Bar(y=visits)],
+        #     #layout_title_text="traffic",
+        # )
+        # # htmlplot = fig.show(renderer="iframe")
+        # # htmlplot = fig.show(output_type='div')
+        # skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
+        # htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
+
+
+        htmlplot= dict(
+            data=[
+                dict(
+                    x=time,
+                    y=visits,
+                    type='bar'
+                ),
+            ],
+            layout=dict(
+                title='Site Visits'
+            )
         )
-        # htmlplot = fig.show(renderer="iframe")
-        # htmlplot = fig.show(output_type='div')
-        skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
-        htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
     elif library == 'matplotlib':
         fig = plt.figure()  # Plot Variable
@@ -100,19 +114,107 @@ def lineplot(library):
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
     elif library == 'plotly':
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(x=SiteZeit ,y=SiteBesuche,
-            mode='lines',
-            name='lines'))
+        # fig = go.Figure()
+        # fig.add_trace(go.Scatter(x=SiteZeit ,y=SiteBesuche,
+        #     mode='lines',
+        #     name='lines'))
+        #
+        # fig.add_trace(go.Scatter(x=PartZeit, y=PartBesuche,
+        #                          mode='lines',
+        #                          name='lines'))
+        #
+        # skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
+        # htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
-        fig.add_trace(go.Scatter(x=PartZeit, y=PartBesuche,
-                                 mode='lines',
-                                 name='lines'))
+        htmlplot = dict(
+            data=[
+                dict(
+                    x=SiteZeit,
+                    y=SiteBesuche,
 
-        skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
-        htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
+                    type='scatter'
+                ),
+                dict(
+                    x=PartZeit,
+                    y=PartBesuche,
+
+                    type='scatter'
+                ),
+            ],
+            layout=dict(
+                title='clicks over time'
+            )
+        )
 
 
 
 
     return htmlplot
+
+def lineplot2():
+    test1 = data.loadData()
+    site = {}
+
+    #Data processing
+    for i in test1:
+        site[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
+
+    for i in test1:
+        for doc in test1.get(i).ranking:
+            if doc.get('clicked'):
+                if doc.get('team') == 'site':
+                    site[test1.get(i).time[:10]] += 1
+
+    participant = {}
+    for i in test1:
+        participant[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
+
+    for i in test1:
+        for doc in test1.get(i).ranking:
+            if doc.get('clicked'):
+                if doc.get('team') == 'participant':
+                    participant[test1.get(i).time[:10]] += 1
+
+    SiteZeit = []
+    for key in site:
+        SiteZeit.append(key)
+    SiteBesuche = []
+    for values in SiteZeit:
+        SiteBesuche.append(site.get(values))
+
+    PartZeit = []
+    for key in participant:
+        PartZeit.append(key)
+    PartBesuche = []
+    for values in PartZeit:
+        PartBesuche.append(participant.get(values))
+
+    graphs = [
+        dict(
+            data=[
+                dict(
+                    x=SiteZeit,
+                    y=SiteBesuche,
+                    type='scatter'
+                ),
+            ],
+            layout=dict(
+                title='first graph'
+            )
+        )
+        ]
+    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
+    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return ids, graphJSON
+
+def makeJson():
+    graphs = []
+    graphs.append(traffic('plotly'))
+    graphs.append(lineplot('plotly'))
+
+
+    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
+    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return ids, graphJSON

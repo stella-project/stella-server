@@ -16,7 +16,10 @@ def index():
 
 @main.route('/dashboard')
 def dashboard():
-    traffic = visualise.traffic('plotly')
-    clicks = visualise.lineplot('plotly')
+    # traffic = visualise.traffic('plotly')
+    # clicks = visualise.lineplot('plotly')
+    test = visualise.makeJson()
+    ids = test[0]
+    graphJSON= test[1]
 
-    return render_template('dashboard.html', traffic=traffic, clicks=clicks)
+    return render_template('dashboard.html', ids=ids, graphJSON=graphJSON)
