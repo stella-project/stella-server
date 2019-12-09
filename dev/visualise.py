@@ -22,15 +22,6 @@ def traffic(library):
 
     #Data visualization
     if library == 'plotly':
-        # fig = go.Figure(
-        #     data=[go.Bar(y=visits)],
-        #     #layout_title_text="traffic",
-        # )
-        # # htmlplot = fig.show(renderer="iframe")
-        # # htmlplot = fig.show(output_type='div')
-        # skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
-        # htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
-
 
         htmlplot= dict(
             data=[
@@ -41,13 +32,12 @@ def traffic(library):
                 ),
             ],
             layout=dict(
-                title='Site Visits',
+                title='Impressions',
                 margin=dict(
                     l=15,
-                    r=0,
-                    t=25,
-                    b=30,
-                    pad=0
+                    r=15,
+                    t=50,
+                    b=50
                 )
             )
         )
@@ -59,7 +49,6 @@ def traffic(library):
         plt.xticks(y_pos, time, rotation=90)
         #plt.show()
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
-
 
     return htmlplot
 
@@ -121,17 +110,6 @@ def lineplot(library):
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
     elif library == 'plotly':
-        # fig = go.Figure()
-        # fig.add_trace(go.Scatter(x=SiteZeit ,y=SiteBesuche,
-        #     mode='lines',
-        #     name='lines'))
-        #
-        # fig.add_trace(go.Scatter(x=PartZeit, y=PartBesuche,
-        #                          mode='lines',
-        #                          name='lines'))
-        #
-        # skript = '<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>'
-        # htmlplot = skript + plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
         htmlplot = dict(
             data=[
@@ -151,19 +129,15 @@ def lineplot(library):
                 ),
             ],
             layout=dict(
-                title='clicks over time',
+                title='Clicks',
                 margin=dict(
                     l=15,
-                    r=0,
-                    t=25,
-                    b=30,
-                    pad=0
+                    r=15,
+                    t=50,
+                    b=50
                 )
             )
         )
-
-
-
 
     return htmlplot
 
@@ -174,6 +148,89 @@ def makeJson():
     graphs.append(traffic('plotly'))
     graphs.append(lineplot('plotly'))
 
+
+    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
+    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
+
+    return ids, graphJSON
+
+def stats():
+    wins=0
+    loss=0
+    tie=0
+    test1 = data.loadData()
+    for i in test1:
+        if test1.get(i).wins()[0]<test1.get(i).wins()[1]:
+            wins+=1
+        elif test1.get(i).wins()[0]>test1.get(i).wins()[1]:
+            loss+=1
+        elif test1.get(i).wins()[0]==test1.get(i).wins()[1]:
+            tie+=1
+
+    htmlplot = dict(
+        data=[
+            dict(
+                values= [wins, loss, tie],
+                labels= ['wins', 'loss', 'tie'],
+
+                type='pie'
+            ),
+        ],
+        layout=dict(
+            title='Wins, Losses and Ties',
+            margin=dict(
+                l=15,
+                r=15,
+                t=50,
+                b=50
+            )
+        )
+    )
+
+    return htmlplot
+
+def outcome():
+    wins = 0
+    loss = 0
+    tie = 0
+    test1 = data.loadData()
+    for i in test1:
+        if test1.get(i).wins()[0] < test1.get(i).wins()[1]:
+            wins += 1
+        elif test1.get(i).wins()[0] > test1.get(i).wins()[1]:
+            loss += 1
+        elif test1.get(i).wins()[0] == test1.get(i).wins()[1]:
+            tie += 1
+
+    outcome = wins/wins+loss
+
+    htmlplot = dict(
+        data=[
+            dict(type='table',
+                header=dict(values=['name', 'stat'])
+            ,
+        cells = dict(values=[['wins', 'loss', 'tie', 'outcome'], [wins, loss, tie, outcome]]),
+                 )],
+        layout=dict(
+            title='Wins, Losses and Ties',
+            margin=dict(
+                l=15,
+                r=15,
+                t=50,
+                b=50
+            )
+        )
+    )
+
+
+    return htmlplot
+
+def makeJson():
+    graphs = []
+    graphs.append(traffic('plotly'))
+    graphs.append(lineplot('plotly'))
+    graphs.append(stats())
+    graphs.append(outcome())
 
     ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)

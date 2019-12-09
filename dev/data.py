@@ -23,6 +23,7 @@ class Ranking:
         return result
 
 
+
 def loadData():
 
     with open('../trecos/2016/citeseerx/queries.json', 'r') as f:
