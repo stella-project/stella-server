@@ -41,7 +41,14 @@ def traffic(library):
                 ),
             ],
             layout=dict(
-                title='Site Visits'
+                title='Site Visits',
+                margin=dict(
+                    l=15,
+                    r=0,
+                    t=25,
+                    b=30,
+                    pad=0
+                )
             )
         )
 
@@ -131,18 +138,27 @@ def lineplot(library):
                 dict(
                     x=SiteZeit,
                     y=SiteBesuche,
+                    name='Site',
 
                     type='scatter'
                 ),
                 dict(
                     x=PartZeit,
                     y=PartBesuche,
+                    name='Part',
 
                     type='scatter'
                 ),
             ],
             layout=dict(
-                title='clicks over time'
+                title='clicks over time',
+                margin=dict(
+                    l=15,
+                    r=0,
+                    t=25,
+                    b=30,
+                    pad=0
+                )
             )
         )
 
@@ -151,62 +167,7 @@ def lineplot(library):
 
     return htmlplot
 
-def lineplot2():
-    test1 = data.loadData()
-    site = {}
 
-    #Data processing
-    for i in test1:
-        site[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
-
-    for i in test1:
-        for doc in test1.get(i).ranking:
-            if doc.get('clicked'):
-                if doc.get('team') == 'site':
-                    site[test1.get(i).time[:10]] += 1
-
-    participant = {}
-    for i in test1:
-        participant[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
-
-    for i in test1:
-        for doc in test1.get(i).ranking:
-            if doc.get('clicked'):
-                if doc.get('team') == 'participant':
-                    participant[test1.get(i).time[:10]] += 1
-
-    SiteZeit = []
-    for key in site:
-        SiteZeit.append(key)
-    SiteBesuche = []
-    for values in SiteZeit:
-        SiteBesuche.append(site.get(values))
-
-    PartZeit = []
-    for key in participant:
-        PartZeit.append(key)
-    PartBesuche = []
-    for values in PartZeit:
-        PartBesuche.append(participant.get(values))
-
-    graphs = [
-        dict(
-            data=[
-                dict(
-                    x=SiteZeit,
-                    y=SiteBesuche,
-                    type='scatter'
-                ),
-            ],
-            layout=dict(
-                title='first graph'
-            )
-        )
-        ]
-    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return ids, graphJSON
 
 def makeJson():
     graphs = []
