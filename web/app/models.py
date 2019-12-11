@@ -41,35 +41,52 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 
-# class Session(db.Model):
-#     __tablename__ = 'sessions'
-#     id = db.Column(db.Integer, primary_key=True)
-#     timestamp = db.Column(db.String(64), unique=False)
-#     length = db.Column(db.Float, unique=False)
-#
-#
-# class Results(db.Model):
-#     __tablename__ = 'results'
-#     id = db.Column(db.Integer, primary_key=True)
-#     ranker_id = db.Column(db.Integer, db.ForeignKey('systems.id'))
-#
-#
-# class System(db.Model):
-#     __tablename__ = 'systems'
-#     id = db.Column(db.Integer, primary_key=True)
-#
-#
-# class Entity(db.Model):
-#     __tablename__ = 'entities'
-#     id = db.Column(db.Integer, primary_key=True)
-#
-#
-# class TextQuery(db.Model):
-#     __tablename__ = 'textqueries'
-#     id = db.Column(db.Integer, primary_key=True)
-#
-#
-# class SiteUser(db.Model):
-#     __tablename__ = 'siteusers'
-#     id = db.Column(db.Integer, primary_key=True)
+class Session(db.Model):
+    __tablename__ = 'sessions'
+    id = db.Column(db.Integer, primary_key=True)
+    start = db.Column(db.DateTime, unique=False)
+    end = db.Column(db.DateTime, unique=False)
+    rankings = db.relationship('Ranking', backref='session', lazy='dynamic')
 
+    @property
+    def serialize(self):
+        return {'id': self.id,
+                'start': self.start,
+                'end': self.end,
+                'rankings': self.get_rankings()
+                }
+
+    def get_rankings(self):
+        return [r.id for r in self.rankings]
+
+
+entities = db.Table('tags',
+    db.Column('entity_id', db.Integer, db.ForeignKey('entities.id'), primary_key=True),
+    db.Column('ranking_id', db.Integer, db.ForeignKey('rankings.id'), primary_key=True)
+)
+
+
+class Ranking(db.Model):
+    __tablename__ = 'rankings'
+    id = db.Column(db.Integer, primary_key=True)
+    textquery = db.Column(db.String(64), unique=False)
+    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
+    entities = db.relationship('Entity', secondary=entities, lazy='subquery',
+                    backref=db.backref('rankings', lazy=True))
+
+    @property
+    def serialize(self):
+        return {'ranking_id': self.id,
+                'textquery': self.textquery,
+                'session_id': self.session_id,
+                'entities': self.get_entities()}
+
+    def get_entities(self):
+        return [e.id for e in self.entities]
+
+
+class Entity(db.Model):
+    __tablename__ = 'entities'
+    id = db.Column(db.String(64), primary_key=True)
+    author = db.Column(db.String(64), unique=False)
+    content = db.Column(db.String(64), unique=False)
