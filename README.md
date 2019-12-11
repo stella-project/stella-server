@@ -7,6 +7,8 @@ docker-compose up -d
 
 #### API endpoints
 
+Use `util/fill-db.py` to fill database with dummy data.
+
 ---
 
 `/stella/api/v1/sessions` 
