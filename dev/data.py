@@ -22,6 +22,12 @@ class Ranking:
         result = site, participant
         return result
 
+    def clicks(self):
+        clicks=0
+        for i in self.ranking:
+            if i.get('clicked') is True and i.get('team') == 'participant':
+                clicks += 1
+        return clicks
 
 
 def loadData():

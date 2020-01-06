@@ -193,14 +193,22 @@ def outcome():
     wins = 0
     loss = 0
     tie = 0
+    clicks = 0
+    views = 0
+
+
     test1 = data.loadData()
+    impressions = len(test1)
     for i in test1:
+        clicks += test1[i].clicks()
         if test1.get(i).wins()[0] < test1.get(i).wins()[1]:
             wins += 1
         elif test1.get(i).wins()[0] > test1.get(i).wins()[1]:
             loss += 1
         elif test1.get(i).wins()[0] == test1.get(i).wins()[1]:
             tie += 1
+
+    CTR = round(clicks/impressions,4)
 
     outcome = wins/wins+loss
 
@@ -209,7 +217,7 @@ def outcome():
             dict(type='table',
                 header=dict(values=['name', 'stat'])
             ,
-        cells = dict(values=[['wins', 'loss', 'tie', 'outcome'], [wins, loss, tie, outcome]]),
+        cells = dict(values=[['wins', 'loss', 'tie', 'outcome', 'CTR'], [wins, loss, tie, outcome, CTR]]),
                  )],
         layout=dict(
             title='Wins, Losses and Ties',
