@@ -1,2 +1,5 @@
 .idea/
 __pycache__/
+web/data-dev.sqlite
+web/migrations/
+web/migrations/*
