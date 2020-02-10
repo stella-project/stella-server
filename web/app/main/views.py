@@ -14,12 +14,11 @@ def index():
         form.name.data = ''
     return render_template('index.html', form=form, name=name)
 
+
 @main.route('/dashboard')
 def dashboard():
-    # traffic = visualise.traffic('plotly')
-    # clicks = visualise.lineplot('plotly')
     test = visualise.makeJson()
     ids = test[0]
-    graphJSON= test[1]
+    graphJSON = test[1]
 
     return render_template('dashboard.html', ids=ids, graphJSON=graphJSON)

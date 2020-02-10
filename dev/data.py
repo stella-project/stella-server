@@ -1,12 +1,14 @@
 import json
 
-
+# Klasse füt Ranking Objekte
 class Ranking:
     def __init__(self, qid, time, ranking):
         self.qid = qid
         self.time = time
         self.ranking = ranking
 
+# Funktion zum errechnen wie oft die vom User vorgeschlagenen Beiträge und die der Seite geklickt worden sind.
+    # Gibt beide Werte zurück.
     def wins(self):
         # use ranking list here to count number of wins
         site = 0
@@ -22,6 +24,7 @@ class Ranking:
         result = site, participant
         return result
 
+# Funktion zum errechnen der gesamten Clicks
     def clicks(self):
         clicks=0
         for i in self.ranking:
@@ -30,13 +33,12 @@ class Ranking:
         return clicks
 
 
+# Funktion zum einlesen der dummy Daten aus /trecos
 def loadData():
 
     with open('../trecos/2016/citeseerx/queries.json', 'r') as f:
         data = (line.strip() for line in f)  # Aufteilen in Liste mit Dictionarys
         data_json = "[{0}]".format(','.join(data))
-
-    queries = json.loads(data_json)
 
     with open('../trecos/2016/citeseerx/round1_test.json', 'r') as f:
         data = (line.strip() for line in f)

@@ -1,18 +1,22 @@
 from dev import data
 import matplotlib.pyplot as plt
 import mpld3
-import plotly.graph_objects as go
 import plotly.offline
 import json
 
 
+# Skript zum visualisieren der Daten in unterschiedlichen Diagrammen durch zwei Methoden:
+# 1. matplotlib und mpld3 - erstellt einen html plot der als iframe angezeigt werden kann
+# 2. plotly - erstellt Diagramm anweisungen im json Format das durch javascript eingebunden wird.
+
+# Visualisierung des Sitetraffics in einem Barplot für jeden Tag
 def traffic(library):
     test1 = data.loadData()
-    traffic={}
-    time=[]
-    visits= []
+    traffic = {}
+    time = []
+    visits = []
 
-    #Data processing
+# Data processing
     for i in test1:
         traffic[test1.get(i).time[:10]] = traffic.get(test1.get(i).time[:10], 0) + 1
 
@@ -20,10 +24,10 @@ def traffic(library):
         time.append(key)
         visits.append(traffic.get(key))
 
-    #Data visualization
+# Data visualization plotly
     if library == 'plotly':
 
-        htmlplot= dict(
+        htmlplot = dict(
             data=[
                 dict(
                     x=time,
@@ -42,26 +46,23 @@ def traffic(library):
             )
         )
 
+# Data visualization matplotlib
     elif library == 'matplotlib':
         fig = plt.figure()  # Plot Variable
         y_pos = time
         plt.bar(y_pos, visits)  # Balken Plotten
         plt.xticks(y_pos, time, rotation=90)
-        #plt.show()
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
     return htmlplot
 
 
-
-
-
-# Ausgabe als Lineplot
+# Visualisierung des Sitetraffics in einem Lineplot für jeden Tag
 def lineplot(library):
     test1 = data.loadData()
     site = {}
 
-    #Data processing
+# Data processing
     for i in test1:
         site[test1.get(i).time[:10]] = 0  # Nach Datum sortieren
 
@@ -95,6 +96,7 @@ def lineplot(library):
     for values in PartZeit:
         PartBesuche.append(participant.get(values))
 
+# Data visualization matplotlib
     if library == 'matplotlib':
         fig = plt.figure()
         plt.plot(SiteZeit, SiteBesuche, label='Site')
@@ -109,8 +111,8 @@ def lineplot(library):
 
         htmlplot = mpld3.fig_to_html(fig, template_type='simple')
 
+# Data visualization matplotlib
     elif library == 'plotly':
-
         htmlplot = dict(
             data=[
                 dict(
@@ -142,36 +144,25 @@ def lineplot(library):
     return htmlplot
 
 
-
-def makeJson():
-    graphs = []
-    graphs.append(traffic('plotly'))
-    graphs.append(lineplot('plotly'))
-
-
-    ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
-    graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)
-
-    return ids, graphJSON
-
+# Funktion zum erstellen eines Kreisdiagramms mit plotly aus den Werten Wins, losses, und Ties
 def stats():
-    wins=0
-    loss=0
-    tie=0
+    wins = 0
+    loss = 0
+    tie = 0
     test1 = data.loadData()
     for i in test1:
-        if test1.get(i).wins()[0]<test1.get(i).wins()[1]:
-            wins+=1
-        elif test1.get(i).wins()[0]>test1.get(i).wins()[1]:
-            loss+=1
-        elif test1.get(i).wins()[0]==test1.get(i).wins()[1]:
-            tie+=1
+        if test1.get(i).wins()[0] < test1.get(i).wins()[1]:
+            wins += 1
+        elif test1.get(i).wins()[0] > test1.get(i).wins()[1]:
+            loss += 1
+        elif test1.get(i).wins()[0] == test1.get(i).wins()[1]:
+            tie += 1
 
     htmlplot = dict(
         data=[
             dict(
-                values= [wins, loss, tie],
-                labels= ['wins', 'loss', 'tie'],
+                values=[wins, loss, tie],
+                labels=['wins', 'loss', 'tie'],
 
                 type='pie'
             ),
@@ -189,13 +180,14 @@ def stats():
 
     return htmlplot
 
+
+# Funktion zum erstteln  einer plotly Tabelle mit Kennzahlen
 def outcome():
     wins = 0
     loss = 0
     tie = 0
     clicks = 0
     views = 0
-
 
     test1 = data.loadData()
     impressions = len(test1)
@@ -208,16 +200,16 @@ def outcome():
         elif test1.get(i).wins()[0] == test1.get(i).wins()[1]:
             tie += 1
 
-    CTR = round(clicks/impressions,4)
+    CTR = round(clicks / impressions, 4)
 
-    outcome = wins/wins+loss
+    outcome = wins / wins + loss
 
     htmlplot = dict(
         data=[
             dict(type='table',
-                header=dict(values=['name', 'stat'])
-            ,
-        cells = dict(values=[['wins', 'loss', 'tie', 'outcome', 'CTR'], [wins, loss, tie, outcome, CTR]]),
+                 header=dict(values=['name', 'stat'])
+                 ,
+                 cells=dict(values=[['wins', 'loss', 'tie', 'outcome', 'CTR'], [wins, loss, tie, outcome, CTR]]),
                  )],
         layout=dict(
             title='Wins, Losses and Ties',
@@ -230,15 +222,12 @@ def outcome():
         )
     )
 
-
     return htmlplot
 
+
+# Alle Plots in eine Json zusammenfügen
 def makeJson():
-    graphs = []
-    graphs.append(traffic('plotly'))
-    graphs.append(lineplot('plotly'))
-    graphs.append(stats())
-    graphs.append(outcome())
+    graphs = [traffic('plotly'), lineplot('plotly'), stats(), outcome()]
 
     ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)

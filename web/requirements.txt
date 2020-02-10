@@ -13,4 +13,4 @@ flask-script
 flask-migrate
 flask-login
 flask-httpauth
-plotly==4.3.0
+plotly

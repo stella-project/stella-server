@@ -6,50 +6,18 @@
 {% block page_content %}
 
     <h2>Dashboard</h2>
-{#    <dif class="container-fluid full-width">#}
-{#        <dif class="row row-no-gutters">#}
-{##}
-{#            <dif class="col-sm-4 col-md-4">#}
-{#                <div class="embed-responsive embed-responsive-4by3">#}
-{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{traffic}}%3C/body%3E%3C/html%3E" ></iframe>#}
-{#                </div>#}
-{#            </dif>#}
-{##}
-{#            <dif class="col-sm-4 col-md-4">#}
-{#                <div class="embed-responsive embed-responsive-4by3">#}
-{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>#}
-{#                </dif>#}
-{#             </dif>#}
-{##}
-{#            <dif class="col-sm-4 col-md-4">#}
-{#                <div class="embed-responsive embed-responsive-4by3">#}
-{#                    <iframe class="embed-responsive-item"  src="data:text/html;charset=utf-8,%3Chtml%3E%3Cbody%3E{{clicks}}%3C/body%3E%3C/html%3E" ></iframe>#}
-{#                </div>#}
-{#            </dif>#}
-{#        </dif>#}
-{#    </dif>#}
-{##}
-{##}
-{#    </dif>#}
 
+    <!-- Erstellen der Bootstrap elemente für das Raster  -->
     <dif class="container-fluid full-width has-inner">
         <dif class="row row-no-gutters">
+
+        <!-- Schleife zum Füllen des Rasters mit Diagrammen  -->
             {% for id in ids %}
-                <div class="col-sm-4 col-md-4 ">
+                <div class="col-sm-4 col-md-4 "></div>
                 <div class="embed-responsive embed-responsive-4by3 " id="{{id}}"></div>
-            </div>
             {% endfor %}
         </div>
     </dif>
-
-
-
-
-{#        {% if traffic %}#}
-{##}
-{##}
-{##}
-{#        {% endif %}#}
 
 
 <footer>
@@ -60,6 +28,8 @@
     <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
+
+    <!-- Javascript zum zerlegen der JSON in einzelne Diagramme  -->
     <script type="text/javascript">
 
         var graphs = {{graphJSON | safe}};
@@ -75,4 +45,3 @@
 </footer>
 
 {% endblock %}
-
