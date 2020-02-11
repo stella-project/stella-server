@@ -2,10 +2,10 @@
 
 The STELLA server provides the following services:
 
-1. User administration (administration of participants)
+1. User administration (administration of admins, participants and sites)
 2. Dashboard service
 3. Automated generation of the STELLA app &rarr; `docker-compose.yml`
-4. Benchmark service: Comparison of experimental systems against baseline (production system)
+~~4. Benchmark service: Comparison of experimental systems against baseline (production system)~~
 5. Data storage (user feedback) for data analysis, training, etc.
 
 #### Setup:
