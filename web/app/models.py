@@ -84,7 +84,7 @@ class Feedback(db.Model):
     start = db.Column(db.DateTime, nullable=False)
     end = db.Column(db.DateTime, nullable=False)
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    site = db.Column(db.Integer, db.ForeignKey('users.id'))
+    site_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     interleave = db.Column(db.Boolean)
     # refers to experimental and baseline ranking
     results = db.relationship('Result', backref='feedback', lazy='dynamic')
