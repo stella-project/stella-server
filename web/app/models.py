@@ -1,6 +1,8 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from . import db, login_manager
+from datetime import datetime
+import json
 
 
 class Role(db.Model):
@@ -52,6 +54,40 @@ class Session(db.Model):
     system_recommendation = db.Column(db.Integer, db.ForeignKey('systems.id'))
     feedbacks = db.relationship('Feedback', backref='session', lazy='dynamic')
 
+    def to_json(self):
+        json_session = {
+            'id': self.id,
+            'start': self.start,
+            'end': self.end,
+            'site_id': self.site_id,
+            'site_user': self.site_user,
+            'system_ranking': self.system_ranking,
+            'system_recommendation': self.system_recommendation,
+        }
+
+        return json_session
+
+    @staticmethod
+    def from_json(json_session):
+        site_name = json_session.get('site_name', None)
+        site_id = User.query.filter_by(username=site_name).first().id
+        site_user = json_session.get('site_user', None)
+        start = json_session.get('start', None)
+        end = json_session.get('start', None)
+        system_ranking = json_session.get('system_ranking', None)
+        system_ranking_id = System.query.filter_by(name=system_ranking).first().id
+        system_recommendation = json_session.get('system_recommendation', None)
+        system_recommendation_id = System.query.filter_by(name=system_recommendation).first().id
+
+        session = Session(site_id=site_id,
+                          site_user=site_user,
+                          start=start,
+                          end=end,
+                          system_ranking=system_ranking_id,
+                          system_recommendation=system_recommendation_id)
+
+        return session
+
 
 class Result(db.Model):
     __tablename__ = 'results'
@@ -77,6 +113,61 @@ class Result(db.Model):
                 'query_date': self.q_date,
                 'items': self.items}
 
+    def to_json(self):
+        result_session = {
+            'session_id': self.session_id,
+            'system_id': self.system_id,
+            'feedback_id': self.feedback_id,
+            'site_id': self.site_id,
+            'part_id': self.part_id,
+            'type': self.type,
+            'q': self.q,
+            'q_date': self.q_date,
+            'q_time': self.q_time,
+            'num_found': self.num_found,
+            'page': self.page,
+            'rpp': self.rpp,
+            'items': self.items
+        }
+
+        return result_session
+
+    @staticmethod
+    def from_json(json_result):
+        q = json_result.get('q', None)
+        q_date_raw = json_result.get('q_date', None)
+
+        if q_date_raw is None:
+            q_date = None
+        else:
+            q_date = datetime.strptime(q_date_raw, "%Y-%m-%d %H:%M:%S")
+
+        q_time_raw = json_result.get('q_time', None)
+
+        if q_time_raw is None:
+            q_time = None
+        else:
+            q_time = datetime.strptime(q_time_raw, "%Y-%m-%d %H:%M:%S")
+
+        part_name = json_result.get('part_name', None)
+
+        if part_name is None:
+            part_id = None
+        else:
+            part_id = User.query.filter_by(username=part_name).first().id
+
+        num_found = json_result.get('num_found', None)
+        page = json_result.get('page', None)
+        rpp = json_result.get('rpp', None)
+        items_raw = json_result.get('items', None)
+        items = json.loads(items_raw)
+
+        result = Result(q=q, q_date=q_date, q_time=q_time, part_id=part_id,
+                        num_found=num_found, page=page, rpp=rpp,
+                        items=items)
+
+        return result
+
 
 class Feedback(db.Model):
     __tablename__ = 'feedbacks'
@@ -90,6 +181,34 @@ class Feedback(db.Model):
     results = db.relationship('Result', backref='feedback', lazy='dynamic')
     # shown result list with clicks (click dates)
     clicks = db.Column(db.JSON)
+
+    @staticmethod
+    def from_json(json_feedback):
+        start_raw = json_feedback.get('start', None)
+        end_raw = json_feedback.get('end', None)
+
+        if start_raw is None:
+            start = None
+        else:
+            start = datetime.strptime(start_raw, "%Y-%m-%d %H:%M:%S")
+
+        if end_raw is None:
+            end = None
+        else:
+            end = datetime.strptime(end_raw, "%Y-%m-%d %H:%M:%S")
+
+        interleave = bool(json_feedback.get('interleave', False))
+        clicks_raw = json_feedback.get('clicks')
+        clicks = json.loads(clicks_raw)
+
+        feedback = Feedback(
+            start=start,
+            end=end,
+            interleave=interleave,
+            clicks=clicks
+        )
+
+        return feedback
 
 
 class System(db.Model):

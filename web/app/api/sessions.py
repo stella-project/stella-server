@@ -7,33 +7,22 @@ from ..models import Session, System, User
 
 
 @api.route('/sessions', methods=['POST'])
-def sessions():
+def post_session():
     if request.method == 'POST':
-        site_name = request.values.get('site_name', None)
-        site_id = User.query.filter_by(username=site_name).first().id
-        site_user = request.values.get('site_user', None)
-        start = request.values.get('start', None)
-        end = request.values.get('start', None)
-        system_ranking = request.values.get('system_ranking', None)
-        system_ranking_id = System.query.filter_by(name=system_ranking).first().id
-        system_recommendation = request.values.get('system_recommendation', None)
-        system_recommendation_id = System.query.filter_by(name=system_recommendation).first().id
 
-        session = Session(site_id=site_id,
-                          site_user=site_user,
-                          start=start,
-                          end=end,
-                          system_ranking=system_ranking_id,
-                          system_recommendation=system_recommendation_id)
+        json_session = request.values
+        session = Session.from_json(json_session)
 
-        db.session.add_all([
-            session
-        ])
-
+        db.session.add(session)
         db.session.commit()
+
         return jsonify({'session_id': session.id})
 
 
+@api.route('/sessions/<int:id>')
+def get_session(id):
+    session = Session.query.get_or_404(id)
+    return jsonify(session.to_json())
 
 # import json
 # from flask import jsonify, request

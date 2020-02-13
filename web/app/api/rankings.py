@@ -1,15 +1,32 @@
-# from flask import request, jsonify
-# from . import api
-# from ..models import Ranking
-#
-#
-# @api.route('/rankings')
-# def rankings():
-#     return jsonify([i.serialize for i in Ranking.query.all()])
-#
-#
-# @api.route('/rankings/<int:id>', methods=['GET'])
-# def ranking(id):
-#     if request.method == 'GET':
-#         ranking = Ranking.query.get(id)
-#         return jsonify(ranking.serialize)
+from flask import request, jsonify
+from . import api
+from .. import db
+from ..models import Result, Feedback, Session
+
+
+@api.route('/feedbacks/<int:id>/rankings', methods=['POST'])
+def post_ranking(id):
+    if request.method == 'POST':
+
+        feedback = Feedback.query.get_or_404(id)
+        site = feedback.site_id
+        session = Session.query.get_or_404(feedback.session_id)
+
+        json_ranking = request.values
+        ranking = Result.from_json(json_ranking)
+        ranking.site_id = site
+        ranking.session_id = session.id
+        ranking.feedback_id = id
+        ranking.system_id = session.system_ranking
+        ranking.type = 'RANK'
+
+        db.session.add(ranking)
+        db.session.commit()
+
+    return jsonify({'feedback_id': feedback.id})
+
+
+@api.route('/rankings/<int:id>')
+def get_ranking(id):
+    ranking = Session.query.get_or_404(id)
+    return jsonify(ranking.to_json())

@@ -34,29 +34,17 @@ def main():
     payload = {
         'start': '2019-11-04 00:06:23',
         'end': '2019-11-04 00:10:38',
-        'session_id': 'rank_exp_a',
-        'site': 'Site A',
         'interleave': True,
         'clicks': json.dumps(click_dict)
                }
 
-    r = req.post(HOST + '/stella/api/v1/feedbacks', data=payload)
+    session_id = 1
+
+    r = req.post(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/feedbacks', data=payload)
+
     r_text = json.loads(r.text)
     feedback_id = r_text.get('feedback_id')
     print(feedback_id)
-
-    '''
-    id = db.Column(db.Integer, primary_key=True)
-    start = db.Column(db.DateTime, nullable=False)
-    end = db.Column(db.DateTime, nullable=False)
-    session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
-    site = db.Column(db.Integer, db.ForeignKey('users.id'))
-    interleave = db.Column(db.Boolean)
-    # refers to experimental and baseline ranking
-    results = db.relationship('Result', backref='feedback', lazy='dynamic')
-    # shown result list with clicks (click dates)
-    clicks = db.Column(db.JSON)
-    '''
 
 
 if __name__ == '__main__':
