@@ -226,6 +226,20 @@ class Feedback(db.Model):
 
         return feedback
 
+    def to_json(self):
+
+        json_feedback = {
+            'id': self.id,
+            'start': self.start,
+            'end': self.end,
+            'session_id': self.session_id,
+            'site_id': self.site_id,
+            'interleave': self.interleave,
+            'clicks': self.clicks
+        }
+
+        return json_feedback
+
 
 class System(db.Model):
     __tablename__ = 'systems'

@@ -18,16 +18,16 @@ HOST = 'http://0.0.0.0:8000'
 def main():
 
     click_dict = {
-        "doc1": None,
-        "doc11": '2019-11-04T00:08:15',
-        "doc2": None,
-        "doc12": '2019-11-04T00:06:23',
-        "doc3": None,
-        "doc13": None,
-        "doc4": None,
-        "doc14": None,
-        "doc5": None,
-        "doc15": None,
+        "1": {"doc_id": "doc1", "clicked": False, "date": None, "system": "EXP"},
+        "2": {"doc_id": "doc11", "clicked": True, "date": '2019-11-04 00:08:15', "system": "BASE"},
+        "3": {"doc_id": "doc2", "clicked": False, "date": None, "system": "EXP"},
+        "4": {"doc_id": "doc12", "clicked": True, "date": '2019-11-04 00:06:23', "system": "BASE"},
+        "5": {"doc_id": "doc3", "clicked": False, "date": None, "system": "EXP"},
+        "6": {"doc_id": "doc13", "clicked": False, "date": None, "system": "BASE"},
+        "7": {"doc_id": "doc4", "clicked": False, "date": None, "system": "EXP"},
+        "8": {"doc_id": "doc14", "clicked": False, "date": None, "system": "BASE"},
+        "9": {"doc_id": "doc5", "clicked": False, "date": None, "system": "EXP"},
+        "10": {"doc_id": "doc15", "clicked": False, "date": None, "system": "BASE"}
     }
 
     # post new session

@@ -32,7 +32,7 @@ def get_ranking(id):
     return jsonify(ranking.to_json())
 
 
-@api.route('rankings/<int:id>', methods=['PUT'])
+@api.route('/rankings/<int:id>', methods=['PUT'])
 def edit_ranking(id):
     pass  # TODO: update ranking with id
 

@@ -3,7 +3,7 @@ from flask import jsonify, request
 from . import api
 from .. import db
 from datetime import datetime
-from ..models import Session, System, User
+from ..models import Session, System, User, Feedback
 
 
 @api.route('/sessions/<int:id>')
@@ -14,16 +14,5 @@ def get_session(id):
 
 @api.route('/sessions/<int:id>/feedbacks')
 def get_session_feedbacks(id):
-    pass  # TODO: return feedback data of session with id
-
-# @api.route('/sessions', methods=['POST'])
-# def post_session():
-#     if request.method == 'POST':
-#
-#         json_session = request.values
-#         session = Session.from_json(json_session)
-#
-#         db.session.add(session)
-#         db.session.commit()
-#
-#         return jsonify({'session_id': session.id})
+    feedbacks = Feedback.query.filter_by(session_id=id)
+    return jsonify([f.to_json() for f in feedbacks])

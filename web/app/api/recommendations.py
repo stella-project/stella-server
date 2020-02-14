@@ -30,3 +30,13 @@ def post_recommendation(id):
 def get_recommendation(id):
     recommendation = Session.query.get_or_404(id)
     return jsonify(recommendation.to_json())
+
+
+@api.route('/recommendations/<int:id>', methods=['PUT'])
+def edit_recommendation(id):
+    pass  # TODO: update ranking with id
+
+
+@api.route('/recommendations')
+def get_recommendations():
+    pass  # TODO: return all recommendations. does this make sense?

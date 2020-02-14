@@ -23,12 +23,14 @@ def post_feedback(id):
 
 @api.route('/feedbacks/<int:id>')
 def get_feedback(id):
-    pass  # TODO: should return a single feedback with specified id
+    feedback = Feedback.query.get_or_404(id)
+    return jsonify(feedback.to_json())
 
 
-@api.route('/feedbacks/<int:id>', methods=['PUT'])
+@api.route('/feedbacks/<int:id>', methods=['GET', 'PUT'])
 def edit_feedback(id):
     pass  # TODO: update single feedback specified by id
+
 
 @api.route('/feedbacks')
 def get_feedbacks():

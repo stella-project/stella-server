@@ -21,7 +21,6 @@ def post_session(id):
 @api.route('/sites/<string:name>')
 def get_site_info_by_name(name):
     site = User.query.filter_by(username=name).first()
-
     return jsonify(site.serialize)
 
 
@@ -29,7 +28,6 @@ def get_site_info_by_name(name):
 def get_site_sessions(id):
     sessions = Session.query.filter_by(site_id=id)
     return jsonify([s.to_json() for s in sessions])
-
 
 
 @api.route('/sites/<int:id>/systems')
