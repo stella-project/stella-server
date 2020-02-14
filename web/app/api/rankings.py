@@ -23,10 +23,20 @@ def post_ranking(id):
         db.session.add(ranking)
         db.session.commit()
 
-    return jsonify({'feedback_id': feedback.id})
+    return jsonify({'ranking_id': ranking.id})
 
 
 @api.route('/rankings/<int:id>')
 def get_ranking(id):
     ranking = Session.query.get_or_404(id)
     return jsonify(ranking.to_json())
+
+
+@api.route('rankings/<int:id>', methods=['PUT'])
+def edit_ranking(id):
+    pass  # TODO: update ranking with id
+
+
+@api.route('/rankings')
+def get_rankings():
+    pass  # TODO: return all rankings. does this make sense?

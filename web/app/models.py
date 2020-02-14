@@ -27,6 +27,11 @@ class User(UserMixin, db.Model):
     def password(self):
         raise AttributeError('password is not a readable attribute')
 
+    @property
+    def serialize(self):
+        return {'id': self.id,
+                'username': self.username}
+
     @password.setter
     def password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -69,18 +74,29 @@ class Session(db.Model):
 
     @staticmethod
     def from_json(json_session):
-        site_name = json_session.get('site_name', None)
-        site_id = User.query.filter_by(username=site_name).first().id
+        # site_name = json_session.get('site_name', None)
+        # site_id = User.query.filter_by(username=site_name).first().id
         site_user = json_session.get('site_user', None)
-        start = json_session.get('start', None)
-        end = json_session.get('start', None)
+        start_raw = json_session.get('start', None)
+
+        if start_raw is None:
+            start = None
+        else:
+            start = datetime.strptime(start_raw, "%Y-%m-%d %H:%M:%S")
+
+        end_raw = json_session.get('end', None)
+
+        if end_raw is None:
+            end = None
+        else:
+            end = datetime.strptime(end_raw, "%Y-%m-%d %H:%M:%S")
+
         system_ranking = json_session.get('system_ranking', None)
         system_ranking_id = System.query.filter_by(name=system_ranking).first().id
         system_recommendation = json_session.get('system_recommendation', None)
         system_recommendation_id = System.query.filter_by(name=system_recommendation).first().id
 
-        session = Session(site_id=site_id,
-                          site_user=site_user,
+        session = Session(site_user=site_user,
                           start=start,
                           end=end,
                           system_ranking=system_ranking_id,
