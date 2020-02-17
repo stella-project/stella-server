@@ -21,12 +21,12 @@ def setup(db):
     participant_role = Role(name='Participant')
     site_role = Role(name='Site')
 
-    user_admin = User(username='STELLA-Admin', role=admin_role, password='pass')
+    user_admin = User(username='STELLA-Admin', email='admin@stella.org', role=admin_role, password='pass')
     # print(user_admin.verify_password('pass'))
-    user_part_a = User(username='Participant A', role=participant_role)
-    user_part_b = User(username='Participant B', role=participant_role)
-    user_site_a = User(username='Site A', role=site_role)
-    user_site_b = User(username='Site B', role=site_role)
+    user_part_a = User(username='Participant A', email='participant_a@stella.org', role=participant_role, password='pass')
+    user_part_b = User(username='Participant B', email='participant_b@stella.org', role=participant_role, password='pass')
+    user_site_a = User(username='Site A', email='site_a@stella.org', role=site_role, password='pass')
+    user_site_b = User(username='Site B', email='site_b@stella.org', role=site_role, password='pass')
 
     # ranking = Result(system_id=)
 

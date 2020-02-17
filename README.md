@@ -1,5 +1,14 @@
 # stella-server
 
+### dev-notes
+
+run local postgres-db with:  
+```
+docker run -d -p 5432:5432 --name my-postgres -e POSTGRES_PASSWORD=change-me postgres
+```
+
+## Overview
+
 The STELLA server provides the following services:
 
 1. User administration (administration of admins, participants and sites)
@@ -14,6 +23,41 @@ docker-compose up -d
 ```
 
 #### API endpoints
+
+
+
+
+
+
+##### Session
+
+GET session with `id`:  
+`/sessions/<int:id>`
+
+GET feedback from session with `id`:  
+`/stella/api/v1/sessions/<int:id>/feedbacks` 
+
+
+##### Site
+
+GET sessions at site with `id`:  
+`/sites/<int:id>/sessions`
+
+GET site details, e.g. `id`, with the help of the `name`:  
+`/sites/<string:name>`
+
+POST new session at site with `id`:  
+`/sites/<int:id>/sessions`
+
+The payload should be provided as follows:  
+
+```json
+{
+
+
+}
+```
+<!--
 
 Use `util/fill-db.py` to fill database with dummy data.
 
@@ -58,3 +102,5 @@ python manage.py db init
 python manage.py db migrate
 python manage.py db upgrade
 ```
+
+-->
