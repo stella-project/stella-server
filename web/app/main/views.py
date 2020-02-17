@@ -1,4 +1,5 @@
 from flask import render_template, session, redirect, url_for, current_app
+from flask_login import current_user
 from . import main
 from .forms import NameForm
 
@@ -11,3 +12,9 @@ def index():
         name = form.name.data
         form.name.data = ''
     return render_template('index.html', form=form, name=name)
+
+
+@main.route('/dashboard')
+def dashboard():
+
+    return render_template('dashboard.html')
