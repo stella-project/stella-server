@@ -13,7 +13,8 @@ def main():
     print('Site identifier: ', site_id)
 
     # Endpoint is not implemented.
-    r = req.get(HOST + '/stella/api/v1/sites/' + site_id + '/systems')
+    r = req.get(HOST + '/stella/api/v1/sites/' + str(site_id) + '/systems')
+    r_json = json.loads(r.text)
 
 
 if __name__ == '__main__':

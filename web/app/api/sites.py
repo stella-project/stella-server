@@ -11,10 +11,8 @@ def post_session(id):
     json_session = request.values
     session = Session.from_json(json_session)
     session.site_id = id
-
     db.session.add(session)
     db.session.commit()
-
     return jsonify({'session_id': session.id})
 
 
@@ -32,4 +30,8 @@ def get_site_sessions(id):
 
 @api.route('/sites/<int:id>/systems')
 def get_site_systems(id):
-    pass  #  TODO: return all systems deployed at site with id. return dictionary with ids as keys and names as values
+    system_dict = {}
+    systems = Session.query.with_entities(Session.system_ranking).distinct().filter_by(site_id=id).all()
+    for s in systems:
+        system_dict.update({s.system_ranking: System.query.get_or_404(s).name})
+    return jsonify(system_dict)

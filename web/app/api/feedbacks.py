@@ -21,18 +21,23 @@ def post_feedback(id):
     return jsonify({'feedback_id': feedback.id})
 
 
+@api.route('/feedbacks')
+def get_feedbacks():
+    feedbacks = Feedback.query.all()
+    return jsonify([feedback.serialize for feedback in feedbacks])
+
+
 @api.route('/feedbacks/<int:id>')
 def get_feedback(id):
     feedback = Feedback.query.get_or_404(id)
     return jsonify(feedback.to_json())
 
 
-@api.route('/feedbacks/<int:id>', methods=['GET', 'PUT'])
+@api.route('/feedbacks/<int:id>', methods=['PUT'])
 def edit_feedback(id):
-    pass  # TODO: update single feedback specified by id
+    json_feedback = request.values
+    feedback = Feedback.query.get_or_404(id)
+    feedback.update(json_feedback)
+    db.session.commit()
 
-
-@api.route('/feedbacks')
-def get_feedbacks():
-    pass  # TODO: return all feedbacks. does this make sense?
 

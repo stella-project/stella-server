@@ -12,7 +12,7 @@ rec_base_a
 rec_base_b
 '''
 
-HOST = 'http://0.0.0.0:8000'
+API = 'http://0.0.0.0:8000/stella/api/v1/'
 
 
 def main():
@@ -20,7 +20,7 @@ def main():
     # Post new session for Site A
     site_name = 'Site A'
 
-    r = req.get(HOST + '/stella/api/v1/sites/' + site_name)
+    r = req.get(API + '/sites/' + site_name)
     r_json = json.loads(r.text)
     site_id = r_json.get('id')
     print('Site identifier: ', site_id)
@@ -33,7 +33,7 @@ def main():
         'system_recommendation': 'rec_exp_a'
                }
 
-    r = req.post(HOST + '/stella/api/v1/sites/' + str(site_id) + '/sessions', data=payload)
+    r = req.post(API + '/sites/' + str(site_id) + '/sessions', data=payload)
     r_json = json.loads(r.text)
     session_id = r_json.get('session_id')
     print('Session identifier: ', session_id)
@@ -41,7 +41,7 @@ def main():
     # Post new session for Site B
     site_name = 'Site B'
 
-    r = req.get(HOST + '/stella/api/v1/sites/' + site_name)
+    r = req.get(API + '/sites/' + site_name)
     r_json = json.loads(r.text)
     site_id = r_json.get('id')
     print('Site identifier: ', site_id)
@@ -54,7 +54,7 @@ def main():
         'system_recommendation': 'rec_exp_b'
                }
 
-    r = req.post(HOST + '/stella/api/v1/sites/' + str(site_id) + '/sessions', data=payload)
+    r = req.post(API + '/sites/' + str(site_id) + '/sessions', data=payload)
     r_json = json.loads(r.text)
     session_id = r_json.get('session_id')
     print('Session identifier: ', session_id)
@@ -63,7 +63,7 @@ def main():
 
     site_name = 'Site A'
 
-    r = req.get(HOST + '/stella/api/v1/sites/' + site_name)
+    r = req.get(API + '/sites/' + site_name)
     r_json = json.loads(r.text)
     site_id = r_json.get('id')
     print('Site identifier: ', site_id)
@@ -76,7 +76,7 @@ def main():
         'system_recommendation': 'rec_exp_b'
     }
 
-    r = req.post(HOST + '/stella/api/v1/sites/' + str(site_id) + '/sessions', data=payload)
+    r = req.post(API + '/sites/' + str(site_id) + '/sessions', data=payload)
     r_json = json.loads(r.text)
     session_id = r_json.get('session_id')
     print('Session identifier: ', session_id)

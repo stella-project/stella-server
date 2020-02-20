@@ -1,8 +1,9 @@
 import requests as req
 import json
 
-NUM_SESSION = 100
+NUM_SESSION = 5
 HOST = 'http://0.0.0.0:8000'
+API = 'http://0.0.0.0:8000/stella/api/v1/'
 
 import random
 import time
@@ -37,8 +38,8 @@ def main():
     site_users = ['123.123.123.123', '234.234.234.234', '345.345.345.345',
                   '456.456.456.456', '567.567.567.567', '678.678.678.678',
                   '891.891.891.891', '912.912.912.912']
-    rankers = ['rank_exp_a', 'rank_exp_b']
-    recommenders = ['rec_exp_a', 'rec_exp_b']
+    rankers = ['rank_exp_a', 'rank_exp_b', 'rank_base_a', 'rank_base_b']
+    recommenders = ['rec_exp_a', 'rec_exp_b', 'rec_base_a', 'rec_base_b']
 
 
     for s in range(0, NUM_SESSION):
@@ -108,6 +109,40 @@ def main():
             }
 
             r = req.post(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/feedbacks', data=payload)
+            r_json = json.loads(r.text)
+            feedback_id = r_json['feedback_id']
+
+
+            r = req.get(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/systems')
+            r_json = json.loads(r.text)
+            ranker_name = r_json.get('RANK')
+            recommender_name = r_json.get('REC')
+
+            items = {
+                "1": "doc1",
+                "2": "doc2",
+                "3": "doc3",
+                "4": "doc4",
+                "5": "doc5",
+                "6": "doc6",
+                "7": "doc7",
+                "8": "doc8",
+                "9": "doc9",
+                "10": "doc10"
+            }
+
+            # POST results
+            payload = {
+                'q': 'query goes here!',
+                'q_date': session_start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                'q_time': 300,
+                'num_found': 10,
+                'page': 1,
+                'rpp': 10,
+                'items': json.dumps(items)
+            }
+
+            r = req.post(API + 'feedbacks/' + str(feedback_id) + '/rankings', data=payload)
 
 
 if __name__ == '__main__':

@@ -59,11 +59,19 @@ class Session(db.Model):
     system_recommendation = db.Column(db.Integer, db.ForeignKey('systems.id'))
     feedbacks = db.relationship('Feedback', backref='session', lazy='dynamic')
 
+    @property
+    def serialize(self):
+        return {'sid': self.id,
+                'site_id': self.site_id,
+                'site_user': self.site_user,
+                'system_ranking': self.system_ranking,
+                'system_recommender': self.system_recommendation}
+
     def to_json(self):
         json_session = {
             'id': self.id,
-            'start': self.start,
-            'end': self.end,
+            'start': self.start.strftime('%Y-%m-%d %H:%M:%S'),
+            'end': self.end.strftime('%Y-%m-%d %H:%M:%S'),
             'site_id': self.site_id,
             'site_user': self.site_user,
             'system_ranking': self.system_ranking,
@@ -116,7 +124,7 @@ class Result(db.Model):
     type = db.Column(db.String(64), index=True)
     q = db.Column(db.String(64), index=True)
     q_date = db.Column(db.DateTime, nullable=True)
-    q_time = db.Column(db.DateTime, nullable=True)  # which datatype?
+    q_time = db.Column(db.Integer)  # which datatype?
     num_found = db.Column(db.Integer)
     page = db.Column(db.Integer)
     rpp = db.Column(db.Integer)
@@ -129,6 +137,48 @@ class Result(db.Model):
                 'query_date': self.q_date,
                 'items': self.items}
 
+    def update(self, data):
+        session_id = data.get('session_id', None)
+        system_id = data.get('system_id', None)
+        feedback_id = data.get('feedback_id', None)
+        site_id = data.get('site_id', None)
+        part_id = data.get('part_id', None)
+        type = data.get('type', None)
+        q = data.get('q', None)
+        q_time = data.get('q_time', None)
+        q_date = data.get('q_date', None)
+        num_found = data.get('num_found', None)
+        rpp = data.get('rpp', None)
+        page = data.get('page', None)
+        items = data.get('items', None)
+
+        if session_id is not None:
+            self.session_id = session_id
+        if system_id is not None:
+            self.system_id = system_id
+        if feedback_id is not None:
+            self.feedback_id = feedback_id
+        if site_id is not None:
+            self.site_id = site_id
+        if part_id is not None:
+            self.part_id = part_id
+        if type is not None:
+            self.type = type
+        if q is not None:
+            self.q = q
+        if q_time is not None:
+            self.q_time = q_time
+        if q_date is not None:
+            self.q_date = datetime.strptime(q_date, "%Y-%m-%d %H:%M:%S")
+        if num_found is not None:
+            self.num_found = num_found
+        if page is not None:
+            self.page = page
+        if rpp is not None:
+            self.rpp = rpp
+        if items is not None:
+            self.items = items
+
     def to_json(self):
         result_session = {
             'session_id': self.session_id,
@@ -138,7 +188,7 @@ class Result(db.Model):
             'part_id': self.part_id,
             'type': self.type,
             'q': self.q,
-            'q_date': self.q_date,
+            'q_date': self.q_date.strftime('%Y-%m-%d %H:%M:%S'),
             'q_time': self.q_time,
             'num_found': self.num_found,
             'page': self.page,
@@ -158,29 +208,15 @@ class Result(db.Model):
         else:
             q_date = datetime.strptime(q_date_raw, "%Y-%m-%d %H:%M:%S")
 
-        q_time_raw = json_result.get('q_time', None)
-
-        if q_time_raw is None:
-            q_time = None
-        else:
-            q_time = datetime.strptime(q_time_raw, "%Y-%m-%d %H:%M:%S")
-
-        part_name = json_result.get('part_name', None)
-
-        if part_name is None:
-            part_id = None
-        else:
-            part_id = User.query.filter_by(username=part_name).first().id
-
+        q_time = json_result.get('q_time', None)
         num_found = json_result.get('num_found', None)
         page = json_result.get('page', None)
         rpp = json_result.get('rpp', None)
         items_raw = json_result.get('items', None)
         items = json.loads(items_raw)
 
-        result = Result(q=q, q_date=q_date, q_time=q_time, part_id=part_id,
-                        num_found=num_found, page=page, rpp=rpp,
-                        items=items)
+        result = Result(q=q, q_date=q_date, q_time=q_time, num_found=num_found,
+                        page=page, rpp=rpp, items=items)
 
         return result
 
@@ -193,10 +229,35 @@ class Feedback(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
     site_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     interleave = db.Column(db.Boolean)
-    # refers to experimental and baseline ranking
     results = db.relationship('Result', backref='feedback', lazy='dynamic')
-    # shown result list with clicks (click dates)
     clicks = db.Column(db.JSON)
+
+    @property
+    def serialize(self):
+        return {'feedback_id': self.id,
+                'session_id': self.session_id,
+                'site_id': self.site_id}
+
+    def update(self, data):
+        start = data.get('start', None)
+        end = data.get('end', None)
+        session_id = data.get('session_id', None)
+        site_id = data.get('site_id', None)
+        interleave = data.get('interleave', None)
+        clicks = data.get('clicks', None)
+
+        if start is not None:
+            self.start = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
+        if end is not None:
+            self.end = datetime.strptime(end, "%Y-%m-%d %H:%M:%S")
+        if session_id is not None:
+            self.session_id = session_id
+        if site_id is not None:
+            self.site_id = site_id
+        if interleave is not None:
+            self.interleave = bool(interleave)
+        if clicks is not None:
+            self.clicks = json.loads(clicks)
 
     @staticmethod
     def from_json(json_feedback):
@@ -230,8 +291,8 @@ class Feedback(db.Model):
 
         json_feedback = {
             'id': self.id,
-            'start': self.start,
-            'end': self.end,
+            'start': self.start.strftime('%Y-%m-%d %H:%M:%S'),
+            'end': self.end.strftime('%Y-%m-%d %H:%M:%S'),
             'session_id': self.session_id,
             'site_id': self.site_id,
             'interleave': self.interleave,
@@ -255,4 +316,3 @@ class System(db.Model):
                 'name': self.name,
                 'participant_id': self.participant_id,
                 'type': self.type}
-
