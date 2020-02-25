@@ -120,7 +120,7 @@ class Result(db.Model):
     system_id = db.Column(db.Integer, db.ForeignKey('systems.id'))
     feedback_id = db.Column(db.Integer, db.ForeignKey('feedbacks.id'))
     site_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    part_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    participant_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     type = db.Column(db.String(64), index=True)
     q = db.Column(db.String(64), index=True)
     q_date = db.Column(db.DateTime, nullable=True)
@@ -142,7 +142,7 @@ class Result(db.Model):
         system_id = data.get('system_id', None)
         feedback_id = data.get('feedback_id', None)
         site_id = data.get('site_id', None)
-        part_id = data.get('part_id', None)
+        participant_id = data.get('participant_id', None)
         type = data.get('type', None)
         q = data.get('q', None)
         q_time = data.get('q_time', None)
@@ -160,8 +160,8 @@ class Result(db.Model):
             self.feedback_id = feedback_id
         if site_id is not None:
             self.site_id = site_id
-        if part_id is not None:
-            self.part_id = part_id
+        if participant_id is not None:
+            self.participant_id = participant_id
         if type is not None:
             self.type = type
         if q is not None:
@@ -185,7 +185,7 @@ class Result(db.Model):
             'system_id': self.system_id,
             'feedback_id': self.feedback_id,
             'site_id': self.site_id,
-            'part_id': self.part_id,
+            'participant_id': self.participant_id,
             'type': self.type,
             'q': self.q,
             'q_date': self.q_date.strftime('%Y-%m-%d %H:%M:%S'),
