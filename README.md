@@ -6,7 +6,7 @@
 - [ ] dashboard
 - [ ] automatic generation of docker-compose.yml for `stella-app`
 
-### dev-notes
+## dev-notes
 
 run local postgres-db with:  
 ```
@@ -22,16 +22,16 @@ The STELLA server provides the following services:
 3. Automated generation of the STELLA app &rarr; `docker-compose.yml`  
 4. Data storage (user feedback) for data analysis, training, etc.
 
-#### Setup:
+## Setup:
 1. Build app with Docker:  `docker-compose up -d`
 2. Add toy data with the help of `util/simulate.py`
 
-#### Sequence diagram
+## Sequence diagram
 [![](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgc2l0ZSAtPj4gc3RlbGxhX2FwcDogcXVlcnlcbiAgICBzdGVsbGFfYXBwIC0tPj4gc2l0ZTogPGl0ZW1zPlxuICAgIE5vdGUgbGVmdCBvZiBzaXRlOiBsb2dzIHVzZXIgZGF0YSA8YnI-IGFuZCBpbnRlcmFjdGlvbnNcbiAgICBsb29wIGZlZWRiYWNrXG4gICAgICAgIHNpdGUgLT4-IHN0ZWxsYV9hcHA6IHNlbmQgZmVlZGJhY2tcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogR0VUIC9zaXRlcy88c3RyaW5nOm5hbWU-XG4gICAgICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBzdGVsbGFfYXBwOiA8c2l0ZV9pZD5cbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogUE9TVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHA6IDxzZXNzaW9uX2lkPlxuICAgICAgICBzdGVsbGFfYXBwIC0-PiBzdGVsbGFfc2VydmVyOiBQT1NUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHAgOiA8ZmVlZGJhY2tfaWQ-XG4gICAgICAgIHN0ZWxsYV9hcHAgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBQT1NUIC9mZWVkYmFja3MvPGludDppZD4vcmFua2luZ3MgKGV4cGVyaW1lbnRhbClcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlciA6IFBPU1QgL2ZlZWRiYWNrcy88aW50OmlkPi9yYW5raW5ncyAoYmFzZWxpbmUpXG4gICAgZW5kXG4gICAgcGFydCAtPj4gc3RlbGxhX3NlcnZlciA6IEdFVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IHNlc3Npb25zIGRldGFpbHNcbiAgICBwYXJ0IC0-PiBzdGVsbGFfc2VydmVyIDogR0VUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IGZlZWRiYWNrIGlkc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL2ZlZWRiYWNrcy88aW50OmlkPlxuICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBwYXJ0IDogZmVlZGJhY2sgZGV0YWlsc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL3JhbmtpbmdzLzxpbnQ6aWQ-XG4gICAgc3RlbGxhX3NlcnZlciAtLT4-IHBhcnQgOiByYW5raW5nIGRldGFpbHNcbiAgICBOb3RlIHJpZ2h0IG9mIHBhcnQgOiBvcHRpbWl6ZXMgaGVyIDxicj4gYWxnb3JpdGhtIHdpdGggdGhlIDxicj4gaGVscCBvZiBsb2cgZGF0YVxuICAgICIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgc2l0ZSAtPj4gc3RlbGxhX2FwcDogcXVlcnlcbiAgICBzdGVsbGFfYXBwIC0tPj4gc2l0ZTogPGl0ZW1zPlxuICAgIE5vdGUgbGVmdCBvZiBzaXRlOiBsb2dzIHVzZXIgZGF0YSA8YnI-IGFuZCBpbnRlcmFjdGlvbnNcbiAgICBsb29wIGZlZWRiYWNrXG4gICAgICAgIHNpdGUgLT4-IHN0ZWxsYV9hcHA6IHNlbmQgZmVlZGJhY2tcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogR0VUIC9zaXRlcy88c3RyaW5nOm5hbWU-XG4gICAgICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBzdGVsbGFfYXBwOiA8c2l0ZV9pZD5cbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogUE9TVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHA6IDxzZXNzaW9uX2lkPlxuICAgICAgICBzdGVsbGFfYXBwIC0-PiBzdGVsbGFfc2VydmVyOiBQT1NUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHAgOiA8ZmVlZGJhY2tfaWQ-XG4gICAgICAgIHN0ZWxsYV9hcHAgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBQT1NUIC9mZWVkYmFja3MvPGludDppZD4vcmFua2luZ3MgKGV4cGVyaW1lbnRhbClcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlciA6IFBPU1QgL2ZlZWRiYWNrcy88aW50OmlkPi9yYW5raW5ncyAoYmFzZWxpbmUpXG4gICAgZW5kXG4gICAgcGFydCAtPj4gc3RlbGxhX3NlcnZlciA6IEdFVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IHNlc3Npb25zIGRldGFpbHNcbiAgICBwYXJ0IC0-PiBzdGVsbGFfc2VydmVyIDogR0VUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IGZlZWRiYWNrIGlkc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL2ZlZWRiYWNrcy88aW50OmlkPlxuICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBwYXJ0IDogZmVlZGJhY2sgZGV0YWlsc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL3JhbmtpbmdzLzxpbnQ6aWQ-XG4gICAgc3RlbGxhX3NlcnZlciAtLT4-IHBhcnQgOiByYW5raW5nIGRldGFpbHNcbiAgICBOb3RlIHJpZ2h0IG9mIHBhcnQgOiBvcHRpbWl6ZXMgaGVyIDxicj4gYWxnb3JpdGhtIHdpdGggdGhlIDxicj4gaGVscCBvZiBsb2cgZGF0YVxuICAgICIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
-#### API endpoints
+## API endpoints
 
-##### Feedback
+### Feedback
 
 GET details of all feedbacks (see also `util/GET_feedbacks.py`):  
 `/feedbacks`
@@ -89,7 +89,7 @@ The payload should be provided as follows:
 }
 ```
 
-##### Participant
+### Participant
 
 GET all systems of participant with `id` (see also `util/GET_systems_of_participant.py`):  
 `/participants/<int:id>/systems`
@@ -97,7 +97,7 @@ GET all systems of participant with `id` (see also `util/GET_systems_of_particip
 GET all sessions of participant with `id` (see also `util/GET_sessions_of_participant.py`):  
 `/participants/<int:id>/sessions`
 
-##### Ranking
+### Ranking
 
 GET details of ranking with `id` (see also `util/GET_ranking.py`):  
 `/rankings/<int:id>`
@@ -145,7 +145,7 @@ The payload should be provided as follows:
 }
 ```
 
-##### Recommendation
+### Recommendation
 
 GET details of recommendation with `id` (see also `util/GET_ranking.py` that works analogously):  
 `/recommendations/<int:id>`
@@ -193,7 +193,7 @@ The payload should be provided as follows:
 }
 ```
 
-##### Session
+### Session
 
 GET session with `id` (see also `util/GET_session.py`):  
 `/sessions/<int:id>`
@@ -204,7 +204,7 @@ GET feedback from session with `id` (see also `util/GET_feedbacks_of_session.py`
 GET systems used in session with `id`:  
 `/sessions/<int:id>/systems`
 
-##### Site
+### Site
 
 GET site details, e.g. `id`, with the help of the `name` (see also `util/GET_systems_at_site.py`):  
 `/sites/<string:name>`
