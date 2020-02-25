@@ -1,6 +1,6 @@
-from flask_migrate import Migrate
 from app import create_app, db
 from app.dev import setup
+from flask_migrate import Migrate
 
 app = create_app('default')
 # app = create_app('postgres')

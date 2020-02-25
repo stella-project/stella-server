@@ -12,7 +12,7 @@ rec_base_a
 rec_base_b
 '''
 
-API = 'http://0.0.0.0:8000/stella/api/v1/'
+API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():

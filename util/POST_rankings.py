@@ -1,7 +1,7 @@
 import requests as req
 import json
 
-HOST = 'http://0.0.0.0:8000'
+API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():
@@ -27,12 +27,6 @@ def main():
 
     # post new ranking
     payload = {
-        'session_id': session_id,
-        'system_name': system_name,
-        'feedback_id': feedback_id,
-        'site_name': site_name,
-        'part_name': part_name,
-        'type': 'RANK',
         'q': 'this is the query text',
         'q_date': '2019-11-04 00:04:00',
         'q_time': None,
@@ -42,10 +36,9 @@ def main():
         'items': json.dumps(items)
                }
 
-    r = req.post(HOST + '/stella/api/v1/feedbacks/' + str(feedback_id) + '/rankings', data=payload)
+    r = req.post(API + '/feedbacks/' + str(feedback_id) + '/rankings', data=payload)
     r_text = json.loads(r.text)
-    # session_id = r_text.get('session_id')
-    # print(session_id)
+    print(r_text)
 
 
 if __name__ == '__main__':

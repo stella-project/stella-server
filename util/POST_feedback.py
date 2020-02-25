@@ -12,7 +12,7 @@ rec_base_a
 rec_base_b
 '''
 
-HOST = 'http://0.0.0.0:8000'
+API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():
@@ -40,7 +40,7 @@ def main():
 
     session_id = 1
 
-    r = req.post(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/feedbacks', data=payload)
+    r = req.post(API + '/sessions/' + str(session_id) + '/feedbacks', data=payload)
 
     r_text = json.loads(r.text)
     feedback_id = r_text.get('feedback_id')

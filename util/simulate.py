@@ -2,8 +2,7 @@ import requests as req
 import json
 
 NUM_SESSION = 5
-HOST = 'http://0.0.0.0:8000'
-API = 'http://0.0.0.0:8000/stella/api/v1/'
+API = 'http://0.0.0.0:8000/stella/api/v1'
 
 import random
 import time
@@ -52,7 +51,7 @@ def main():
         recommender = random.choice(recommenders)
 
         # GET site identifier
-        r = req.get(HOST + '/stella/api/v1/sites/' + site)
+        r = req.get(API + '/sites/' + site)
         r_json = json.loads(r.text)
         site_id = r_json.get('id')
 
@@ -65,7 +64,7 @@ def main():
         }
 
         # POST session
-        r = req.post(HOST + '/stella/api/v1/sites/' + str(site_id) + '/sessions', data=payload)
+        r = req.post(API + '/sites/' + str(site_id) + '/sessions', data=payload)
         r_json = json.loads(r.text)
         session_id = r_json['session_id']
 
@@ -108,12 +107,11 @@ def main():
                 'clicks': json.dumps(click_dict)
             }
 
-            r = req.post(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/feedbacks', data=payload)
+            r = req.post(API + '/sessions/' + str(session_id) + '/feedbacks', data=payload)
             r_json = json.loads(r.text)
             feedback_id = r_json['feedback_id']
 
-
-            r = req.get(HOST + '/stella/api/v1/sessions/' + str(session_id) + '/systems')
+            r = req.get(API + '/sessions/' + str(session_id) + '/systems')
             r_json = json.loads(r.text)
             ranker_name = r_json.get('RANK')
             recommender_name = r_json.get('REC')
@@ -142,7 +140,7 @@ def main():
                 'items': json.dumps(items)
             }
 
-            r = req.post(API + 'feedbacks/' + str(feedback_id) + '/rankings', data=payload)
+            r = req.post(API + '/feedbacks/' + str(feedback_id) + '/rankings', data=payload)
 
 
 if __name__ == '__main__':
