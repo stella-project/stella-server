@@ -22,7 +22,7 @@ The STELLA server provides the following services:
 3. Automated generation of the STELLA app &rarr; `docker-compose.yml`  
 4. Data storage (user feedback) for data analysis, training, etc.
 
-## Setup:
+## Setup
 1. Build app with Docker:  `docker-compose up -d`
 2. Add toy data with the help of `util/simulate.py`
 
