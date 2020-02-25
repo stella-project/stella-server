@@ -1,7 +1,8 @@
 # stella-server
 
 ## todos
-- [ ] authentication
+- [x] authentication via jwt
+- [ ] read and write permissions for users and participants
 - [ ] unit tests
 - [ ] dashboard
 - [ ] automatic generation of docker-compose.yml for `stella-app`

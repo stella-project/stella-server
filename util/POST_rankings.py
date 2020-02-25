@@ -5,6 +5,9 @@ API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():
+    r = req.post(API + '/tokens', auth=('participant_a@stella.org', 'pass'))
+    r_json = json.loads(r.text)
+    token = r_json.get('token')
 
     session_id = 1
     system_name = 'rank_exp_a'
@@ -36,9 +39,8 @@ def main():
         'items': json.dumps(items)
                }
 
-    r = req.post(API + '/feedbacks/' + str(feedback_id) + '/rankings', data=payload)
-    r_text = json.loads(r.text)
-    print(r_text)
+    r = req.post(API + '/feedbacks/' + str(feedback_id) + '/rankings', data=payload, auth=(token, ''))
+    print(r.text)
 
 
 if __name__ == '__main__':

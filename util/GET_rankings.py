@@ -1,11 +1,14 @@
 import requests as req
 import json
 
-API = 'http://0.0.0.0:8000/stella/api/v1/'
+API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():
-    r = req.get(API + 'rankings')
+    r = req.post(API + '/tokens', auth=('participant_a@stella.org', 'pass'))
+    r_json = json.loads(r.text)
+    token = r_json.get('token')
+    r = req.get(API + '/rankings', auth=(token, ''))
     print(r.text)
 
 

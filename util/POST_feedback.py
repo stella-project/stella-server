@@ -16,6 +16,9 @@ API = 'http://0.0.0.0:8000/stella/api/v1'
 
 
 def main():
+    r = req.post(API + '/tokens', auth=('participant_a@stella.org', 'pass'))
+    r_json = json.loads(r.text)
+    token = r_json.get('token')
 
     click_dict = {
         "1": {"doc_id": "doc1", "clicked": False, "date": None, "system": "EXP"},
@@ -40,7 +43,7 @@ def main():
 
     session_id = 1
 
-    r = req.post(API + '/sessions/' + str(session_id) + '/feedbacks', data=payload)
+    r = req.post(API + '/sessions/' + str(session_id) + '/feedbacks', data=payload, auth=(token, ''))
 
     r_text = json.loads(r.text)
     feedback_id = r_text.get('feedback_id')
