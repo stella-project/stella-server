@@ -7,20 +7,17 @@ from ..models import Result, Feedback, Session, System
 @api.route('/feedbacks/<int:id>/rankings', methods=['POST'])
 def post_ranking(id):
     if request.method == 'POST':
-
         feedback = Feedback.query.get_or_404(id)
         site = feedback.site_id
         session = Session.query.get_or_404(feedback.session_id)
-
         json_ranking = request.values
         ranking = Result.from_json(json_ranking)
         ranking.site_id = site
         ranking.session_id = session.id
         ranking.feedback_id = id
         ranking.system_id = session.system_ranking
-        ranking.part_id = System.query.get_or_404(session.system_ranking).participant_id
+        ranking.participant_id = System.query.get_or_404(session.system_ranking).participant_id
         ranking.type = 'RANK'
-
         db.session.add(ranking)
         db.session.commit()
 

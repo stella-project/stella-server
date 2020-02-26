@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from . import api
 from .. import db
-from ..models import Result, Feedback, Session
+from ..models import Result, Feedback, Session, System
 
 
 @api.route('/feedbacks/<int:id>/recommendations', methods=['POST'])
@@ -16,6 +16,7 @@ def post_recommendation(id):
         recommendation.session_id = session.id
         recommendation.feedback_id = id
         recommendation.system_id = session.system_ranking
+        recommendation.participant_id = System.query.get_or_404(session.system_recommendation).participant_id
         recommendation.type = 'REC'
         db.session.add(recommendation)
         db.session.commit()
