@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.dev import setup
+from app.util import setup_db
 from flask_migrate import Migrate
 
 app = create_app('default')
@@ -9,6 +9,6 @@ migrate = Migrate(app, db)
 if __name__ == '__main__':
 
     with app.app_context():
-        setup(db)
+        setup_db(db)
 
     app.run(host='0.0.0.0', port=8000, debug=True)
