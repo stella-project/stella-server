@@ -3,7 +3,7 @@ from flask_login import current_user
 from . import main
 from .forms import NameForm
 
-from dev import visualise
+# from dev import visualise
 
 
 @main.route('/', methods=['GET', 'POST'])
@@ -16,10 +16,10 @@ def index():
     return render_template('index.html', form=form, name=name)
 
 
-@main.route('/dashboard')
-def dashboard():
-    test = visualise.makeJson()
-    ids = test[0]
-    graphJSON = test[1]
-
-    return render_template('dashboard.html', ids=ids, graphJSON=graphJSON)
+# @main.route('/dashboard')
+# def dashboard():
+#     test = visualise.makeJson()
+#     ids = test[0]
+#     graphJSON = test[1]
+#
+#     return render_template('dashboard.html', ids=ids, graphJSON=graphJSON)
