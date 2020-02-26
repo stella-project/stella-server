@@ -4,7 +4,7 @@
 - [x] authentication via jwt
 - [x] production-ready (docker-compose + postgresql)
 - [x] sequence diagram
-- [ ] tech-stack
+- [x] tech-stack
 - [ ] read and write permissions for users and participants
 - [ ] unit tests
 - [ ] dashboard
