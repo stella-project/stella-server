@@ -20,7 +20,7 @@ class PostgresConfig(Config):
     DEBUG = True
     POSTGRES_USER = 'postgres'
     POSTGRES_PW = 'change-me'
-    POSTGRES_URL = 'localhost:5432'
+    POSTGRES_URL = 'db:5432'
     POSTGRES_DB = 'postgres'
     SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER,
                                                                            pw=POSTGRES_PW,

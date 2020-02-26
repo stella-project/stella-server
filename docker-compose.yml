@@ -6,10 +6,23 @@ services:
     build: ./web
     expose:
       - "8000"
-    command: /usr/local/bin/gunicorn -w 2 -b :8000 stella-server:app
-
-
-
+    command: bash -c "python setup_db.py &&
+             python manage.py db init &&
+             python manage.py db migrate &&
+             python manage.py db upgrade &&
+             /usr/local/bin/gunicorn -w 2 -b :8000 stella-server:app"
+    links:
+      - db:db
+    depends_on:
+      - db
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=change-me
+      - POSTGRES_DB=postgres
   nginx:
     restart: always
     build: ./nginx
@@ -17,3 +30,5 @@ services:
       - "80:80"
     links:
       - web:web
+    depends_on:
+      - web

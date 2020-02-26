@@ -2,7 +2,8 @@ import requests as req
 import json
 
 NUM_SESSION = 5
-API = 'http://0.0.0.0:8000/stella/api/v1'
+PORT = '80'
+API = 'http://0.0.0.0:' + PORT + '/stella/api/v1'
 
 import random
 import time
