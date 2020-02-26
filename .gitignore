@@ -3,3 +3,4 @@ __pycache__/
 web/data-dev.sqlite
 web/migrations/
 web/migrations/*
+trecos/*
