@@ -4,7 +4,6 @@ import mpld3
 import plotly.offline
 import json
 
-
 # Skript zum visualisieren der Daten in unterschiedlichen Diagrammen durch zwei Methoden:
 # 1. matplotlib und mpld3 - erstellt einen html plot der als iframe angezeigt werden kann
 # 2. plotly - erstellt Diagramm anweisungen im json Format das durch javascript eingebunden wird.
@@ -163,7 +162,7 @@ def stats():
             dict(
                 values=[wins, loss, tie],
                 labels=['wins', 'loss', 'tie'],
-
+                hole=.3,
                 type='pie'
             ),
         ],
@@ -202,23 +201,34 @@ def outcome():
 
     CTR = round(clicks / impressions, 4)
 
-    outcome = wins / wins + loss
+    outcome = "{0:.4f}".format(wins / (wins + loss))
 
     htmlplot = dict(
         data=[
             dict(type='table',
-                 header=dict(values=['name', 'stat'])
-                 ,
-                 cells=dict(values=[['wins', 'loss', 'tie', 'outcome', 'CTR'], [wins, loss, tie, outcome, CTR]]),
+                 header=dict(values=['Metric', 'Value'],
+                             align='left', fill={"color": "#119DFF"},
+                             line={"width": "1", "color": 'black'},
+                             font={"family": "Arial",
+                                   "size": "12",
+                                   "color": "white"}),
+                 cells=dict(values=[['Win', 'Loss', 'Tie', 'Outcome', 'CTR'], [wins, loss, tie, outcome, CTR]],
+                            align='left',
+                            line={"width": "1", "color": 'black'},
+                            fill={"color": "#506784"},
+                            font={"family": "Arial",
+                                  "size": "12",
+                                  "color": "white"})
                  )],
         layout=dict(
-            title='Wins, Losses and Ties',
+            # title='Wins, Losses and Ties',
             margin=dict(
                 l=15,
                 r=15,
                 t=50,
                 b=50
-            )
+            ),
+
         )
     )
 
@@ -227,7 +237,7 @@ def outcome():
 
 # Alle Plots in eine Json zusammenfügen
 def makeJson():
-    graphs = [traffic('plotly'), lineplot('plotly'), stats(), outcome()]
+    graphs = [traffic('plotly'), stats(), lineplot('plotly'), outcome()]
 
     ids = ['graph-{}'.format(i) for i, _ in enumerate(graphs)]
     graphJSON = json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder)

@@ -8,16 +8,17 @@
     <h2>Dashboard</h2>
 
     <!-- Erstellen der Bootstrap elemente für das Raster  -->
-    <dif class="container-fluid full-width has-inner">
-        <dif class="row row-no-gutters">
+    <div class="container-fluid full-width has-inner">
+        <div class="row row-no-gutters">
 
         <!-- Schleife zum Füllen des Rasters mit Diagrammen  -->
             {% for id in ids %}
-                <div class="col-sm-4 col-md-4 "></div>
-                <div class="embed-responsive embed-responsive-4by3 " id="{{id}}"></div>
+                <div class="col-sm-6 col-md-6 ">
+                    <div class="embed-responsive embed-responsive-4by3 " id="{{id}}"></div>
+                </div>
             {% endfor %}
         </div>
-    </dif>
+    </div>
 
 
 <footer>
@@ -34,6 +35,7 @@
 
         var graphs = {{graphJSON | safe}};
         var ids = {{ids | safe}};
+
 
         for(var i in graphs) {
             Plotly.plot(ids[i], // the ID of the div, created above
