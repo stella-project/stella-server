@@ -3,7 +3,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you do not know'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-do-not-know'
 
     @staticmethod
     def init_app(app):
@@ -16,6 +16,18 @@ class DevelopmentConfig(Config):
         'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 
+class PostgresConfig(Config):
+    DEBUG = True
+    POSTGRES_USER = 'postgres'
+    POSTGRES_PW = 'change-me'
+    POSTGRES_URL = 'db:5432'
+    POSTGRES_DB = 'postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER,
+                                                                           pw=POSTGRES_PW,
+                                                                           url=POSTGRES_URL,
+                                                                           db=POSTGRES_DB)
+
 config = {
-    'default': DevelopmentConfig
+    'default': DevelopmentConfig,
+    'postgres': PostgresConfig
 }

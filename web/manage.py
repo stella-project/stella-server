@@ -4,7 +4,8 @@ import os
 
 from app import create_app, db
 
-app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+# app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+app = create_app(os.getenv('FLASK_CONFIG') or 'postgres')
 migrate = Migrate(app, db)
 
 manager = Manager(app)

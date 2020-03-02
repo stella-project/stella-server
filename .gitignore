@@ -1,3 +1,7 @@
 .idea/
 __pycache__/
-trecos/
+web/data-dev.sqlite
+web/migrations/
+web/migrations/*
+trecos/*
+

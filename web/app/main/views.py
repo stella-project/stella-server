@@ -1,8 +1,10 @@
 from flask import render_template, session, redirect, url_for, current_app
+from flask_login import current_user
 from . import main
 from .forms import NameForm
 
 from dev import visualise
+
 
 
 @main.route('/', methods=['GET', 'POST'])
