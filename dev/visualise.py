@@ -8,6 +8,7 @@ import json
 # 1. matplotlib und mpld3 - erstellt einen html plot der als iframe angezeigt werden kann
 # 2. plotly - erstellt Diagramm anweisungen im json Format das durch javascript eingebunden wird.
 
+
 # Visualisierung des Sitetraffics in einem Barplot für jeden Tag
 def traffic(library):
     test1 = data.loadData()
@@ -119,14 +120,16 @@ def lineplot(library):
                     y=SiteBesuche,
                     name='Site',
 
-                    type='scatter'
+                    # type='scatter'
+                    type='bar'
                 ),
                 dict(
                     x=PartZeit,
                     y=PartBesuche,
                     name='Part',
 
-                    type='scatter'
+                    # type='scatter'
+                    type='bar'
                 ),
             ],
             layout=dict(
