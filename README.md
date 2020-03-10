@@ -5,9 +5,9 @@
 - [x] production-ready (docker-compose + postgresql)
 - [x] sequence diagram
 - [x] tech-stack
+- [x] dashboard
 - [ ] read and write permissions for users and participants
 - [ ] unit tests
-- [ ] dashboard
 - [ ] automatic generation of docker-compose.yml for `stella-app`
 
 ## dev-notes

@@ -3,8 +3,6 @@ from flask_login import current_user
 from . import main
 import json
 
-from dev import visualise
-
 from ..models import User, Session, System, Feedback
 
 from ..dashboard import Dashboard
