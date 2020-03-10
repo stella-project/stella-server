@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, SelectField
 from wtforms.validators import DataRequired
 
+class Dropdown(FlaskForm):
+    system = SelectField(choices=[])
+    site = SelectField(choices=[])
+    submit = SubmitField('Display results')
 
-class NameForm(FlaskForm):
-    name = StringField('Please enter your name', validators=[DataRequired()])
-    submit = SubmitField('Submit')

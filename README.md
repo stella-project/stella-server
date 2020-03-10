@@ -36,6 +36,8 @@ The STELLA server provides the following services:
 1. Change `app = create_app('postgres')` to `app = create_app('default')` in `stella-server.py`
 2. Run `stella-server.py`
 3. Change `PORT='80'` to `PORT='8000'` in `util/simulate.py` and run it
+4. Login with user `participant_a@stella.org` and password `pass`
+5. Visit `http://0.0.0.0:8000/dashboard`
 
 ## Tech stack
 ![tech-stack](doc/techstack.png)

@@ -4,3 +4,5 @@ web/data-dev.sqlite
 web/migrations/
 web/migrations/*
 trecos/*
+*.sqlite
+

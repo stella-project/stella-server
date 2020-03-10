@@ -1,8 +1,8 @@
 import requests as req
 import json
 
-NUM_SESSION = 5
-PORT = '80'
+NUM_SESSION = 100
+PORT = '8000'
 API = 'http://0.0.0.0:' + PORT + '/stella/api/v1'
 
 import random
@@ -100,10 +100,11 @@ def main():
                                              session_end_date.strftime("%Y-%m-%d %H:%M:%S"),
                                              random.random())
                 click_time = datetime.datetime.strptime(click_time_str, "%Y-%m-%d %H:%M:%S")
-                old = click_dict.get(str(click))
-                old['clicked'] = True
-                old['date'] = click_time_str
-                click_dict.update(old)
+                tmp = click_dict.get(str(click))
+                tmp['clicked'] = True
+                tmp['date'] = click_time_str
+                click_dict[click] = tmp
+                # click_dict.update({click: old})
 
             payload = {
                 'start': session_start_date.strftime("%Y-%m-%d %H:%M:%S"),
