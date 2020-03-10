@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}STELLA{% endblock %}
 
@@ -11,6 +11,23 @@
 
     <!-- Erstellen der Bootstrap elemente für das Raster  -->
     <div class="container-fluid full-width has-inner">
+
+
+        <div style=margin-bottom:80px;>
+            <form method="POST" action="/dashboard">
+                <div class="col-md-5">
+                    {{ wtf.form_field(form.system, form_type="horizontal") }}
+                </div>
+                <div class="col-md-5">
+                    {{ wtf.form_field(form.site, form_type="horizontal") }}
+                </div>
+                <div class="col-md-2">
+                    {{ wtf.form_field(form.submit) }}
+                </div>
+            </form>
+        </div>
+
+
         <div class="row row-no-gutters">
 
         <!-- Schleife zum Füllen des Rasters mit Diagrammen  -->
@@ -40,9 +57,7 @@
 
 
         for(var i in graphs) {
-            Plotly.plot(ids[i], // the ID of the div, created above
-                        graphs[i].data,
-                        graphs[i].layout || {});
+            Plotly.plot(ids[i], graphs[i].data, graphs[i].layout || {});
         }
 
     </script>
