@@ -28,14 +28,14 @@ def setup_db(db):
 
     db.session.commit()
 
-    ranker_a = System(name='rank_exp_a', participant_id=user_part_a.id, type='RANK')
-    ranker_b = System(name='rank_exp_b', participant_id=user_part_b.id, type='RANK')
-    recommender_a = System(name='rec_exp_a', participant_id=user_part_a.id, type='REC')
-    recommender_b = System(name='rec_exp_b', participant_id=user_part_b.id, type='REC')
-    ranker_base_a = System(name='rank_base_a', participant_id=user_site_a.id, type='RANK')
-    ranker_base_b = System(name='rank_base_b', participant_id=user_site_b.id, type='RANK')
-    recommender_base_a = System(name='rec_base_a', participant_id=user_site_a.id, type='REC')
-    recommender_base_b = System(name='rec_base_b', participant_id=user_site_b.id, type='REC')
+    ranker_a = System(name='Experimental Ranker A', participant_id=user_part_a.id, type='RANK')
+    ranker_b = System(name='Experimental Ranker B', participant_id=user_part_b.id, type='RANK')
+    recommender_a = System(name='Experimental Recommender A', participant_id=user_part_a.id, type='REC')
+    recommender_b = System(name='Experimental Recommender B', participant_id=user_part_b.id, type='REC')
+    ranker_base_a = System(name='Baseline Ranker A', participant_id=user_site_a.id, type='RANK')
+    ranker_base_b = System(name='Baseline Ranker B', participant_id=user_site_b.id, type='RANK')
+    recommender_base_a = System(name='Baseline Recommender A', participant_id=user_site_a.id, type='REC')
+    recommender_base_b = System(name='Baseline Recommender B', participant_id=user_site_b.id, type='REC')
 
     db.session.add_all([
         ranker_a,
