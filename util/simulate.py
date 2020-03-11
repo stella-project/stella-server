@@ -42,8 +42,10 @@ def main():
     site_users = ['123.123.123.123', '234.234.234.234', '345.345.345.345',
                   '456.456.456.456', '567.567.567.567', '678.678.678.678',
                   '891.891.891.891', '912.912.912.912']
-    rankers = ['Experimental Ranker A', 'Experimental Ranker B', 'Baseline Ranker A', 'Baseline Ranker B']
-    recommenders = ['Experimental Recommender A', 'Experimental Recommender B', 'Baseline Recommender A', 'Baseline Recommender B']
+    # rankers = ['Experimental Ranker A', 'Experimental Ranker B', 'Baseline Ranker A', 'Baseline Ranker B']
+    rankers = ['Experimental Ranker A', 'Experimental Ranker B']
+    # recommenders = ['Experimental Recommender A', 'Experimental Recommender B', 'Baseline Recommender A', 'Baseline Recommender B']
+    recommenders = ['Experimental Recommender A', 'Experimental Recommender B']
 
     for s in range(0, NUM_SESSION):
         session_start = random_date("2020-01-01 00:00:00", "2020-12-31 00:00:00", random.random())

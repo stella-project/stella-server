@@ -5,11 +5,32 @@ from .main.forms import Dropdown
 class Dashboard:
 
     def __init__(self, user_id, system_id=None, site_id=None):
+
+        user_role_id = User.query.filter_by(id=user_id).first().role_id
+
         self.system_id = system_id
         self.site_id = site_id
-        self.systems = System.query.filter_by(participant_id=user_id).all()
+
+        if user_role_id == 3:  # user is site
+            self.site_id = user_id
+
+        if user_role_id == 1:  # user is admin
+            self.systems = System.query.filter().distinct().all()
+        if user_role_id == 2:  # user is participant
+            self.systems = System.query.filter_by(participant_id=user_id).all()
+        if user_role_id == 3:  # user is site
+            system_ids = Session.query.filter_by(site_id=user_id).with_entities(Session.system_recommendation).distinct().all() + Session.query.filter_by(site_id=user_id).with_entities(Session.system_ranking).distinct().all()
+            self.systems = System.query.filter(System.id.in_([s[0] for s in system_ids])).all()
+
         site_ids = Session.query.filter(Session.system_ranking.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all()
-        self.sites = User.query.filter(User.id.in_([s[0] for s in site_ids])).all()
+
+        if user_role_id == 1:  # user is admin
+            self.sites = User.query.filter_by(role_id=3).distinct().all()
+        if user_role_id == 2:  # user is participant
+            self.sites = User.query.filter(User.id.in_([s[0] for s in site_ids])).all()
+        if user_role_id == 3:  # user is site
+            self.sites = [User.query.filter_by(id=user_id).first()]
+
         self.form = Dropdown()
         self.sessions = []
         self.clicks_base = {}
@@ -83,6 +104,7 @@ class Dashboard:
             pass
 
     def dropdown(self):
+
         self.form.system.choices = [(r.id, r.name) for r in self.systems]
         if len(self.form.system.choices) != 0:
             self.form.system.default = self.form.system.choices[0]
