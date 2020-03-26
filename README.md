@@ -1,14 +1,16 @@
 # stella-server
 
 ## todos
+- [ ] read and write permissions for users and participants
+- [ ] unit tests
+- [ ] automatic generation of docker-compose.yml for `stella-app`
+- [ ] add meta-data about docker-containers/experimental systems (github-url, ...) to database
+- [ ] ~~Webhook in repos of experimental systems: PING stella-server~~ cron-job that checks for updates in repos
 - [x] authentication via jwt
 - [x] production-ready (docker-compose + postgresql)
 - [x] sequence diagram
 - [x] tech-stack
 - [x] dashboard
-- [ ] read and write permissions for users and participants
-- [ ] unit tests
-- [ ] automatic generation of docker-compose.yml for `stella-app`
 
 ## dev-notes
 
