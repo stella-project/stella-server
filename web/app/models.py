@@ -289,7 +289,7 @@ class Feedback(db.Model):
         else:
             end = datetime.strptime(end_raw, "%Y-%m-%d %H:%M:%S")
 
-        interleave = bool(json_feedback.get('interleave', False))
+        interleave = json_feedback.get('interleave', False).lower() == 'true'
         clicks_raw = json_feedback.get('clicks')
         clicks = json.loads(clicks_raw)
 

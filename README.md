@@ -1,6 +1,8 @@
 # stella-server
 
 ## todos
+
+- [ ] register-ui: option `participant` or `site`
 - [ ] read and write permissions for users and participants
 - [ ] unit tests
 - [ ] automatic generation of docker-compose.yml for `stella-app`
