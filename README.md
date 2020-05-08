@@ -7,7 +7,7 @@
 - [ ] explanation of metrics (dashboard)
 - [ ] button for bulk-download (dashboard)
 
-#### handling 
+#### management of participants + systems
 - [ ] register-ui: option `participant` (team-name, github-profiles,...)
 - [ ] read and write permissions for users and participants
 - [ ] automatic generation of docker-compose.yml for `stella-app`
