@@ -2,12 +2,16 @@
 
 ## todos
 
-- [ ] register-ui: option `participant` or `site`
+- [ ] fill landing page with content
+- [ ] explanation of metrics (dashboard)
+- [ ] button for bulk-download (dashboard)
+- [ ] register-ui: option `participant` (team-name, github-profiles,...)
 - [ ] read and write permissions for users and participants
 - [ ] unit tests
 - [ ] automatic generation of docker-compose.yml for `stella-app`
+- [ ] sync experimental systems &rarr; stella-server will write to config-file
 - [ ] add meta-data about docker-containers/experimental systems (github-url, ...) to database
-- [ ] ~~Webhook in repos of experimental systems: PING stella-server~~ cron-job that checks for updates in repos
+- [ ] cron-job that checks for updates in repos
 - [x] authentication via jwt
 - [x] production-ready (docker-compose + postgresql)
 - [x] sequence diagram
