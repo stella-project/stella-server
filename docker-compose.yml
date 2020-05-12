@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   web:
     restart: always
@@ -27,7 +26,7 @@ services:
     restart: always
     build: ./nginx
     ports:
-      - "80:80"
+      - 80:80
     links:
       - web:web
     depends_on:
