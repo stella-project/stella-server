@@ -2,7 +2,7 @@ import requests as req
 import json
 
 NUM_SESSION = 100
-PORT = '8080'
+PORT = '80'
 API = 'http://0.0.0.0:' + PORT + '/stella/api/v1'
 
 import random
@@ -38,14 +38,14 @@ def main():
     r_json = json.loads(r.text)
     token = r_json.get('token')
 
-    sites = ['Site A', 'Site B']
+    sites = ['site_a', 'site_b']
     site_users = ['123.123.123.123', '234.234.234.234', '345.345.345.345',
                   '456.456.456.456', '567.567.567.567', '678.678.678.678',
                   '891.891.891.891', '912.912.912.912']
     # rankers = ['Experimental Ranker A', 'Experimental Ranker B', 'Baseline Ranker A', 'Baseline Ranker B']
-    rankers = ['Experimental Ranker A', 'Experimental Ranker B']
+    rankers = ['rank_elastic', 'experimental_ranker_b']
     # recommenders = ['Experimental Recommender A', 'Experimental Recommender B', 'Baseline Recommender A', 'Baseline Recommender B']
-    recommenders = ['Experimental Recommender A', 'Experimental Recommender B']
+    recommenders = ['recom_tfidf', 'experimental_recommender_b']
 
     for s in range(0, NUM_SESSION):
         session_start = random_date("2020-01-01 00:00:00", "2020-12-31 00:00:00", random.random())
