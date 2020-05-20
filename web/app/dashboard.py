@@ -88,12 +88,12 @@ class Dashboard:
                         else:
                             self.clicks_base[date] = self.clicks_base[date] + 1
                         cnt_base += 1
-                    if cnt_exp > cnt_base:
-                        self.win += 1
-                    if cnt_exp < cnt_base:
-                        self.loss += 1
-                    if cnt_exp == cnt_base:
-                        self.tie += 1
+                if cnt_exp > cnt_base:
+                    self.win += 1
+                if cnt_exp < cnt_base:
+                    self.loss += 1
+                if cnt_exp == cnt_base:
+                    self.tie += 1
 
             if len(self.impressions) > 0:
                 self.CTR = round(len(self.clicks_exp) / len(self.impressions), 4)
