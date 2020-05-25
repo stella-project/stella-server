@@ -194,7 +194,7 @@ class Dashboard:
             data=[
                 dict(type='table',
                      header=dict(values=['Metric', 'Value'],
-                                 align='left', fill={"color": "#119DFF"},
+                                 align='left', fill={"color": "#201C2D"},
                                  line={"width": "1", "color": 'black'},
                                  font={"family": "Arial",
                                        "size": "12",

@@ -5,12 +5,24 @@
 {% block head %}
 {{ super() }}
 <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <style type="text/css">
+    .navbar-header img {
+        height: 65px;
+        margin-bottom: -10px;
+        margin-top: -10px;
+    }
+    .navbar {
+        color: white;
+        background-color: #201C2D;
+    }
+</style>
 {% endblock %}
 
 {% block navbar %}
 <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
         <div class="navbar-header">
+            <img class="navbar-brand" src={{ url_for('static', filename = "img/stella-logo.png") }}  alt="logo" max-height="90px">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -25,6 +37,7 @@
             <ul class="nav navbar-nav">
 {#                  <li><a href="{{ url_for('main.index') }}">Home</a></li>#}
                 <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
+                <li><a href="https://stella-project.org/">Website</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 {% if current_user.is_authenticated %}
