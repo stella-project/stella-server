@@ -1,4 +1,4 @@
-from .models import System, Session, Feedback, User
+from .models import System, Session, Feedback, User, Result
 from .main.forms import Dropdown
 
 
@@ -57,7 +57,14 @@ class Dashboard:
                 self.site = [User.query.filter_by(id=self.site_id).first().id]
 
             if self.site is not None:
-                self.sessions = Session.query.filter_by(system_ranking=self.ranker.id, site_id=self.site[0]).all()
+                if self.ranker.type == 'RANK':
+                    results = Result.query.filter_by(system_id=self.ranker.id, site_id=self.site_id, type='RANK').all()
+                    session_ids = [r.session_id for r in results]
+                    self.sessions = [Session.query.filter_by(id=sid, system_ranking=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
+                if self.ranker.type == 'REC':
+                    results = Result.query.filter_by(system_id=self.ranker.id, site_id=self.site_id, type='REC').all()
+                    session_ids = [r.session_id for r in results]
+                    self.sessions = [Session.query.filter_by(id=sid, system_recommendation=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
 
             sids = [s.id for s in self.sessions]
             self.feedbacks = Feedback.query.filter(Feedback.session_id.in_(sids)).all()

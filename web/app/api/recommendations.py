@@ -15,7 +15,7 @@ def post_recommendation(id):
         recommendation.site_id = site
         recommendation.session_id = session.id
         recommendation.feedback_id = id
-        recommendation.system_id = session.system_ranking
+        recommendation.system_id = session.system_recommendation
         recommendation.participant_id = System.query.get_or_404(session.system_recommendation).participant_id
         recommendation.type = 'REC'
         db.session.add(recommendation)
