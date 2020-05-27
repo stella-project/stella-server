@@ -4,8 +4,8 @@
 
 #### dashboard
 - [ ] fill landing page with content
-- [ ] explanation of metrics (dashboard)
-- [ ] button for bulk-download (dashboard)
+- [ ] explanation of metrics 
+- [ ] button for bulk-download 
 
 #### management of participants + systems
 - [ ] register-ui: option `participant` (team-name, github-profiles,...)
@@ -15,7 +15,9 @@
 - [ ] add meta-data about docker-containers/experimental systems (github-url, ...) to database
 - [ ] cron-job that checks for updates in repos
 
-#### misc
+#### sw dev
+- [ ] code documentation
+- [ ] cleaner code
 - [ ] unit tests
 
 #### done 
@@ -26,14 +28,12 @@
 - [x] dashboard
 
 ## dev-notes
-
 run local postgres-db with:  
 ```
 docker run -d -p 5432:5432 --name my-postgres -e POSTGRES_PASSWORD=change-me postgres
 ```
 
 ## Overview
-
 The STELLA server provides the following services:
 
 1. User administration (administration of admins, participants and sites)
