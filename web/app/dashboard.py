@@ -59,11 +59,17 @@ class Dashboard:
             if self.site is not None:
                 if self.ranker.type == 'RANK':
                     results = Result.query.filter_by(system_id=self.ranker.id, site_id=self.site_id, type='RANK').all()
-                    session_ids = [r.session_id for r in results]
+                    session_ids = []
+                    for r in results:
+                        if r.session_id not in session_ids:
+                            session_ids.append(r.session_id)
                     self.sessions = [Session.query.filter_by(id=sid, system_ranking=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
                 if self.ranker.type == 'REC':
                     results = Result.query.filter_by(system_id=self.ranker.id, site_id=self.site_id, type='REC').all()
-                    session_ids = [r.session_id for r in results]
+                    session_ids = []
+                    for r in results:
+                        if r.session_id not in session_ids:
+                            session_ids.append(r.session_id)
                     self.sessions = [Session.query.filter_by(id=sid, system_recommendation=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
 
             sids = [s.id for s in self.sessions]
