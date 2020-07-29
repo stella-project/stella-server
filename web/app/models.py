@@ -291,7 +291,7 @@ class Feedback(db.Model):
 
         interleave = json_feedback.get('interleave', False).lower() == 'true'
         clicks_raw = json_feedback.get('clicks')
-        clicks = json.loads(clicks_raw)
+        clicks = clicks_raw if type(clicks_raw) is dict else json.loads(clicks_raw)
 
         feedback = Feedback(
             start=start,
