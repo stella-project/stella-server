@@ -2,6 +2,12 @@ from .models import Role, System, User
 
 
 def setup_db(db):
+    '''
+    Use this function to setup a database with set of pre-registered users.
+
+    @param db: SQLAlchemy() instance.
+    @return: -
+    '''
     db.drop_all()
     db.create_all()
 

@@ -8,6 +8,9 @@ import json
 
 
 class Role(db.Model):
+    '''
+    Users have different roles which should either be "Admin", "Site" or "Participant"
+    '''
     __tablename__ = 'roles'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -18,6 +21,10 @@ class Role(db.Model):
 
 
 class User(UserMixin, db.Model):
+    '''
+    In this case the term "user" considers all actors who USE and access the stella-server.
+    This includes administrators, sites as well as participants.
+    '''
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
@@ -64,6 +71,9 @@ def load_user(user_id):
 
 
 class Session(db.Model):
+    '''
+    Sessions contain a specific site-user, a specific experimental ranking system and a specific recommendation system.
+    '''
     __tablename__ = 'sessions'
     id = db.Column(db.Integer, primary_key=True)
     start = db.Column(db.DateTime, nullable=True)
@@ -129,6 +139,9 @@ class Session(db.Model):
 
 
 class Result(db.Model):
+    '''
+    For both rankings and recommendations we use the Result table.
+    '''
     __tablename__ = 'results'
     id = db.Column(db.Integer, primary_key=True)
     session_id = db.Column(db.Integer, db.ForeignKey('sessions.id'))
@@ -237,6 +250,9 @@ class Result(db.Model):
 
 
 class Feedback(db.Model):
+    '''
+    Feedbacks are made for each specific ranking or recommendation.
+    '''
     __tablename__ = 'feedbacks'
     id = db.Column(db.Integer, primary_key=True)
     start = db.Column(db.DateTime, nullable=False)
@@ -318,6 +334,9 @@ class Feedback(db.Model):
 
 
 class System(db.Model):
+    '''
+    These are either experimental (contributed by participants) or baseline (by the sites) systems.
+    '''
     __tablename__ = 'systems'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
