@@ -6,6 +6,12 @@ from ..models import Result, Feedback, Session, System
 
 @api.route('/feedbacks/<int:id>/rankings', methods=['POST'])
 def post_ranking(id):
+    '''
+    Use this endpoint to add a ranking for a specific feedback and the corresponding session.
+
+    @param id: Identifier of the feedback.
+    @return: JSON/Dictionary with id of the ranking.
+    '''
     if request.method == 'POST':
         feedback = Feedback.query.get_or_404(id)
         site = feedback.site_id
@@ -26,6 +32,13 @@ def post_ranking(id):
 
 @api.route('/rankings/<int:id>', methods=['GET', 'PUT'])
 def ranking(id):
+    '''
+    Use this endpoint either to get information about a specific ranking (GET) or to update the information (PUT).
+
+    @param id: Identifier of the ranking.
+    @return: GET - JSON/Dictionary with ranking and corresponding items.
+             PUT - Update ranking with specified identifier 'id'.
+    '''
     if request.method == 'GET':
         ranking = Result.query.get_or_404(id)
         return jsonify(ranking.to_json())
@@ -39,6 +52,10 @@ def ranking(id):
 
 @api.route('/rankings')
 def get_rankings():
+    '''
+
+    @return: JSON/Dictionary with identifiers of all rankings in database.
+    '''
     results = Result.query.filter_by(type='RANK')
     return jsonify({"rids": [r.id for r in results]})
 

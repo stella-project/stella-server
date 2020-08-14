@@ -8,6 +8,12 @@ from ..models import Session, System, User
 
 @api.route('/sites/<int:id>/sessions', methods=['POST'])
 def post_session(id):
+    '''
+    Use this endpoint to make a new database entry for a new session.
+
+    @param id: Identifier of the site.
+    @return: JSON/Dictionary with the identifier of the session that was created.
+    '''
     json_session = request.values
     session = Session.from_json(json_session)
     session.site_id = id
@@ -18,18 +24,33 @@ def post_session(id):
 
 @api.route('/sites/<string:name>')
 def get_site_info_by_name(name):
+    '''
+
+    @param name: Name of the site.
+    @return: JSON/Dictionary containing information (also the identifier) about the site specified by 'name'.
+    '''
     site = User.query.filter_by(username=name).first()
     return jsonify(site.serialize)
 
 
 @api.route('/sites/<int:id>/sessions')
 def get_site_sessions(id):
+    '''
+
+    @param id: Identifier of the site.
+    @return: JSON/Dictionary with information about all sessions from the site specified by the identifier.
+    '''
     sessions = Session.query.filter_by(site_id=id)
     return jsonify([s.to_json() for s in sessions])
 
 
 @api.route('/sites/<int:id>/systems')
 def get_site_systems(id):
+    '''
+
+    @param id: Identifier of the site.
+    @return: JSON/Dictionary with information about all the systems that are deployed at the site.
+    '''
     system_dict = {}
     systems = Session.query.with_entities(Session.system_ranking).distinct().filter_by(site_id=id).all()
     for s in systems:
