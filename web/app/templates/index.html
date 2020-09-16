@@ -5,101 +5,116 @@
 
 {% block page_content %}
     <div class="page-header">
-        <h1>{% if current_user.is_authenticated %}Hello, {{ current_user.username }}{% else %}STELLA - Infrastructures for Living Labs{% endif %}</h1>
+        <h1>{% if current_user.is_authenticated %}Hello, {{ current_user.username }}{% else %}STELLA - Infrastructures
+            for Living Labs{% endif %}</h1>
     </div>
 
     <div class="container login-container">
-            <div class="row border justify-content-center">
-                <div class="col-md-2"> </div>
-                <div class="col-md-4 login-form-1 box">
-                    <h3>About</h3>
-                    <p>The DFG-funded STELLA project aims to create an evaluation infrastructure that allows to evaluate search and recommendation services within productive web-based search systems with real users.</p>
-                    <br>
+        <div class="row border justify-content-center display-flex ">
+            <div class="col-md-2"></div>
+            <div class="col-md-4 login-form-1 box">
+                <h3>About</h3>
+                <p>The DFG-funded STELLA project aims to create an evaluation infrastructure that allows to evaluate
+                    search and recommendation services within productive web-based search systems with real users.</p>
+                <br>
 
-                    <a href="https://stella-project.org/" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Website</a>
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-                </div>
+                <a href="https://stella-project.org/" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Website</a>
+                <br>
+                <br>
+                <br>
+                <br>
+            </div>
 
-                <div class="col-md-4 login-form-2">
+            <div class="col-md-4 login-form-2">
                 {% if current_user.is_authenticated %}
                     <h3>Logout</h3>
                     <p>Goodby, {{ current_user.username }}!</p>
                     <br><br><br><br><br><br>
                     <div class="form-group">
-                    <a href="{{ url_for('auth.logout') }}" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Log Out</a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-primary btn-lg" role="button"
+                           aria-disabled="true">Log Out</a>
                     </div>
                 {% else %}
                     <h3>Login</h3>
                     {{ wtf.quick_form(form) }}
 
 
-                        <div class="form-group">
-                            <br>
-                            <p>
+                    <div class="form-group">
+                        <br>
+                        <p>
                             <a href="#" class="ForgetPwd" value="Login">Forget Password?</a> or
                             <a href="{{ url_for('auth.register') }}">Register</a>
-                            </p>
-                        </div>
+                        </p>
+                    </div>
                 {% endif %}
-                </div>
-
-                <div class="col-md-2"> </div>
             </div>
+
+            <div class="col-md-2"></div>
         </div>
+    </div>
 
     <style>
-    .btn {
-        border-radius: 0px;
-        box-sizing: border-box;
-        color: #fff;
-        display: inline-block;
-        font-size: 14px;
-        height: 3em;
-        letter-spacing: 0.075em;
-        line-height: 2.5;
-        padding: 0.25em 35px;
-        text-transform: uppercase;
-        transition: .3s ease;
-        background: #525e8b;
-        border-color: #525e8b;
-        margin-right: 15px;
-        border: 2px;
-        font-family: "Roboto", "Helvetica Neue", Helvetica, sans-serif;
+        .btn {
+            border-radius: 0px;
+            box-sizing: border-box;
+            color: #fff;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            letter-spacing: 0.075em;
+            line-height: 2.5;
+            padding: 0.25em 35px;
+            text-transform: uppercase;
+            transition: .3s ease;
+            background: #525e8b;
+            border-color: #525e8b;
+            margin-right: 15px;
+            border: 2px;
+            font-family: "Roboto", "Helvetica Neue", Helvetica, sans-serif;
         }
-    .btn:hover {
-        background: 0;
-        box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
-        border: 2px solid;
-        border-radius: 0px;
-        box-sizing: border-box;
-        display: inline-block;
-        font-size: 14px;
-        height: 3em;
-        padding: 0.25em 35px;
-        letter-spacing: 0.075em;
-        border-color: #525e8b;
-        color: #201c2d;
-        outline: 0;
-        text-transform: uppercase;
-        transition: .3s ease;
 
-    }
+        .btn:hover {
+            background: 0;
+            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            border: 2px solid;
+            border-radius: 0px;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            padding: 0.25em 35px;
+            letter-spacing: 0.075em;
+            border-color: #525e8b;
+            color: #201c2d;
+            outline: 0;
+            text-transform: uppercase;
+            transition: .3s ease;
 
-    .login-form-1{
-    padding: 5%;
-        border: 2px solid;
-        border-color: #525e8b;
-        margin: 10px;
-}
-    .login-form-2{
-    padding: 5%;
-        border: 2px solid;
-        border-color: #525e8b;
-        margin: 10px;
-    }
+        }
+
+        .login-form-1 {
+            padding: 5%;
+            border: 2px solid;
+            border-color: #525e8b;
+            margin: 10px;
+        }
+
+        .login-form-2 {
+            padding: 5%;
+            border: 2px solid;
+            border-color: #525e8b;
+            margin: 10px;
+        }
+
+        .row.display-flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .row.display-flex > [class*='col-'] {
+            display: flex;
+            flex-direction: column;
+        }
 
     </style>
 {% endblock %}
