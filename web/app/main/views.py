@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, url_for, current_app, request, flash
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required
+
 from . import main
 import json
 
@@ -52,3 +53,11 @@ def systems():
     systems = System.query.filter().distinct().all()
     # systems = System.query.filter_by(participant_id=current_user.id).all()
     return render_template('systems.html', systems=systems)
+
+
+@main.route('/usersettings', methods=['GET', 'POST'])
+@login_required
+def usersettings():
+    # form = RegistrationForm()
+
+    return render_template('userSettings.html', current_user=current_user)
