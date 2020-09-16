@@ -41,3 +41,11 @@ def register():
         flash('You can now login.')
         return redirect(url_for('auth.login'))
     return render_template('auth/register.html', form=form)
+
+
+@auth.route('/user', methods=['GET', 'POST'])
+@login_required
+def user():
+    form = RegistrationForm()
+
+    return render_template('user.html', current_user=current_user, form=form)

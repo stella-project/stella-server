@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block title %}STELLA User{% endblock %}
+
+{% block page_content %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <div class="page-header">
+        <h1>Systems</h1>
+    </div>
+
+    <table class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Status</th>
+            <th scope="col">Name</th>
+            <th scope="col">Active since</th>
+            <th scope="col">Views</th>
+            <th scope="col">Type</th>
+            <th scope="col">Info</th>
+            <th scope="col">Stop</th>
+            <th scope="col">Start</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Export</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        {% for i in systems %}
+
+
+
+            <tr>
+                <td scope="row"><span class="badge badge-success">running</span></td>
+                <td>{{ i.name  | replace("_"," ") }}</td>
+                <td>31.08.2020</td>
+                <td>7800</td>
+                <td>{{ i.type }}</td>
+                <td><a href="https://github.com/stella-project">GitHub</a></td>
+                <td>
+                    <button class="btnTable"><i class="fa fa-play"></i></button>
+                </td>
+                <td>
+                    <button class="btnTable"><i class="fa fa-stop"></i></button>
+                </td>
+                <td>
+                    <button class="btnTable"><i class="fa fa-trash"></i></button>
+                </td>
+                <td>
+                    <button class="btnTable"><i class="fa fa-file"></i></button>
+                </td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="row border">
+        <div class="col-md-12 text-center">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalExample">
+                submit new system
+            </button>
+        </div>
+    </div>
+
+    <div id="ModalExample" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">How to submit a new system:</h2>
+                </div>
+                <div class="modal-body">
+                    <ol>
+                        <li>Participating team registers</li>
+                        <li>Download required datasets by LIVIVO and GESIS Search</li>
+                        <li>Clone project template from STELLA GitHub Organization</li>
+                        <li>Implement REST-API endpoints such that rankings and recommendations can be retrieved from
+                            the Docker container
+                        </li>
+                        <li>Development finished → Register repository</li>
+                        <li>The Docker container with the experimental system is integrated into the STELLA app</li>
+                        <li>Evaluate system with user feedback</li>
+                        <li>Adapt system with the help of provided feedback</li>
+                    </ol>
+                    <br/>
+                    <label for="fname">GitHub URL:</label>
+                    <input type="text" id="fname" name="fname"><br><br>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-lg">
+                        submit
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+
+    <style>
+        .badge-success {
+            background-color: green;
+        }
+
+        .badge-danger {
+            background-color: darkred;
+        }
+
+        .btnTable {
+            color: #fff;
+            display: inline-block;
+            line-height: 2.5;
+            padding: 0.115em 15px;
+            transition: .3s ease;
+            background: #525e8b;
+            border-color: #525e8b;
+        }
+
+        .btnTable:hover {
+            background: 0;
+            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            border: 2px solid;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 14px;
+            line-height: 2.5;
+            padding: 0.115em 15px;
+            border-color: #525e8b;
+            color: #201c2d;
+            transition: .3s ease;
+
+        }
+
+        .btn {
+            border-radius: 0px;
+            box-sizing: border-box;
+            color: #fff;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            letter-spacing: 0.075em;
+            line-height: 2.5;
+            padding: 0.25em 35px;
+            text-transform: uppercase;
+            transition: .3s ease;
+            background: #525e8b;
+            border-color: #525e8b;
+            margin-right: 15px;
+            border: 2px;
+            font-family: "Roboto", "Helvetica Neue", Helvetica, sans-serif;
+        }
+
+        .btn:hover {
+            background: 0;
+            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            border: 2px solid;
+            border-radius: 0px;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            padding: 0.25em 35px;
+            letter-spacing: 0.075em;
+            border-color: #525e8b;
+            color: #201c2d;
+            outline: 0;
+            text-transform: uppercase;
+            transition: .3s ease;
+
+        }
+    </style>
+
+{% endblock %}
