@@ -43,6 +43,7 @@
                     {% if current_user.is_authenticated %}
                         <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ url_for('main.systems') }}">Systems</a></li>
+                        <li><a href="{{ url_for('main.uploads') }}">Upload</a></li>
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

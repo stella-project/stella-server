@@ -1,5 +1,8 @@
 from flask import render_template, session, redirect, url_for, current_app, request, flash
 from flask_login import current_user, login_user, login_required
+from werkzeug.utils import secure_filename
+
+import os
 
 from . import main
 import json
@@ -61,3 +64,22 @@ def usersettings():
     # form = RegistrationForm()
 
     return render_template('userSettings.html', current_user=current_user)
+
+
+@main.route('/upload', methods=['POST'])
+def upload_files():
+
+    if not os.path.exists('uploads'):
+        os.makedirs('uploads')
+
+    uploaded_file = request.files['file']
+    filename = secure_filename(uploaded_file.filename)
+    if filename != '':
+        uploaded_file.save(os.path.join('uploads', filename))
+    return redirect(url_for('main.uploads'))
+
+
+@main.route('/upload')
+@login_required
+def uploads():
+    return render_template('upload.html', current_user=current_user)

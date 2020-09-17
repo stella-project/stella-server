@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Upload{% endblock %}
+
+{% block page_content %}
+
+    <div class="page-header">
+        <h1>Upload of pre-computed run files</h1>
+    </div>
+
+    <form action="{{ url_for('main.upload_files') }}" class="dropzone"></form>
+
+    <footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.css">
+    </footer>
+
+{% endblock %}
