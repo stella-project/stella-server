@@ -3,6 +3,7 @@ from flask_login import current_user, login_user, login_required
 from werkzeug.utils import secure_filename
 
 import os
+import re
 
 from . import main
 import json
@@ -75,7 +76,15 @@ def upload_files():
     uploaded_file = request.files['file']
     filename = secure_filename(uploaded_file.filename)
     if filename != '':
-        uploaded_file.save(os.path.join('uploads', filename))
+        file = uploaded_file.read().decode("utf-8").split('\n')[:-1]
+        print(file)
+        if all([bool(re.match('^\d+\sQ0\s\w+\s\d*\s-?\d\.\d+\s\w+', line)) for line in file]):
+            print('RegEx validated')
+            if all([True if int(file[line].split(' ')[3]) == int(file[line-1].split(' ')[3])+1 else False for line in range(1, len(file))]):
+                print('rank validated')
+                if sorted([line.split(' ')[4] for line in file], reverse=True):
+                    print('score validated')
+                    uploaded_file.save(os.path.join('uploads', filename))
     return redirect(url_for('main.uploads'))
 
 
