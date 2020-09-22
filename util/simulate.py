@@ -80,16 +80,16 @@ def main():
         for f in range(0, NUM_FEEDBACK):
 
             click_dict = {
-                "1": {"doc_id": "doc1", "clicked": False, "date": None, "system": "EXP"},
-                "2": {"doc_id": "doc14", "clicked": False, "date": None, "system": "BASE"},
-                "3": {"doc_id": "doc2", "clicked": False, "date": None, "system": "EXP"},
-                "4": {"doc_id": "doc14", "clicked": False, "date": None, "system": "BASE"},
-                "5": {"doc_id": "doc3", "clicked": False, "date": None, "system": "EXP"},
-                "6": {"doc_id": "doc13", "clicked": False, "date": None, "system": "BASE"},
-                "7": {"doc_id": "doc4", "clicked": False, "date": None, "system": "EXP"},
-                "8": {"doc_id": "doc14", "clicked": False, "date": None, "system": "BASE"},
-                "9": {"doc_id": "doc5", "clicked": False, "date": None, "system": "EXP"},
-                "10": {"doc_id": "doc15", "clicked": False, "date": None, "system": "BASE"}
+                "1": {"docid": "doc1", "clicked": False, "date": None, "system": "EXP"},
+                "2": {"docid": "doc14", "clicked": False, "date": None, "system": "BASE"},
+                "3": {"docid": "doc2", "clicked": False, "date": None, "system": "EXP"},
+                "4": {"docid": "doc14", "clicked": False, "date": None, "system": "BASE"},
+                "5": {"docid": "doc3", "clicked": False, "date": None, "system": "EXP"},
+                "6": {"docid": "doc13", "clicked": False, "date": None, "system": "BASE"},
+                "7": {"docid": "doc4", "clicked": False, "date": None, "system": "EXP"},
+                "8": {"docid": "doc14", "clicked": False, "date": None, "system": "BASE"},
+                "9": {"docid": "doc5", "clicked": False, "date": None, "system": "EXP"},
+                "10": {"docid": "doc15", "clicked": False, "date": None, "system": "BASE"}
             }
 
             serp_entries = 10
