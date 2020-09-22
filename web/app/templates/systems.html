@@ -84,14 +84,13 @@
                         <li>Adapt system with the help of provided feedback</li>
                     </ol>
                     <br/>
-                    <label for="fname">GitHub URL:</label>
-                    <input type="text" id="fname" name="fname"><br><br>
+                    <div>
+                        {{ wtf.quick_form(form) }}
+                    </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-lg">
-                        submit
-                    </button>
+
                 </div>
             </div>
         </div>

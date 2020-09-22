@@ -8,6 +8,8 @@ import re
 from . import main
 import json
 
+from .forms import SubmitSystem
+
 from ..models import User, Session, System, Feedback
 
 from ..dashboard import Dashboard
@@ -56,7 +58,8 @@ def dashboard():
 def systems():
     systems = System.query.filter().distinct().all()
     # systems = System.query.filter_by(participant_id=current_user.id).all()
-    return render_template('systems.html', systems=systems)
+    form = SubmitSystem()
+    return render_template('systems.html', systems=systems, form=form)
 
 
 @main.route('/usersettings', methods=['GET', 'POST'])
@@ -77,7 +80,6 @@ def upload_files():
     filename = secure_filename(uploaded_file.filename)
     if filename != '':
         file = uploaded_file.read().decode("utf-8").split('\n')[:-1]
-        print(file)
         if all([bool(re.match('^\d+\sQ0\s\w+\s\d*\s-?\d\.\d+\s\w+', line)) for line in file]):
             print('RegEx validated')
             if all([True if int(file[line].split(' ')[3]) == int(file[line-1].split(' ')[3])+1 else False for line in range(1, len(file))]):
