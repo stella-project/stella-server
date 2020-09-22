@@ -87,14 +87,14 @@ class Dashboard:
                 cnt_base = 0
                 cnt_exp = 0
                 for c in clicks.values():
-                    if c.get('clicked') and c.get('type') == 'EXP':
+                    if c.get('clicked') and c.get('system') == 'EXP':
                         date = c.get('date')[:10]
                         if self.clicks_exp.get(date) is None:
                             self.clicks_exp.update({date: 1})
                         else:
                             self.clicks_exp[date] = self.clicks_exp[date] + 1
                         cnt_exp += 1
-                    if c.get('clicked') and c.get('type') == 'BASE':
+                    if c.get('clicked') and c.get('system') == 'BASE':
                         date = c.get('date')[:10]
                         if self.clicks_base.get(date) is None:
                             self.clicks_base.update({date: 1})
