@@ -1,37 +1,4 @@
-# stella-server
-
-## todos
-
-#### dashboard
-- [ ] fill landing page with content
-- [ ] explanation of metrics 
-- [ ] button for bulk-download 
-
-#### management of participants + systems
-- [ ] register-ui: option `participant` (team-name, github-profiles,...)
-- [ ] read and write permissions for users and participants
-- [ ] automatic generation of docker-compose.yml for `stella-app`
-- [ ] sync experimental systems &rarr; stella-server will write to config-file
-- [ ] add meta-data about docker-containers/experimental systems (github-url, ...) to database
-- [ ] cron-job that checks for updates in repos
-
-#### sw dev
-- [ ] code documentation
-- [ ] cleaner code
-- [ ] unit tests
-
-#### done 
-- [x] authentication via jwt
-- [x] production-ready (docker-compose + postgresql)
-- [x] sequence diagram
-- [x] tech-stack
-- [x] dashboard
-
-## dev-notes
-run local postgres-db with:  
-```
-docker run -d -p 5432:5432 --name my-postgres -e POSTGRES_PASSWORD=change-me postgres
-```
+# STELLA Server
 
 ## Overview
 The STELLA server provides the following services:
@@ -57,7 +24,7 @@ The STELLA server provides the following services:
 ## Tech stack
 ![tech-stack](doc/techstack.png)
 
-## Sequence diagram
+## Sequence diagram when posting feedback data from STELLA app to STELLA server
 [![](https://mermaid.ink/img/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgc2l0ZSAtPj4gc3RlbGxhX2FwcDogcXVlcnlcbiAgICBzdGVsbGFfYXBwIC0tPj4gc2l0ZTogPGl0ZW1zPlxuICAgIE5vdGUgbGVmdCBvZiBzaXRlOiBsb2dzIHVzZXIgZGF0YSA8YnI-IGFuZCBpbnRlcmFjdGlvbnNcbiAgICBsb29wIGZlZWRiYWNrXG4gICAgICAgIHNpdGUgLT4-IHN0ZWxsYV9hcHA6IHNlbmQgZmVlZGJhY2tcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogR0VUIC9zaXRlcy88c3RyaW5nOm5hbWU-XG4gICAgICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBzdGVsbGFfYXBwOiA8c2l0ZV9pZD5cbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogUE9TVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHA6IDxzZXNzaW9uX2lkPlxuICAgICAgICBzdGVsbGFfYXBwIC0-PiBzdGVsbGFfc2VydmVyOiBQT1NUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHAgOiA8ZmVlZGJhY2tfaWQ-XG4gICAgICAgIHN0ZWxsYV9hcHAgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBQT1NUIC9mZWVkYmFja3MvPGludDppZD4vcmFua2luZ3MgKGV4cGVyaW1lbnRhbClcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlciA6IFBPU1QgL2ZlZWRiYWNrcy88aW50OmlkPi9yYW5raW5ncyAoYmFzZWxpbmUpXG4gICAgZW5kXG4gICAgcGFydCAtPj4gc3RlbGxhX3NlcnZlciA6IEdFVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IHNlc3Npb25zIGRldGFpbHNcbiAgICBwYXJ0IC0-PiBzdGVsbGFfc2VydmVyIDogR0VUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IGZlZWRiYWNrIGlkc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL2ZlZWRiYWNrcy88aW50OmlkPlxuICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBwYXJ0IDogZmVlZGJhY2sgZGV0YWlsc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL3JhbmtpbmdzLzxpbnQ6aWQ-XG4gICAgc3RlbGxhX3NlcnZlciAtLT4-IHBhcnQgOiByYW5raW5nIGRldGFpbHNcbiAgICBOb3RlIHJpZ2h0IG9mIHBhcnQgOiBvcHRpbWl6ZXMgaGVyIDxicj4gYWxnb3JpdGhtIHdpdGggdGhlIDxicj4gaGVscCBvZiBsb2cgZGF0YVxuICAgICIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)](https://mermaid-js.github.io/mermaid-live-editor/#/edit/eyJjb2RlIjoic2VxdWVuY2VEaWFncmFtXG4gICAgc2l0ZSAtPj4gc3RlbGxhX2FwcDogcXVlcnlcbiAgICBzdGVsbGFfYXBwIC0tPj4gc2l0ZTogPGl0ZW1zPlxuICAgIE5vdGUgbGVmdCBvZiBzaXRlOiBsb2dzIHVzZXIgZGF0YSA8YnI-IGFuZCBpbnRlcmFjdGlvbnNcbiAgICBsb29wIGZlZWRiYWNrXG4gICAgICAgIHNpdGUgLT4-IHN0ZWxsYV9hcHA6IHNlbmQgZmVlZGJhY2tcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogR0VUIC9zaXRlcy88c3RyaW5nOm5hbWU-XG4gICAgICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBzdGVsbGFfYXBwOiA8c2l0ZV9pZD5cbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlcjogUE9TVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHA6IDxzZXNzaW9uX2lkPlxuICAgICAgICBzdGVsbGFfYXBwIC0-PiBzdGVsbGFfc2VydmVyOiBQT1NUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICAgICAgc3RlbGxhX3NlcnZlciAtLT4-IHN0ZWxsYV9hcHAgOiA8ZmVlZGJhY2tfaWQ-XG4gICAgICAgIHN0ZWxsYV9hcHAgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBQT1NUIC9mZWVkYmFja3MvPGludDppZD4vcmFua2luZ3MgKGV4cGVyaW1lbnRhbClcbiAgICAgICAgc3RlbGxhX2FwcCAtPj4gc3RlbGxhX3NlcnZlciA6IFBPU1QgL2ZlZWRiYWNrcy88aW50OmlkPi9yYW5raW5ncyAoYmFzZWxpbmUpXG4gICAgZW5kXG4gICAgcGFydCAtPj4gc3RlbGxhX3NlcnZlciA6IEdFVCAvc2l0ZXMvPGludDppZD4vc2Vzc2lvbnNcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IHNlc3Npb25zIGRldGFpbHNcbiAgICBwYXJ0IC0-PiBzdGVsbGFfc2VydmVyIDogR0VUIC9zZXNzaW9ucy88aW50OmlkPi9mZWVkYmFja3NcbiAgICBzdGVsbGFfc2VydmVyIC0tPj4gcGFydCA6IGZlZWRiYWNrIGlkc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL2ZlZWRiYWNrcy88aW50OmlkPlxuICAgIHN0ZWxsYV9zZXJ2ZXIgLS0-PiBwYXJ0IDogZmVlZGJhY2sgZGV0YWlsc1xuICAgIHBhcnQgLT4-IHN0ZWxsYV9zZXJ2ZXIgOiBHRVQgL3JhbmtpbmdzLzxpbnQ6aWQ-XG4gICAgc3RlbGxhX3NlcnZlciAtLT4-IHBhcnQgOiByYW5raW5nIGRldGFpbHNcbiAgICBOb3RlIHJpZ2h0IG9mIHBhcnQgOiBvcHRpbWl6ZXMgaGVyIDxicj4gYWxnb3JpdGhtIHdpdGggdGhlIDxicj4gaGVscCBvZiBsb2cgZGF0YVxuICAgICIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In0sInVwZGF0ZUVkaXRvciI6ZmFsc2V9)
 
 ## API endpoints
@@ -259,4 +226,11 @@ The payload should be provided as follows:
     "system_ranking": "rank_exp_a",
     "system_recommendation": "rec_exp_a"
 }
+```
+
+## miscellaneous
+
+run local postgres-db with:  
+```
+docker run -d -p 5432:5432 --name my-postgres -e POSTGRES_PASSWORD=change-me postgres
 ```
