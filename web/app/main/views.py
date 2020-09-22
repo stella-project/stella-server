@@ -55,11 +55,12 @@ def dashboard():
 
 
 @main.route('/systems', methods=['GET', 'POST'])
+@login_required
 def systems():
     systems = System.query.filter().distinct().all()
     # systems = System.query.filter_by(participant_id=current_user.id).all()
     form = SubmitSystem()
-    return render_template('systems.html', systems=systems, form=form)
+    return render_template('systems.html', systems=systems, form=form, current_user=current_user)
 
 
 @main.route('/usersettings', methods=['GET', 'POST'])

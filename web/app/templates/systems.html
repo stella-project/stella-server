@@ -29,6 +29,7 @@
         </thead>
         <tbody>
 
+
         {% for i in systems %}
             <tr>
                 <td scope="row"><span class="badge badge-success">running</span></td>
@@ -37,12 +38,14 @@
                 <td>7800</td>
                 <td>{{ i.type }}</td>
                 <td><a href="https://github.com/stella-project">GitHub</a></td>
-                <td>
-                    <button class="btnTable"><i class="fa fa-play"></i></button>
-                </td>
-                <td>
-                    <button class="btnTable"><i class="fa fa-stop"></i></button>
-                </td>
+                {% if current_user.role.name != 'Participant' %}
+                    <td>
+                        <button class="btnTable"><i class="fa fa-play"></i></button>
+                    </td>
+                    <td>
+                        <button class="btnTable"><i class="fa fa-stop"></i></button>
+                    </td>
+                {% endif %}
                 <td>
                     <button class="btnTable"><i class="fa fa-trash"></i></button>
                 </td>
