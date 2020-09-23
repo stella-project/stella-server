@@ -4,55 +4,52 @@
 {% block title %}STELLA User{% endblock %}
 
 {% block page_content %}
-
-
-
-    <div class="page-header">
-        <h1>User</h1>
-    </div>
-
-
-
+    <br/>
     <div class="container">
-
+<!-- box head -->
         <div class="row border justify-content-center">
-            <div class="col-md-3"></div>
-            <div class="col-md-6 titleBox">
+            <div class="col-md-2"></div>
+            <div class="col-md-8 titleBox">
                 <div class="row justify-content-center">
                     <h1>{{ current_user.username }}</h1>
                 </div>
             </div>
         </div>
 
-
         <div class="row border justify-content-center">
-            <div class="col-md-3"></div>
-            <div class="col-md-6 box1">
-
+            <div class="col-md-2"></div>
+            <div class="col-md-8 box1">
                 <div class="row">
-                    <ul>
-                        <li>Username:</li>
-                        <li>E-Mail:</li>
-                        <li>Password:</li>
-                    </ul>
+                    <!-- change forms -->
+                    <div class="col-lg-6">
+                        <h3>Change Username or Email:</h3>
+                        {{ wtf.quick_form(form) }}
+                        <br/>
+                    </div>
+                    <div class="col-lg-6">
+                        <h3>Change Password:</h3>
+                        {{ wtf.quick_form(changePasswordForm) }}
+                    </div>
                 </div>
-
+                <br />
+                <hr>
                 <div class="row">
-                    <div class="button-box col-lg-12">
-{#                        <a href="#" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Delete account</a>#}
+                    <div class="button-box col-lg-12 text-center">
                         <a href="mailto:name@email.com" class="btn btn-primary btn-lg" role="button"
                            aria-disabled="true">Support</a>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-primary btn-lg" role="button"
+                           aria-disabled="true">Log Out</a>
                     </div>
                 </div>
 
                 <div class=row">
-                    </br>
-                    <a href="{{ url_for('auth.logout') }}" class="btn btn-primary btn-lg" role="button"
-                       aria-disabled="true">Log Out</a>
+
+
                 </div>
 
             </div>
         </div>
+        <br/>
     </div>
 
     <style>
@@ -95,7 +92,7 @@
         }
 
         .box1 {
-            padding: 5%;
+            padding: 2%;
             border: 2px solid;
             border-color: #525e8b;
             margin-left: 10px;

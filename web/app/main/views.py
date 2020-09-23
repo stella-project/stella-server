@@ -8,9 +8,9 @@ import re
 from . import main
 import json
 
-from .forms import SubmitSystem
+from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword
 
-from ..models import User, Session, System, Feedback
+from ..models import User, Session, System, Feedback, load_user
 
 from ..dashboard import Dashboard
 from .. auth.forms import LoginForm
@@ -66,9 +66,14 @@ def systems():
 @main.route('/usersettings', methods=['GET', 'POST'])
 @login_required
 def usersettings():
-    # form = RegistrationForm()
+    if request.method == 'POST':
+        print(request.form.get('username'))
+        print(request.form.get('email'))
 
-    return render_template('userSettings.html', current_user=current_user)
+    user = load_user(current_user.id)
+    form = ChangeUsernameForm(obj=user)
+    changePasswordForm = ChangePassword()
+    return render_template('userSettings.html', current_user=current_user, form=form, changePasswordForm=changePasswordForm)
 
 
 @main.route('/upload', methods=['POST'])
