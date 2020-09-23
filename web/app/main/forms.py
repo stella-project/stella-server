@@ -11,29 +11,36 @@ class Dropdown(FlaskForm):
     site = SelectField(choices=[])
     submit = SubmitField('Display results')
 
+
 class ChangeUsernameForm(FlaskForm):
     username = StringField('Username', validators=[
         DataRequired(), Length(1, 64),
         Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                'Usernames must have only letters, numbers, dots or '
                'underscores')])
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
-                                             Email()])
-    submit = SubmitField('change username')
+    submit1 = SubmitField('change username')
 
     def validate_username(self, field):
         if User.query.filter_by(username=field.data).first():
             raise ValidationError('Username already in use.')
 
+
+class ChangeEmailForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+                                             Email()])
+    submit2 = SubmitField('change E-Mail')
+
     def validate_email(self, field):
         if User.query.filter_by(email=field.data.lower()).first():
             raise ValidationError('Email already registered.')
+
 
 class ChangePassword(FlaskForm):
     password = PasswordField('New Password', validators=[
         DataRequired(), EqualTo('password2', message='Passwords must match.')])
     password2 = PasswordField('Confirm new password', validators=[DataRequired()])
-    submit = SubmitField('Change Password')
+    submit3 = SubmitField('Change Password')
+
 
 class SubmitSystem(FlaskForm):
     systemname = StringField('System Name', validators=[
@@ -42,6 +49,6 @@ class SubmitSystem(FlaskForm):
                'Systemname must have only letters, numbers, dots or '
                'underscores')])
     GitHubUrl = URLField('URL', validators=[DataRequired(message="Enter URL Please"),
-        URL(message="Enter Valid URL Please.")])
+                                            URL(message="Enter Valid URL Please.")])
 
     submit = SubmitField('Submit')

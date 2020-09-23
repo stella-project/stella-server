@@ -22,13 +22,22 @@
                 <div class="row">
                     <!-- change forms -->
                     <div class="col-lg-6">
-                        <h3>Change Username or Email:</h3>
-                        {{ wtf.quick_form(form) }}
+                        <h3>Change Username:</h3>
+                        <form action="{{ url_for('main.username') }}" method="post">
+                            {{ wtf.quick_form(changeUsernameForm) }}
+                        </form>
+
+                        <h3>Change E-Mail:</h3>
+                        <form action="{{ url_for('main.mail') }}" method="post">
+                        {{ wtf.quick_form(changeEmailForm) }}
+                        </form>
                         <br/>
                     </div>
                     <div class="col-lg-6">
                         <h3>Change Password:</h3>
-                        {{ wtf.quick_form(changePasswordForm) }}
+                        <form action="{{ url_for('main.password') }}" method="post">
+                            {{ wtf.quick_form(changePasswordForm) }}
+                        </form>
                     </div>
                 </div>
                 <br />

@@ -1,6 +1,7 @@
 from flask import render_template, session, redirect, url_for, current_app, request, flash
 from flask_login import current_user, login_user, login_required
 from werkzeug.utils import secure_filename
+from .. import db
 
 import os
 import re
@@ -8,7 +9,7 @@ import re
 from . import main
 import json
 
-from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword
+from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm
 
 from ..models import User, Session, System, Feedback, load_user
 
@@ -63,17 +64,66 @@ def systems():
     return render_template('systems.html', systems=systems, form=form, current_user=current_user)
 
 
-@main.route('/usersettings', methods=['GET', 'POST'])
+@main.route('/usersettings')
 @login_required
 def usersettings():
-    if request.method == 'POST':
-        print(request.form.get('username'))
-        print(request.form.get('email'))
-
     user = load_user(current_user.id)
-    form = ChangeUsernameForm(obj=user)
+    changeUsernameForm = ChangeUsernameForm(obj=user)
+    changeEmailForm = ChangeEmailForm(obj=user)
     changePasswordForm = ChangePassword()
-    return render_template('userSettings.html', current_user=current_user, form=form, changePasswordForm=changePasswordForm)
+    return render_template('userSettings.html', current_user=current_user, changeUsernameForm=changeUsernameForm,
+                           changePasswordForm=changePasswordForm, changeEmailForm=changeEmailForm)
+
+
+@main.route('/username', methods=['GET', 'POST'])
+@login_required
+def username():
+    user = load_user(current_user.id)
+    changeUsernameForm = ChangeUsernameForm(obj=user)
+    changeEmailForm = ChangeEmailForm(obj=user)
+    changePasswordForm = ChangePassword()
+
+    if changeUsernameForm.validate_on_submit():
+        user.username = changeUsernameForm.username.data
+        db.session.commit()
+        flash('Username changed.')
+
+    return render_template('userSettings.html', current_user=current_user, changeUsernameForm=changeUsernameForm,
+                           changePasswordForm=changePasswordForm, changeEmailForm=changeEmailForm)
+
+
+@main.route('/password', methods=['GET', 'POST'])
+@login_required
+def password():
+    user = load_user(current_user.id)
+    changeUsernameForm = ChangeUsernameForm(obj=user)
+    changeEmailForm = ChangeEmailForm(obj=user)
+    changePasswordForm = ChangePassword()
+
+    if changePasswordForm.validate_on_submit():
+        user.email = changeEmailForm.email.data
+        db.session.commit()
+        flash('Password changed.')
+
+    return render_template('userSettings.html', current_user=current_user, changeUsernameForm=changeUsernameForm,
+                           changePasswordForm=changePasswordForm, changeEmailForm=changeEmailForm)
+
+
+@main.route('/mail', methods=['GET', 'POST'])
+@login_required
+def mail():
+    user = load_user(current_user.id)
+    changeUsernameForm = ChangeUsernameForm(obj=user)
+    changeEmailForm = ChangeEmailForm(obj=user)
+    changePasswordForm = ChangePassword()
+
+    if changeEmailForm.validate_on_submit():
+        user.email = changeEmailForm.email.data
+        db.session.commit()
+        flash('E-Mail changed.')
+
+    return render_template('userSettings.html', current_user=current_user, changeUsernameForm=changeUsernameForm,
+                           changePasswordForm=changePasswordForm, changeEmailForm=changeEmailForm)
 
 
 @main.route('/upload', methods=['POST'])
