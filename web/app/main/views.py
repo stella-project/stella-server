@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, current_app, request, flash
+from flask import render_template, session, redirect, url_for, current_app, request, flash, jsonify
 from flask_login import current_user, login_user, login_required
 from werkzeug.utils import secure_filename
 from .. import db
@@ -58,10 +58,17 @@ def dashboard():
 @main.route('/systems', methods=['GET', 'POST'])
 @login_required
 def systems():
-    systems = System.query.filter().distinct().all()
-    # systems = System.query.filter_by(participant_id=current_user.id).all()
+    # systems = System.query.filter().distinct().all()
+    systems = System.query.filter_by(participant_id=current_user.id).all()
     form = SubmitSystem()
     return render_template('systems.html', systems=systems, form=form, current_user=current_user)
+
+
+@main.route('/download/<system>')
+def download(system):
+    d = System.query.filter_by(name=system).all()[0]
+    print(d.serialize)
+    return jsonify(d.serialize)
 
 
 """
