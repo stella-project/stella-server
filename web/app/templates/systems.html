@@ -19,7 +19,8 @@
             <th scope="col">Name</th>
             <th scope="col">Active since</th>
             <th scope="col">Views</th>
-            <th scope="col">Type</th>
+            <th scope="col">System for</th>
+            <th scope="col">Submitted as</th>
             <th scope="col">Info</th>
             <th scope="col">Stop</th>
             <th scope="col">Start</th>
@@ -36,7 +37,16 @@
                 <td>{{ i.name  | replace("_"," ") }}</td>
                 <td>31.08.2020</td>
                 <td>7800</td>
-                <td>{{ i.type }}</td>
+                <td>
+                    {% if i.type == 'RANK' %}
+                        Ranking
+                    {% elif i.type == 'REC' %}
+                        Recommender
+                    {% else %}
+                        unknown
+                    {% endif %}
+                </td>
+                <td>Container</td>
                 <td><a href="https://github.com/stella-project">GitHub</a></td>
                 {% if current_user.role.name != 'Participant' %}
                     <td>
