@@ -64,6 +64,10 @@ def systems():
     return render_template('systems.html', systems=systems, form=form, current_user=current_user)
 
 
+"""
+Multiple, prefilled forms in a single page workaround from: 
+https://stackoverflow.com/questions/18290142/multiple-forms-in-a-single-page-using-flask-and-wtforms?answertab=votes#tab-top
+"""
 @main.route('/usersettings')
 @login_required
 def usersettings():
@@ -128,7 +132,6 @@ def mail():
 
 @main.route('/upload', methods=['POST'])
 def upload_files():
-
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
