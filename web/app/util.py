@@ -34,14 +34,14 @@ def setup_db(db):
 
     db.session.commit()
 
-    ranker_a = System(name='rank_elastic', participant_id=user_part_a.id, type='RANK')
-    ranker_b = System(name='experimental_ranker_b', participant_id=user_part_b.id, type='RANK')
-    recommender_a = System(name='recom_tfidf', participant_id=user_part_a.id, type='REC')
-    recommender_b = System(name='experimental_recommender_b', participant_id=user_part_b.id, type='REC')
-    ranker_base_a = System(name='rank_elastic_base', participant_id=user_site_a.id, type='RANK')
-    ranker_base_b = System(name='baseline_ranker_b', participant_id=user_site_b.id, type='RANK')
-    recommender_base_a = System(name='recom_tfidf_base', participant_id=user_site_a.id, type='REC')
-    recommender_base_b = System(name='baseline_recommender_b', participant_id=user_site_b.id, type='REC')
+    ranker_a = System(status='running', name='rank_elastic', participant_id=user_part_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project')
+    ranker_b = System(status='submitted', name='experimental_ranker_b', participant_id=user_part_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project')
+    recommender_a = System(status='error', name='recom_tfidf', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project')
+    recommender_b = System(status='running', name='experimental_recommender_b', participant_id=user_part_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project')
+    ranker_base_a = System(status='running', name='rank_elastic_base', participant_id=user_site_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project')
+    ranker_base_b = System(status='running', name='baseline_ranker_b', participant_id=user_site_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project')
+    recommender_base_a = System(status='running', name='recom_tfidf_base', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project')
+    recommender_base_b = System(status='running', name='baseline_recommender_b', participant_id=user_site_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project')
 
     db.session.add_all([
         ranker_a,

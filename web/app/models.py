@@ -343,10 +343,16 @@ class System(db.Model):
     participant_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     type = db.Column(db.String(64), index=True)
     results = db.relationship('Result', backref='system', lazy='dynamic')
+    url = db.Column(db.String(64), index=False)
+    submitted = db.Column(db.String(64), index=False)
+    status = db.Column(db.String(64), index=False)
+
+
 
     @property
     def serialize(self):
         return {'id': self.id,
                 'name': self.name,
                 'participant_id': self.participant_id,
-                'type': self.type}
+                'type': self.type,
+                'url': self.url}

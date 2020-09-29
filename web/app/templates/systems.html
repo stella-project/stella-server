@@ -33,7 +33,16 @@
 
         {% for i in systems %}
             <tr>
+                {% if i.status == 'running' %}
                 <td scope="row"><span class="badge badge-success">running</span></td>
+                {% elif i.status == 'submitted' %}
+                <td scope="row"><span class="badge badge-secondary">submitted</span></td>
+                {% elif i.status == 'error' %}
+                <td scope="row"><span class="badge badge-danger">error</span></td>
+                {% else %}
+                <td scope="row"><span class="badge badge-danger">running</span></td>
+                {% endif %}
+
                 <td>{{ i.name  | replace("_"," ") }}</td>
                 <td>31.08.2020</td>
                 <td>7800</td>
@@ -46,8 +55,18 @@
                         unknown
                     {% endif %}
                 </td>
-                <td>Container</td>
-                <td><a href="https://github.com/stella-project">GitHub</a></td>
+
+                {% if i.submitted == 'TREC' %}
+                    <td>TREC file</td>
+                    <button class="btnTable"><i class="fa fa-file"></i></button>
+                {% elif i.submitted == 'DOCKER' %}
+                    <td>Docker Container</td>
+                    <td><a href="{{ i.url }}">GitHub</a></td>
+                {% else %}
+                    <td>unknown</td>
+                    <td>unknown</td>
+                {% endif %}
+
                 {% if current_user.role.name != 'Participant' %}
                     <td>
                         <button class="btnTable"><i class="fa fa-play"></i></button>
