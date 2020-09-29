@@ -105,7 +105,7 @@ def password():
     changePasswordForm = ChangePassword()
 
     if changePasswordForm.validate_on_submit():
-        user.email = changeEmailForm.email.data
+        user.password = changePasswordForm.password.data
         db.session.commit()
         flash('Password changed.')
 
