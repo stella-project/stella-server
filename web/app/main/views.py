@@ -67,9 +67,8 @@ def systems():
 @main.route('/download/<system>')
 @login_required
 def download(system):
-    if current_user.id == System.query.filter_by(id=system).all()[0].serialize['participant_id']:
-        results = Result.query.filter_by(system_id=system).all()
-        export = {'Results' : [r.serialize for r in results]}
+    if current_user.id == System.query.filter_by(id=system).all()[0].participant_id:
+        export = {'Results' : [r.serialize for r in Result.query.filter_by(system_id=system).all()]}
         return jsonify(export)
     else:
         return render_template('404.html'), 404
