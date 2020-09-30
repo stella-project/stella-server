@@ -46,8 +46,8 @@
                 {% endif %}
 
                 <td>{{ i.name  | replace("_"," ") }}</td>
-                <td>31.08.2020</td>
-                <td>7800</td>
+                <td>#Date goes here!</td>
+                <td>#Views go here!</td>
                 <td>
                     {% if i.type == 'RANK' %}
                         Ranking
@@ -96,6 +96,8 @@
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalExample">
                 submit new system
             </button>
+            <a href="{{ url_for('main.downloadAll') }}" class="btnTable" role="button"
+                   aria-disabled="true">Export All <i class="fa fa-file"></i></a>
         </div>
     </div>
 

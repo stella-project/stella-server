@@ -69,10 +69,20 @@ def systems():
 def download(system):
     if current_user.id == System.query.filter_by(id=system).all()[0].serialize['participant_id']:
         results = Result.query.filter_by(system_id=system).all()
-        out = {'Results' : [r.serialize for r in results]}
-        return jsonify(out)
+        export = {'Results' : [r.serialize for r in results]}
+        return jsonify(export)
     else:
         return render_template('404.html'), 404
+
+
+@main.route('/downloadall')
+@login_required
+def downloadAll():
+    systems = System.query.filter_by(participant_id=current_user.id).all()
+    export = {}
+    for system in systems:
+        export[system.name] = [r.serialize for r in Result.query.filter_by(system_id=system.id).all()]
+    return jsonify(export)
 
 
 """
