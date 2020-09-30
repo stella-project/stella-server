@@ -11,7 +11,7 @@ import json
 
 from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm
 
-from ..models import User, Session, System, Feedback, load_user
+from ..models import User, Session, System, Feedback, load_user, Result
 
 from ..dashboard import Dashboard
 from .. auth.forms import LoginForm
@@ -65,10 +65,14 @@ def systems():
 
 
 @main.route('/download/<system>')
+@login_required
 def download(system):
-    d = System.query.filter_by(name=system).all()[0]
-    print(d.serialize)
-    return jsonify(d.serialize)
+    if current_user.id == System.query.filter_by(id=system).all()[0].serialize['participant_id']:
+        results = Result.query.filter_by(system_id=system).all()
+        out = {'Results' : [r.serialize for r in results]}
+        return jsonify(out)
+    else:
+        return render_template('404.html'), 404
 
 
 """
