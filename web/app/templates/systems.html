@@ -22,8 +22,10 @@
             <th scope="col">System for</th>
             <th scope="col">Submitted as</th>
             <th scope="col">Info</th>
+            {% if current_user.role.name != 'Participant' %}
             <th scope="col">Stop</th>
             <th scope="col">Start</th>
+            {% endif %}
             <th scope="col">Delete</th>
             <th scope="col">Export</th>
         </tr>
@@ -79,7 +81,6 @@
                     <button class="btnTable"><i class="fa fa-trash"></i></button>
                 </td>
                 <td>
-{#                    <button class="btnTable"><i class="fa fa-file"></i></button>#}
                     <a href="{{ url_for('main.download', system=i.id) }}" class="btnTable" role="button"
                            aria-disabled="true"><i class="fa fa-file"></i></a>
                 </td>
