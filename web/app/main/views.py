@@ -1,4 +1,4 @@
-from flask import render_template, session, redirect, url_for, current_app, request, flash, jsonify
+from flask import render_template, session, redirect, url_for, current_app, request, flash, jsonify, send_from_directory
 from flask_login import current_user, login_user, login_required
 from werkzeug.utils import secure_filename
 from .. import db
@@ -9,7 +9,7 @@ import re
 from . import main
 import json
 
-from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm
+from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm, SubmitRanking
 
 from ..models import User, Session, System, Feedback, load_user, Result
 
@@ -58,10 +58,56 @@ def dashboard():
 @main.route('/systems', methods=['GET', 'POST'])
 @login_required
 def systems():
-    # systems = System.query.filter().distinct().all()
     systems = System.query.filter_by(participant_id=current_user.id).all()
-    form = SubmitSystem()
-    return render_template('systems.html', systems=systems, form=form, current_user=current_user)
+
+    formContainer = SubmitSystem()
+    formRanking = SubmitRanking()
+    if formRanking.validate_on_submit():
+        f = formRanking.upload.data
+        filename = secure_filename(f.filename)
+        file = f.read().decode("utf-8")
+        validate = file.split('\n')[:-1]
+        if all([
+            all([bool(re.match('^\d+[\s|\t]Q0[\s|\t]\w+[\s|\t]\d*[\s|\t]-?\d\.\d+[\s|\t]\w+', line)) for line in validate]),
+            all([True if int(validate[line].split(' ')[3]) == int(validate[line - 1].split(' ')[3]) + 1 else False for line in
+                 range(1, len(validate))]),
+            sorted([line.split(' ')[4] for line in validate], reverse=True)
+        ]):
+            if not os.path.exists('uploads'):
+                os.makedirs('uploads')
+            with open(os.path.join('uploads', filename), 'w') as outfile:
+                outfile.write(file)
+
+            systemname = formRanking.systemname.data
+            system = System(status='submitted', name=systemname, participant_id=current_user.id, type='RANK',
+                            submitted='TREC', url=filename)
+            db.session.add_all([system])
+            db.session.commit()
+
+            flash('Ranking submitted')
+            return redirect(url_for('main.systems'))
+        else:
+            flash('Validation failed')
+            return redirect(url_for('main.systems'))
+
+    if formContainer.validate_on_submit():
+        systemname = formContainer.systemname.data
+        system = System(status='submitted', name=systemname, participant_id=current_user.id, type='RANK',
+                          submitted='DOCKER')
+        db.session.add_all([system])
+        db.session.commit()
+        flash('Container submitted')
+        return redirect(url_for('main.systems'))
+
+    return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking, current_user=current_user)
+
+
+@main.route('/uploads/<path:filename>', methods=['GET', 'POST'])
+def downloadTREC(filename):
+    print(filename)
+    uploads = os.path.join(current_app.root_path, '../uploads')
+    print(uploads)
+    return send_from_directory(directory=uploads, filename=filename)
 
 
 @main.route('/download/<system>')

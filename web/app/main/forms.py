@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, SelectField, PasswordField
 from wtforms.validators import DataRequired, Length, Regexp, URL, Email, EqualTo
 from wtforms.fields.html5 import URLField
 from wtforms import ValidationError
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from ..models import User
 
 
@@ -51,4 +52,17 @@ class SubmitSystem(FlaskForm):
     GitHubUrl = URLField('URL', validators=[DataRequired(message="Enter URL Please"),
                                             URL(message="Enter Valid URL Please.")])
 
+    submit = SubmitField('Submit')
+
+
+class SubmitRanking(FlaskForm):
+    systemname = StringField('System Name', validators=[
+        DataRequired(), Length(1, 64),
+        Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+               'Systemname must have only letters, numbers, dots or '
+               'underscores')])
+    upload = FileField('image', validators=[
+        FileRequired(),
+        FileAllowed(['out', 'txt'], 'Images only!')
+    ])
     submit = SubmitField('Submit')
