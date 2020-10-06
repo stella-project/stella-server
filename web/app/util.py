@@ -1,5 +1,31 @@
 from .models import Role, System, User
+import yaml
 
+def makeComposeFile():
+    systems = System.query.filter_by().all()
+    compose = {'version': '3',
+               'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
+            'services': {
+                'app': {
+                    'build': './app', 'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
+                    'ports': ['8080:8000'],
+                    'depends_on': [system.name for system in systems],
+                    'networks': ['stella-shared']
+                    }
+                }
+            }
+    for system in systems:
+        compose['services'][str(system.name)] = {
+            'build' : system.url,
+            'container_name' : system.name,
+            'volumes' : ['./data/:/data/']
+        }
+
+    with open('docker-compose.yml', 'w') as file:
+        sort_file = yaml.dump(compose, file)
+        print(sort_file)
+
+    return file
 
 def setup_db(db):
     '''

@@ -17,6 +17,8 @@ from ..dashboard import Dashboard
 from .. auth.forms import LoginForm
 import plotly.offline
 
+from ..util import makeComposeFile
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = LoginForm()
@@ -222,3 +224,9 @@ def upload_files():
 @login_required
 def uploads():
     return render_template('upload.html', current_user=current_user)
+
+
+@main.route('/buildCompose')
+def build():
+    print(makeComposeFile())
+    return render_template('index.html')
