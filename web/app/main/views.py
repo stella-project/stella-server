@@ -91,13 +91,16 @@ def systems():
             return redirect(url_for('main.systems'))
 
     if formContainer.validate_on_submit():
-        systemname = formContainer.systemname.data
-        system = System(status='submitted', name=systemname, participant_id=current_user.id, type='RANK',
-                          submitted='DOCKER')
+        systemName = formContainer.systemname.data
+        systemUrl = formContainer.GitHubUrl.data
+        system = System(status='submitted', name=systemName, participant_id=current_user.id, type='RANK',
+                          submitted='DOCKER', url=systemUrl)
         db.session.add_all([system])
         db.session.commit()
         flash('Container submitted')
         return redirect(url_for('main.systems'))
+    else:
+        flash('Validation failed')
 
     return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking, current_user=current_user)
 
