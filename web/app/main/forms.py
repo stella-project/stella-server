@@ -26,7 +26,7 @@ class ChangeUsernameForm(FlaskForm):
 
 
 class ChangeEmailForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Length(1, 64),
+    email = StringField('E-Mail', validators=[DataRequired(), Length(1, 64),
                                              Email()])
     submit2 = SubmitField('change E-Mail')
 
@@ -38,7 +38,7 @@ class ChangeEmailForm(FlaskForm):
 class ChangePassword(FlaskForm):
     password = PasswordField('New Password', validators=[
         DataRequired(), EqualTo('password2', message='Passwords must match.')])
-    password2 = PasswordField('Confirm new password', validators=[DataRequired()])
+    password2 = PasswordField('Confirm new Password', validators=[DataRequired()])
     submit3 = SubmitField('Change Password')
 
 
