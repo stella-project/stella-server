@@ -65,4 +65,4 @@ class SubmitRanking(FlaskForm):
         FileRequired(),
         FileAllowed(['out', 'txt'], 'Images only!')
     ])
-    submit = SubmitField('Submit')
+    submit2 = SubmitField('Submit')

@@ -1,5 +1,6 @@
 from .models import Role, System, User
 import ruamel.yaml
+import re
 def makeComposeFile():
     systems = System.query.filter_by().all()
     compose = {'version': '3',
@@ -27,6 +28,7 @@ def makeComposeFile():
         yaml.dump(compose, file)
 
     return True
+
 
 def setup_db(db):
     '''

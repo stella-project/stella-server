@@ -17,6 +17,8 @@ from ..dashboard import Dashboard
 from .. auth.forms import LoginForm
 import plotly.offline
 
+from ..core.validator import Validator
+
 from ..util import makeComposeFile
 
 @main.route('/', methods=['GET', 'POST'])
@@ -64,17 +66,14 @@ def systems():
 
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
-    if formRanking.validate_on_submit():
+
+    if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
         filename = secure_filename(f.filename)
         file = f.read().decode("utf-8")
-        validate = file.split('\n')[:-1]
-        if all([
-            all([bool(re.match('^\d+[\s|\t]Q0[\s|\t]\w+[\s|\t]\d*[\s|\t]-?\d\.\d+[\s|\t]\w+', line)) for line in validate]),
-            all([True if int(validate[line].split(' ')[3]) == int(validate[line - 1].split(' ')[3]) + 1 else False for line in
-                 range(1, len(validate))]),
-            sorted([line.split(' ')[4] for line in validate], reverse=True)
-        ]):
+
+        if Validator().validate(file):
+
             if not os.path.exists('uploads'):
                 os.makedirs('uploads')
             with open(os.path.join('uploads', filename), 'w') as outfile:
@@ -92,7 +91,7 @@ def systems():
             flash('Validation failed')
             return redirect(url_for('main.systems'))
 
-    if formContainer.validate_on_submit():
+    if formContainer.submit.data and formContainer.validate():
         systemName = formContainer.systemname.data
         systemUrl = formContainer.GitHubUrl.data
         system = System(status='submitted', name=systemName, participant_id=current_user.id, type='RANK',
@@ -101,17 +100,13 @@ def systems():
         db.session.commit()
         flash('Container submitted')
         return redirect(url_for('main.systems'))
-    else:
-        flash('Validation failed')
 
     return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking, current_user=current_user)
 
 
 @main.route('/uploads/<path:filename>', methods=['GET', 'POST'])
 def downloadTREC(filename):
-    print(filename)
     uploads = os.path.join(current_app.root_path, '../uploads')
-    print(uploads)
     return send_from_directory(directory=uploads, filename=filename)
 
 
