@@ -7,7 +7,7 @@ def makeComposeFile():
             'services': {
                 'app': {
                     'build': './app', 'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
-                    'ports': "8080:8000",
+                    'ports': ["8080:8000"],
                     'depends_on': [system.name for system in systems],
                     'networks': ['stella-shared']
                     }
