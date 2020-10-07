@@ -24,10 +24,9 @@ def makeComposeFile():
     yaml.indent(sequence=4, offset=4)
 
     with open('docker-compose.yml', 'w') as file:
-        sort_file = yaml.dump(compose, file)
-        print(sort_file)
+        yaml.dump(compose, file)
 
-    return file
+    return True
 
 def setup_db(db):
     '''

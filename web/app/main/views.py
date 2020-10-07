@@ -228,5 +228,6 @@ def uploads():
 
 @main.route('/buildCompose')
 def build():
-    print(makeComposeFile())
+    if makeComposeFile():
+        flash('New "docker-compose.yaml" file created!')
     return render_template('index.html')
