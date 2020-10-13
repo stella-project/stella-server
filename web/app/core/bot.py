@@ -1,7 +1,8 @@
 import re
+import os
 
 
-class Validator:
+class Bot:
 
     def validate(self, TRECstr):
         print('validation started')
@@ -68,3 +69,32 @@ class Validator:
         if len(errorLog) == 0:
             print('validation successful')
             return True
+
+
+    def saveFile(self, TRECstr, filename):
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+        with open(os.path.join('uploads', filename), 'w') as outfile:
+            outfile.write(TRECstr)
+
+
+    def saveSplits(self, TRECstr, filename):
+        files = {}
+        lines = TRECstr.split('\n')[:-1]
+        for line in lines:
+            if '\t' in line:
+                fields = line.split('\t')
+            elif ' ' in line:
+                fields = line.split(' ')
+            else:
+                print('Error Line {} - Could not detect delimeter.\n'.format(str(lines.index(line) + 1)))
+
+            files.setdefault(fields[0], []).append(line)
+        if not os.path.exists(os.path.join('uploads', str(filename.split('.')[0]))):
+            os.makedirs(os.path.join('uploads', str(filename.split('.')[0])))
+        for file in files:
+            with open(os.path.join('uploads', str(filename.split('.')[0]),
+                                   str(filename.split('.')[0]) + '_' + file + '.txt'), 'w') as outfile:
+                for line in files[file]:
+                    outfile.write(line + '\n')
+        return files
