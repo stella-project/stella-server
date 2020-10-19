@@ -1,6 +1,9 @@
 import re
 import os
 
+from github import Github
+from datetime import datetime
+
 
 class Bot:
 
@@ -98,3 +101,21 @@ class Bot:
                 for line in files[file]:
                     outfile.write(line + '\n')
         return files
+
+    @staticmethod
+    def push_to_github(token, repo_name):
+        g = Github(token)
+        repo = g.get_user().get_repo(repo_name)
+
+        file = repo.get_contents('README.md')
+        readme_content = file.decoded_content.decode('utf-8')
+
+        commit_message = 'update at ' + str(datetime.now())
+        updated_readme_content = readme_content + '  \n' + str(datetime.now())
+        repo.update_file('README.md', commit_message, updated_readme_content, file.sha)
+
+    @staticmethod
+    def create_repo(token, repo_name, orga='stella-project'):
+        g = Github(token)
+        stella_project = g.get_organization(orga)
+        stella_project.create_repo(repo_name, private=True)
