@@ -1,6 +1,6 @@
 # YAML 1.2
 ---
-abstract: "STELLA Application is a multi-container flask application and provides an API for transforming the experimental components and feedback between sites and the lab Infrastructure."
+abstract: "STELLA Server is the central server of the STELLA infrastructure"
 authors: 
   -
     affiliation: "TH Köln - University of Applied Sciences, Germany"
