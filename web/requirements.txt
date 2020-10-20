@@ -15,4 +15,4 @@ flask-login
 flask-httpauth
 plotly
 email_validator
-pyyaml
+ruamel.yaml
