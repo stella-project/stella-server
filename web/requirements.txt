@@ -16,3 +16,4 @@ flask-httpauth
 plotly
 email_validator
 ruamel.yaml
+PyGithub
