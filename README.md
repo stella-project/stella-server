@@ -230,9 +230,17 @@ The payload should be provided as follows:
 }
 ```
 
-## miscellaneous
+## Miscellaneous
 
 run local postgres-db with:  
 ```
 docker run -d -p 5432:5432 --name my-postgres -e POSTGRES_PASSWORD=change-me postgres
 ```
+
+## Citation
+
+We provide citation information via the [CITATION file](./CITATION.cff). If you use `stella-server` in your work, please cite our repository as follows:
+
+> Schaer P, Schaible J, Garcia Castro LJ, Breuer T, Tavakolpoursaleh N, Wolff B. STELLA Search. Available at https://github.com/stella-project/stella-server/
+
+We recommend you include the retrieval date.
