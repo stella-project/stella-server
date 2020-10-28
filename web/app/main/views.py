@@ -14,12 +14,13 @@ from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmail
 from ..models import User, Session, System, Feedback, load_user, Result
 
 from ..dashboard import Dashboard
-from .. auth.forms import LoginForm
+from ..auth.forms import LoginForm
 import plotly.offline
 
 from ..core import bot
 
 from ..util import makeComposeFile
+
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -73,8 +74,8 @@ def systems():
         file = f.read().decode("utf-8")
 
         TREC = bot.Bot()
-
-        if TREC.validate(file):
+        hasErrors = TREC.validate(file)
+        if not hasErrors:
             TREC.saveFile(file, filename)
 
             systemname = formRanking.systemname.data
@@ -88,6 +89,9 @@ def systems():
             flash('Ranking submitted')
             return redirect(url_for('main.systems'))
         else:
+            flash(hasErrors)
+            for errorType in hasErrors:
+                flash(str(errorType.key()) + ' ' + str(len(hasErrors[errorType])))
             flash('Validation failed')
             return redirect(url_for('main.systems'))
 
@@ -95,13 +99,14 @@ def systems():
         systemName = formContainer.systemname.data
         systemUrl = formContainer.GitHubUrl.data
         system = System(status='submitted', name=systemName, participant_id=current_user.id, type='RANK',
-                          submitted='DOCKER', url=systemUrl)
+                        submitted='DOCKER', url=systemUrl)
         db.session.add_all([system])
         db.session.commit()
         flash('Container submitted')
         return redirect(url_for('main.systems'))
 
-    return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking, current_user=current_user)
+    return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking,
+                           current_user=current_user)
 
 
 @main.route('/uploads/<path:filename>', methods=['GET', 'POST'])
@@ -114,7 +119,13 @@ def downloadTREC(filename):
 @login_required
 def download(system):
     if current_user.id == System.query.filter_by(id=system).all()[0].participant_id:
-        export = {'Results' : [r.serialize for r in Result.query.filter_by(system_id=system).all()]}
+        export = {'Results': [{
+            'clicks': r.clicks,
+            'start': r.start,
+            'end': r.end,
+            'interleave': r.interleave
+        } for r in Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+            System, System.id == Session.system_ranking).filter(System.id == system).all()]}
         return jsonify(export)
     else:
         return render_template('404.html'), 404
@@ -126,7 +137,13 @@ def downloadAll():
     systems = System.query.filter_by(participant_id=current_user.id).all()
     export = {}
     for system in systems:
-        export[system.name] = [r.serialize for r in Result.query.filter_by(system_id=system.id).all()]
+        export[system.name] = [{
+            'clicks': r.clicks,
+            'start': r.start,
+            'end': r.end,
+            'interleave': r.interleave
+        } for r in Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+            System, System.id == Session.system_ranking).filter(System.id == system.id).all()]
     return jsonify(export)
 
 
@@ -134,6 +151,8 @@ def downloadAll():
 Multiple, prefilled forms in a single page workaround from: 
 https://stackoverflow.com/questions/18290142/multiple-forms-in-a-single-page-using-flask-and-wtforms?answertab=votes#tab-top
 """
+
+
 @main.route('/usersettings')
 @login_required
 def usersettings():
@@ -207,7 +226,8 @@ def upload_files():
         file = uploaded_file.read().decode("utf-8").split('\n')[:-1]
         if all([bool(re.match('^\d+\sQ0\s\w+\s\d*\s-?\d\.\d+\s\w+', line)) for line in file]):
             print('RegEx validated')
-            if all([True if int(file[line].split(' ')[3]) == int(file[line-1].split(' ')[3])+1 else False for line in range(1, len(file))]):
+            if all([True if int(file[line].split(' ')[3]) == int(file[line - 1].split(' ')[3]) + 1 else False for line
+                    in range(1, len(file))]):
                 print('rank validated')
                 if sorted([line.split(' ')[4] for line in file], reverse=True):
                     print('score validated')
