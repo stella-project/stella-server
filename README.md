@@ -247,5 +247,5 @@ We recommend you include the retrieval date.
 
 ## License
 
-`stella-server` is licensed under the [GNU GPLv3 license](https://github.com/stella-project/stella-server/blob/master/LICENSE). If you modify `stella-search` in any way, please link back to this repository.
+`stella-server` is licensed under the [GNU GPLv3 license](https://github.com/stella-project/stella-server/blob/master/LICENSE). If you modify `stella-server` in any way, please link back to this repository.
 
