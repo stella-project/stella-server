@@ -119,3 +119,26 @@ class Bot:
         g = Github(token)
         stella_project = g.get_organization(orga)
         stella_project.create_repo(repo_name, private=True)
+
+    @staticmethod
+    def create_new_precom_repo(token, repo_name, run_in):
+        g = Github(token)
+        user = g.get_user()
+        orga = 'stella-project'
+        stella_project = g.get_organization(orga)
+        repo = stella_project.get_repo('stella-app')
+
+        contents = repo.get_contents('rank_precom/')
+        head_query_file = [file for file in repo.get_contents('rank_precom/data/topic/') if file.name == 'head_queries_rnd1.xml'][0]
+        dockerfile = [file for file in contents if file.name == 'Dockerfile'][0]
+        app_py = [file for file in contents if file.name == 'app.py'][0]
+        requirements = [file for file in contents if file.name == 'requirements.txt'][0]
+
+        repo_name = repo_name + '_precom'
+        repo = stella_project.create_repo(repo_name, private=True)
+        repo.create_file('Dockerfile', 'add Dockerfile', dockerfile.decoded_content.decode('utf-8'))
+        repo.create_file('app.py', 'add app.py', app_py.decoded_content.decode('utf-8'))
+        repo.create_file('requirements.txt', 'add requirements.txt', requirements.decoded_content.decode('utf-8'))
+        repo.create_file('data/topic/head_queries_rnd1.xml', 'add head_queries_rnd1.xml',
+                         head_query_file.decoded_content.decode('utf-8'))
+        repo.create_file('data/run/run_rnd1.txt', 'add run file', run_in)
