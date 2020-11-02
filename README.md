@@ -244,3 +244,8 @@ We provide citation information via the [CITATION file](./CITATION.cff). If you 
 > Schaer P, Schaible J, Garcia Castro LJ, Breuer T, Tavakolpoursaleh N, Wolff B. STELLA Search. Available at https://github.com/stella-project/stella-server/
 
 We recommend you include the retrieval date.
+
+## License
+
+`stella-server` is licensed under the [GNU GPLv3 license](https://github.com/stella-project/stella-server/blob/master/LICENSE). If you modify `stella-search` in any way, please link back to this repository.
+
