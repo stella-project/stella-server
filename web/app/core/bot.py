@@ -77,11 +77,11 @@ class Bot:
                     errorLog.setdefault('rank', []).append(error)
                     continue
 
-                if not re.search("^[A-Za-z0-9-]{1,24}$", fields[2]):
-                    error = 'Error line {} - "Invalid docid {}"\n'.format(str(lines.index(line) + 1),
-                                                                          str(fields[2]))
-                    errorLog.setdefault('docid', []).append(error)
-                    continue
+                # if not re.search("^[A-Za-z0-9-]{1,24}$", fields[2]):
+                    # error = 'Error line {} - "Invalid docid {}"\n'.format(str(lines.index(line) + 1),
+                                                                          # str(fields[2]))
+                    # errorLog.setdefault('docid', []).append(error)
+                    # continue
 
             if len(errorLog) == 0:
                 return False
