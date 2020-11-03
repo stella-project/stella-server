@@ -21,7 +21,6 @@ class Bot:
                     message.append(errorLog[errorType][0])
             return message
 
-        print('validation started')
         errorLog = {}
         if TRECstr:
             lines = TRECstr.split('\n')[:-1]
@@ -85,12 +84,9 @@ class Bot:
                     continue
 
             if len(errorLog) == 0:
-                print('validation successful')
                 return False
         else:
-            print('TREC file is empty!')
             return 'TREC file is empty!'
-        print('validation failed')
         return errorMessage(errorLog)
 
 
