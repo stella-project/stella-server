@@ -73,10 +73,10 @@ def systems():
         filename = secure_filename(f.filename)
         file = f.read().decode("utf-8")
 
-        TREC = bot.Bot()
-        hasErrors = TREC.validate(file)
+        automator = bot.Bot()
+        hasErrors = automator.validate(file)
         if not hasErrors:
-            TREC.saveFile(file, filename)
+            automator.saveFile(file, filename)
 
             systemname = formRanking.systemname.data
             system = System(status='submitted', name=systemname, participant_id=current_user.id, type='RANK',
@@ -84,7 +84,7 @@ def systems():
             db.session.add_all([system])
             db.session.commit()
 
-            TREC.saveSplits(file, filename)
+            automator.saveSplits(file, filename)
 
             flash('Ranking submitted')
             return redirect(url_for('main.systems'))
