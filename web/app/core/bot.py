@@ -5,11 +5,24 @@ from github import Github
 from datetime import datetime
 
 
+
 class Bot:
 
     def validate(self, TRECstr):
+        def errorMessage(errorLog):
+            message = []
+            errorcount = sum([len(s) for s in errorLog])
+            message.append('Validation failed! There are {} errors in your file.'.format(errorcount))
+            for errorType in errorLog:
+                if len(errorLog[errorType]) > 1:
+                    message.append(
+                        errorLog[errorType][0] + ' and {} more lines.'.format(str(len(errorLog[errorType]) - 1)))
+                else:
+                    message.append(errorLog[errorType][0])
+            return message
+
         print('validation started')
-        errorLog = str()
+        errorLog = {}
         if TRECstr:
             lines = TRECstr.split('\n')[:-1]
             topics = {}
@@ -19,28 +32,32 @@ class Bot:
                 elif ' ' in line:
                     fields = line.split(' ')
                 else:
-                    errorLog += 'Error Line {} - Could not detect delimeter.\n'.format(str(lines.index(line) + 1))
+                    error = 'Error line {} - Could not detect delimeter\n'.format(str(lines.index(line) + 1))
+                    errorLog.setdefault('wrong delimeter', []).append(error)
                     continue
 
                 if lines.index(line) == 0:
                     runTag = fields[5]
 
                 if len(fields) != 6:
-                    errorLog += 'Error Line {} - Missing fields.\n'.format(str(lines.index(line) + 1))
+                    error = 'Error line {} - Missing fields\n'.format(str(lines.index(line) + 1))
+                    errorLog.setdefault('missing fields', []).append(error)
                     continue
 
                 if not re.search("^[A-Za-z0-9_.-]{1,24}$", fields[5]):
-                    errorLog += 'Error Line {} - Run tag {} is malformed.\n'.format(str(lines.index(line) + 1),
-                                                                                    str(fields[5]))
+                    error = 'Error line {} - Run tag {} is malformed\n'.format(str(lines.index(line) + 1),
+                                                                               str(fields[5]))
                     continue
                 else:
                     if not fields[5] == runTag:
-                        errorLog += 'Error Line {} - Run tag is inconsistent ({} and {}).\n'.format(
+                        error = 'Error line {} - Run tag is inconsistent ({} and {})\n'.format(
                             str(lines.index(line) + 1),
                             str(fields[5]), str(runTag))
+                        errorLog.setdefault('inconsistent run tag', []).append(error)
                         continue
                 if not fields[0].isdigit():
-                    errorLog += 'Error Line {} - Unknown topic {}.\n'.format(str(lines.index(line) + 1), str(fields[0]))
+                    error = 'Error line {} - Unknown topic {}\n'.format(str(lines.index(line) + 1), str(fields[0]))
+                    errorLog.setdefault('unknown topic', []).append(error)
                     continue
                 else:
                     if fields[0] not in topics:
@@ -50,28 +67,31 @@ class Bot:
                     # todo: Topic anzahl abgleichen
 
                 if 'Q0'.casefold() not in fields[1].casefold():
-                    errorLog += 'Error Line {} - "Field 2 is {} not "Q0".\n'.format(str(lines.index(line) + 1),
-                                                                                    str(fields[1]))
+                    error = 'Error line {} - "Field 2 is {} not "Q0"\n'.format(str(lines.index(line) + 1),
+                                                                               str(fields[1]))
+                    errorLog.setdefault('Q0', []).append(error)
                     continue
 
                 if not fields[3].isdigit():
-                    errorLog += 'Error Line {} - "Column 4 (rank) {} must be an integer".\n'.format(
+                    error = 'Error line {} - "Column 4 (rank) {} must be an integer"\n'.format(
                         str(lines.index(line) + 1), str(fields[3]))
+                    errorLog.setdefault('rank', []).append(error)
                     continue
 
                 if not re.search("^[A-Za-z0-9-]{1,24}$", fields[2]):
-                    errorLog += 'Error Line {} - "Invalid docid {}".\n'.format(str(lines.index(line) + 1),
-                                                                               str(fields[2]))
+                    error = 'Error line {} - "Invalid docid {}"\n'.format(str(lines.index(line) + 1),
+                                                                          str(fields[2]))
+                    errorLog.setdefault('docid', []).append(error)
                     continue
 
-            print(errorLog)
+            if len(errorLog) == 0:
+                print('validation successful')
+                return False
         else:
             print('TREC file is empty!')
-            return False
-
-        if len(errorLog) == 0:
-            print('validation successful')
-            return True
+            return 'TREC file is empty!'
+        print('validation failed')
+        return errorMessage(errorLog)
 
 
     def saveFile(self, TRECstr, filename):
