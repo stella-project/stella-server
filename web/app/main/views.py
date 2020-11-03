@@ -89,10 +89,7 @@ def systems():
             flash('Ranking submitted')
             return redirect(url_for('main.systems'))
         else:
-            flash(hasErrors)
-            for errorType in hasErrors:
-                flash(str(errorType.key()) + ' ' + str(len(hasErrors[errorType])))
-            flash('Validation failed')
+            flash(hasErrors, 'danger')
             return redirect(url_for('main.systems'))
 
     if formContainer.submit.data and formContainer.validate():

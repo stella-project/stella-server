@@ -11,8 +11,8 @@ class Bot:
     def validate(self, TRECstr):
         def errorMessage(errorLog):
             message = []
-            errorcount = sum([len(s) for s in errorLog])
-            message.append('Validation failed! There are {} errors in your file.'.format(errorcount))
+            errorcount = sum([len(errorLog[s]) for s in errorLog])
+            message.append('Validation failed! There are {} errors in your file.'.format(str(errorcount)))
             for errorType in errorLog:
                 if len(errorLog[errorType]) > 1:
                     message.append(
