@@ -125,9 +125,16 @@ class Session(db.Model):
             end = datetime.strptime(end_raw, "%Y-%m-%d %H:%M:%S")
 
         system_ranking = json_session.get('system_ranking', None)
-        system_ranking_id = System.query.filter_by(name=system_ranking).first().id
+        if system_ranking is not None:
+            system_ranking_id = System.query.filter_by(name=system_ranking).first().id
+        else:
+            system_ranking_id = None
+
         system_recommendation = json_session.get('system_recommendation', None)
-        system_recommendation_id = System.query.filter_by(name=system_recommendation).first().id
+        if system_recommendation is not None:
+            system_recommendation_id = System.query.filter_by(name=system_recommendation).first().id
+        else:
+            system_recommendation_id = None
 
         session = Session(site_user=site_user,
                           start=start,

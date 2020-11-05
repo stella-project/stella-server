@@ -22,7 +22,7 @@ class Dashboard:
             system_ids = Session.query.filter_by(site_id=user_id).with_entities(Session.system_recommendation).distinct().all() + Session.query.filter_by(site_id=user_id).with_entities(Session.system_ranking).distinct().all()
             self.systems = System.query.filter(System.id.in_([s[0] for s in system_ids])).all()
 
-        site_ids = Session.query.filter(Session.system_ranking.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all()
+        site_ids = Session.query.filter(Session.system_ranking.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all() + Session.query.filter(Session.system_recommendation.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all()
 
         if user_role_id == 1:  # user is admin
             self.sites = User.query.filter_by(role_id=3).distinct().all()

@@ -64,24 +64,37 @@ def setup_db(db):
 
     db.session.commit()
 
-    ranker_a = System(status='running', name='rank_elastic', participant_id=user_part_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
-    ranker_b = System(status='submitted', name='experimental_ranker_b', participant_id=user_part_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
-    recommender_a = System(status='error', name='recom_tfidf', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
-    recommender_b = System(status='running', name='experimental_recommender_b', participant_id=user_part_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
-    ranker_base_a = System(status='running', name='rank_elastic_base', participant_id=user_site_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
-    ranker_base_b = System(status='running', name='baseline_ranker_b', participant_id=user_site_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
-    recommender_base_a = System(status='running', name='recom_tfidf_base', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
-    recommender_base_b = System(status='running', name='baseline_recommender_b', participant_id=user_site_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
+    # ranker_a = System(status='running', name='rank_elastic', participant_id=user_part_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
+    # ranker_b = System(status='submitted', name='experimental_ranker_b', participant_id=user_part_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
+    # recommender_a = System(status='error', name='recom_tfidf', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
+    # recommender_b = System(status='running', name='experimental_recommender_b', participant_id=user_part_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
+    # ranker_base_a = System(status='running', name='rank_elastic_base', participant_id=user_site_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
+    # ranker_base_b = System(status='running', name='baseline_ranker_b', participant_id=user_site_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
+    # recommender_base_a = System(status='running', name='recom_tfidf_base', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
+    # recommender_base_b = System(status='running', name='baseline_recommender_b', participant_id=user_site_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
+
+    # db.session.add_all([
+    #     ranker_a,
+    #     ranker_b,
+    #     recommender_a,
+    #     recommender_b,
+    #     ranker_base_a,
+    #     ranker_base_b,
+    #     recommender_base_a,
+    #     recommender_base_b
+    # ])
+
+    ranker_a = System(status='running', name='rank_dummy', participant_id=user_part_a.id, type='RANK',
+                      submitted='DOCKER', url='https://github.com/stella-project')
+    ranker_base_a = System(status='running', name='rank_dummy_base', participant_id=user_site_a.id, type='RANK',
+                           submitted='DOCKER', url='https://github.com/stella-project')
+
+    recommender_a = System(status='running', name='gesis_rec_precom', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom')
+    recommender_base_a = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro')
 
     db.session.add_all([
-        ranker_a,
-        ranker_b,
         recommender_a,
-        recommender_b,
-        ranker_base_a,
-        ranker_base_b,
         recommender_base_a,
-        recommender_base_b
     ])
 
     db.session.commit()
