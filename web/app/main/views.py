@@ -250,10 +250,10 @@ def upload_files():
     return redirect(url_for('main.uploads'))
 
 
-@main.route('/upload')
-@login_required
-def uploads():
-    return render_template('upload.html', current_user=current_user)
+# @main.route('/upload')
+# @login_required
+# def uploads():
+#     return render_template('upload.html', current_user=current_user)
 
 
 @main.route('/buildCompose')
