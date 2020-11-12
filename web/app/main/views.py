@@ -143,13 +143,20 @@ def downloadAll():
     systems = System.query.filter_by(participant_id=current_user.id).all()
     export = {}
     for system in systems:
+
+        if system.type == 'REC':
+            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+                System, System.id == Session.system_recommendation).filter(System.id == system.id).all()
+        else:
+            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+                System, System.id == Session.system_ranking).filter(System.id == system.id).all()
+
         export[system.name] = [{
             'clicks': r.clicks,
             'start': r.start,
             'end': r.end,
             'interleave': r.interleave
-        } for r in Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-            System, System.id == Session.system_ranking).filter(System.id == system.id).all()]
+        } for r in feedbacks]
     return jsonify(export)
 
 
