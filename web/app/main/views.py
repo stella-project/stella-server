@@ -114,19 +114,21 @@ def downloadTREC(filename):
     return send_from_directory(directory=uploads, filename=filename)
 
 
-@main.route('/download/<system>')
+@main.route('/download/<system_id>')
 @login_required
-def download(system):
-    if current_user.id == System.query.filter_by(id=system).all()[0].participant_id:
+def download(system_id):
+    if current_user.id == System.query.filter_by(id=system_id).all()[0].participant_id:
 
-        if System.query.filter_by(id=system).first().type == 'REC':
+        system = System.query.filter_by(id=system_id).first()
+
+        if system.type == 'REC':
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-                System, System.id == Session.system_recommendation).filter(System.id == system).all()
+                System, System.id == Session.system_recommendation).filter(System.id == system_id).all()
         else:
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-                System, System.id == Session.system_ranking).filter(System.id == system).all()
+                System, System.id == Session.system_ranking).filter(System.id == system_id).all()
 
-        export = {'Results': [{
+        export = {system.name: [{
             'clicks': r.clicks,
             'start': r.start,
             'end': r.end,
