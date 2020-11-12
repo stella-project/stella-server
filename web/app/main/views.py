@@ -79,7 +79,8 @@ def systems():
             automator.saveFile(file, filename)
 
             systemname = formRanking.systemname.data
-            system = System(status='submitted', name=systemname, participant_id=current_user.id, type='RANK',
+            type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
+            system = System(status='submitted', name=systemname, participant_id=current_user.id, type=type,
                             submitted='TREC', url=filename)
             db.session.add_all([system])
             db.session.commit()
@@ -95,7 +96,8 @@ def systems():
     if formContainer.submit.data and formContainer.validate():
         systemName = formContainer.systemname.data
         systemUrl = formContainer.GitHubUrl.data
-        system = System(status='submitted', name=systemName, participant_id=current_user.id, type='RANK',
+        type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
+        system = System(status='submitted', name=systemName, participant_id=current_user.id, type=type,
                         submitted='DOCKER', url=systemUrl)
         db.session.add_all([system])
         db.session.commit()
