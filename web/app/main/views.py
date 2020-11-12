@@ -118,13 +118,20 @@ def downloadTREC(filename):
 @login_required
 def download(system):
     if current_user.id == System.query.filter_by(id=system).all()[0].participant_id:
+
+        if System.query.filter_by(id=system).first().type == 'REC':
+            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+                System, System.id == Session.system_recommendation).filter(System.id == system).all()
+        else:
+            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
+                System, System.id == Session.system_ranking).filter(System.id == system).all()
+
         export = {'Results': [{
             'clicks': r.clicks,
             'start': r.start,
             'end': r.end,
             'interleave': r.interleave
-        } for r in Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-            System, System.id == Session.system_ranking).filter(System.id == system).all()]}
+        } for r in feedbacks]}
         return jsonify(export)
     else:
         return render_template('404.html'), 404
