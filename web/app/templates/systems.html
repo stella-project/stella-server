@@ -19,15 +19,15 @@
             <th scope="col">Name</th>
             <th scope="col">Active since</th>
             <th scope="col">Views</th>
-            <th scope="col">System for</th>
-            <th scope="col">Submitted as</th>
+            <th scope="col">System type</th>
+            <th scope="col">Submission type</th>
             <th scope="col">Info</th>
             {% if current_user.role.name != 'Participant' %}
                 <th scope="col">Start</th>
                 <th scope="col">Stop</th>
             {% endif %}
             <th scope="col">Delete</th>
-            <th scope="col">Export</th>
+            <th scope="col">Feedback Data</th>
         </tr>
         </thead>
         <tbody>
@@ -36,19 +36,19 @@
         {% for i in systems %}
             <tr>
                 {% if i.status == 'running' %}
-                    <td scope="row"><span class="badge badge-success">running</span></td>
+                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-success">running</span></td>
                 {% elif i.status == 'submitted' %}
-                    <td scope="row"><span class="badge badge-secondary">submitted</span></td>
+                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-secondary">submitted</span></td>
                 {% elif i.status == 'error' %}
-                    <td scope="row"><span class="badge badge-danger">error</span></td>
+                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-danger">error</span></td>
                 {% else %}
-                    <td scope="row"><span class="badge badge-danger">running</span></td>
+                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-danger">running</span></td>
                 {% endif %}
 
-                <td>{{ i.name  | replace("_"," ") }}</td>
-                <td>#Date goes here!</td>
-                <td>#Views go here!</td>
-                <td>
+                <td style="text-align: center; vertical-align: middle;">{{ i.name  | replace("_"," ") }}</td>
+                <td style="text-align: center; vertical-align: middle;">#Date goes here!</td>
+                <td style="text-align: center; vertical-align: middle;">#Views go here!</td>
+                <td style="text-align: center; vertical-align: middle;">
                     {% if i.type == 'RANK' %}
                         Ranking
                     {% elif i.type == 'REC' %}
@@ -59,30 +59,30 @@
                 </td>
 
                 {% if i.submitted == 'TREC' %}
-                    <td>TREC file</td>
-                    <td><a href="{{ url_for('main.downloadTREC', filename=i.url) }}" class="btnTable" role="button"
+                    <td style="text-align: center; vertical-align: middle;">TREC file</td>
+                    <td style="text-align: center; vertical-align: middle;"><a href="{{ url_for('main.downloadTREC', filename=i.url) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-file"></i></a></td>
                 {% elif i.submitted == 'DOCKER' %}
-                    <td>Docker Container</td>
-                    <td><a href="{{ i.url }}">GitHub</a></td>
+                    <td style="text-align: center; vertical-align: middle;">Docker Container</td>
+                    <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}">GitHub</a></td>
                 {% else %}
                     <td>unknown</td>
                     <td>unknown</td>
                 {% endif %}
 
                 {% if current_user.role.name != 'Participant' %}
-                    <td>
+                    <td style="text-align: center; vertical-align: middle;">
                         <button class="btnTable"><i class="fa fa-play"></i></button>
                     </td>
-                    <td>
+                    <td style="text-align: center; vertical-align: middle;">
                         <button class="btnTable"><i class="fa fa-stop"></i></button>
                     </td>
                 {% endif %}
-                <td>
+                <td style="text-align: center; vertical-align: middle;">
                     <button class="btnTable"><i class="fa fa-trash"></i></button>
                 </td>
-                <td>
-                    <a href="{{ url_for('main.download', system=i.id) }}" class="btnTable" role="button"
+                <td style="text-align: center; vertical-align: middle;">
+                    <a href="{{ url_for('main.download', system_id=i.id) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-file"></i></a>
                 </td>
             </tr>
@@ -93,15 +93,19 @@
     </table>
 
     <div class="row border">
-        <div class="col-md-12 text-center">
+        <div class="col-md-4 text-center">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalContainer">
-                submit new system
+                register docker system
             </button>
+        </div>
+        <div class="col-md-4 text-center">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalTREC">
-                submit new ranking
+                submit run file
             </button>
-            <a href="{{ url_for('main.downloadAll') }}" class="btnTable" role="button"
-               aria-disabled="true">Export All <i class="fa fa-file"></i></a>
+        </div>
+        <div class="col-md-4 text-center">
+            <a href="{{ url_for('main.downloadAll') }}" class="btn btn-primary btn-lg" role="button"
+               aria-disabled="true">Feedback Data (Bulk) <i class="fa fa-file"></i></a>
         </div>
     </div>
 
