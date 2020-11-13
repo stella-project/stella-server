@@ -5,4 +5,4 @@ web/migrations/
 web/migrations/*
 trecos/*
 *.sqlite
-
+web/uploads/*
