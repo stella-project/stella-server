@@ -4,6 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-do-not-know'
+    AUTOMATOR_GH_KEY = os.environ.get('AUTOMATOR_GH_KEY') or None
 
     @staticmethod
     def init_app(app):

@@ -153,24 +153,33 @@ class Bot:
         stella_project.create_repo(repo_name, private=True)
 
     @staticmethod
-    def create_new_precom_repo(token, repo_name, run_in):
+    def create_precom_repo(token, repo_name, run_tar_in, type):
         g = Github(token)
-        user = g.get_user()
-        orga = 'stella-project'
-        stella_project = g.get_organization(orga)
-        repo = stella_project.get_repo('stella-app')
+        orga_name = 'stella-project'
+        stella_project = g.get_organization(orga_name)
+        template = stella_project.get_repo('stella-micro-template-precom')
+        repo = stella_project.create_repo(repo_name + '_precom', private=True)
 
-        contents = repo.get_contents('rank_precom/')
-        head_query_file = [file for file in repo.get_contents('rank_precom/data/topic/') if file.name == 'head_queries_rnd1.xml'][0]
-        dockerfile = [file for file in contents if file.name == 'Dockerfile'][0]
-        app_py = [file for file in contents if file.name == 'app.py'][0]
-        requirements = [file for file in contents if file.name == 'requirements.txt'][0]
+        for file in template.get_contents('.'):
+            filename = file.name
+            if filename not in ['test', 'precom']:
+                commit_msg = 'add ' + filename
+                repo.create_file(filename, commit_msg, file.decoded_content.decode('utf-8'))
 
-        repo_name = repo_name + '_precom'
-        repo = stella_project.create_repo(repo_name, private=True)
-        repo.create_file('Dockerfile', 'add Dockerfile', dockerfile.decoded_content.decode('utf-8'))
-        repo.create_file('app.py', 'add app.py', app_py.decoded_content.decode('utf-8'))
-        repo.create_file('requirements.txt', 'add requirements.txt', requirements.decoded_content.decode('utf-8'))
-        repo.create_file('data/topic/head_queries_rnd1.xml', 'add head_queries_rnd1.xml',
-                         head_query_file.decoded_content.decode('utf-8'))
-        repo.create_file('data/run/run_rnd1.txt', 'add run file', run_in)
+        for test_file in template.get_contents('test'):
+            filename = test_file.name
+            commit_msg = 'add ' + filename
+            repo.create_file('test/'+filename, commit_msg, test_file.decoded_content.decode('utf-8'))
+
+        repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
+        repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
+        repo.create_file('precom/rec/publications/.gitkeep', 'add rec pub dir', " ")
+
+        if type == 'RANK':
+            run_tar_path = 'precom/rank/run.tar.gz'
+        if type == 'REC':
+            run_tar_path = 'precom/rec/datasets/run.tar.gz'
+        with open(run_tar_in, 'rb') as run_in:
+            repo.create_file(run_tar_path, 'add run.tar.gz', run_in.read())
+
+        return repo.html_url

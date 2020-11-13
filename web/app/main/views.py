@@ -76,12 +76,23 @@ def systems():
         filename = secure_filename(f.filename)
         subdir = automator.saveFile(f, filename)
         if not hasErrors:
+
             tar_path = automator.compressFile(subdir)
-            # gh_url = automator.commit_to_gh(tar_path)
+
             systemname = formRanking.systemname.data
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
-            system = System(status='submitted', name=systemname, participant_id=current_user.id, type=type,
-                            submitted='TREC', url=filename)
+
+            if current_app.config['AUTOMATOR_GH_KEY']:
+                gh_url = automator.create_precom_repo(token=current_app.config['AUTOMATOR_GH_KEY'],
+                                                      repo_name=systemname,
+                                                      run_tar_in=tar_path,
+                                                      type=type)
+            else:
+                gh_url = 'http://github.com/stella-project'
+
+            system = System(status='submitted', name=systemname,
+                            participant_id=current_user.id, type=type,
+                            submitted='TREC', url=gh_url)
             db.session.add_all([system])
             db.session.commit()
 
