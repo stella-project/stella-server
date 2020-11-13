@@ -17,7 +17,7 @@ from ..dashboard import Dashboard
 from ..auth.forms import LoginForm
 import plotly.offline
 
-from ..core import bot
+from ..core.bot import Bot
 
 from ..util import makeComposeFile
 
@@ -67,17 +67,17 @@ def systems():
 
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
+    automator = Bot()
 
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
+        # hasErrors = automator.validate(f)
+        hasErrors = False
         filename = secure_filename(f.filename)
-        file = f.read().decode("utf-8")
-
-        automator = bot.Bot()
-        hasErrors = automator.validate(file)
+        subdir = automator.saveFile(f, filename)
         if not hasErrors:
-            automator.saveFile(file, filename)
-
+            tar_path = automator.compressFile(subdir)
+            # gh_url = automator.commit_to_gh(tar_path)
             systemname = formRanking.systemname.data
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
             system = System(status='submitted', name=systemname, participant_id=current_user.id, type=type,
@@ -85,9 +85,9 @@ def systems():
             db.session.add_all([system])
             db.session.commit()
 
-            automator.saveSplits(file, filename)
+            # automator.saveSplits(file, filename)
 
-            flash('Ranking submitted')
+            flash('Run file submitted')
             return redirect(url_for('main.systems'))
         else:
             flash(hasErrors, 'danger')

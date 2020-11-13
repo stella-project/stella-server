@@ -4,7 +4,7 @@ import os
 from github import Github
 from datetime import datetime
 
-
+from ..util import make_tarfile
 
 class Bot:
 
@@ -23,7 +23,8 @@ class Bot:
 
         errorLog = {}
         if TRECstr:
-            lines = TRECstr.split('\n')[:-1]
+            TRECstr_decoded = TRECstr.read().decode("utf-8")
+            lines = TRECstr_decoded.split('\n')[:-1]
             topics = {}
             for line in lines:
                 if '\t' in line:
@@ -89,12 +90,27 @@ class Bot:
             return 'TREC file is empty!'
         return errorMessage(errorLog)
 
+    def compressFile(self, subdir):
 
-    def saveFile(self, TRECstr, filename):
+        input = os.path.join(subdir, 'run.txt')
+        output = os.path.join(subdir, 'run.tar.gz')
+        make_tarfile(output, input)
+        return output
+
+    def saveFile(self, file, filename):
         if not os.path.exists('uploads'):
             os.makedirs('uploads')
-        with open(os.path.join('uploads', filename), 'w') as outfile:
-            outfile.write(TRECstr)
+
+        subdir = os.path.join('uploads', filename)
+        if not os.path.exists(subdir):
+            os.makedirs(subdir)
+
+        run_path = os.path.join(subdir, 'run.txt')
+
+        file.save(run_path)
+
+        return subdir
+
 
 
     def saveSplits(self, TRECstr, filename):
