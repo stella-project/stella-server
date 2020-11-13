@@ -6,6 +6,10 @@ from datetime import datetime
 
 from ..util import make_tarfile
 
+from ..models import System
+import ruamel.yaml
+
+
 class Bot:
 
     def validate(self, TRECstr):
@@ -183,3 +187,64 @@ class Bot:
             repo.create_file(run_tar_path, 'add run.tar.gz', run_in.read())
 
         return repo.html_url
+
+    @staticmethod
+    def update_stella_app(type='all', token=None):
+
+        yml_path = 'uploads/docker-compose.yml'
+
+        if type == 'all':
+            systems = System.query.filter_by().all()
+            repo_name = 'stella-app'
+        if type == 'rec':
+            systems = System.query.filter_by(type='REC').all()
+            repo_name = 'stella-app'
+        if type == 'rank':
+            systems = System.query.filter_by(type='RANK').all()
+            repo_name = 'stella-app'
+
+        compose = {'version': '3',
+                   'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
+                   'services': {
+                       'app': {
+                           'build': './app',
+                           'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
+                           'ports': ["8080:8000"],
+                           'depends_on': [system.name for system in systems],
+                           'networks': ['stella-shared']
+                     }
+                    }
+                   }
+
+        for system in systems:
+            compose['services'][str(system.name)] = {
+                'build': system.url,
+                'container_name': system.name,
+                'volumes': ['./data/:/data/'],
+                'networks': ['stella-shared']
+            }
+
+        yaml = ruamel.yaml.YAML()
+        yaml.indent(sequence=4, offset=4)
+
+        with open(yml_path, 'w') as file:
+            yaml.dump(compose, file)
+
+        with open(yml_path) as yml_in:
+            updated_content = yml_in.read()
+            print(updated_content)
+
+        if token:
+            g = Github(token)
+            orga_name = 'stella-project'
+            stella_project = g.get_organization(orga_name)
+            stella_app = stella_project.get_repo(repo_name)
+
+            file = stella_app.get_contents('docker-compose.yml')
+
+            commit_message = 'automatic update'
+
+            with open(yml_path) as yml_in:
+                updated_content = yml_in.read()
+
+            stella_app.update_file('docker-compose.yml', commit_message, updated_content, file.sha)

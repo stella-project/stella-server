@@ -44,6 +44,9 @@
                         <li><a href="{{ url_for('main.dashboard') }}">Dashboard</a></li>
                         <li><a href="{{ url_for('main.systems') }}">Systems</a></li>
                         {# <li><a href="{{ url_for('main.uploads') }}">Upload</a></li> #}
+                        {% if current_user.role_id == 1 %}
+                            <li><a href="{{ url_for('main.administration') }}">Administration</a></li>
+                        {% endif %}
                     {% endif %}
                 </ul>
                 <ul class="nav navbar-nav navbar-right">

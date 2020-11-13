@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+
+{% block title %}STELLA User{% endblock %}
+
+{% block page_content %}
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <div class="page-header">
+        <h1>STELLA app updates</h1>
+    </div>
+
+    <div class="row border">
+        <div class="col-md-4 text-center">
+             <a href="{{ url_for('main.update_stella_app') }}" class="btn btn-primary btn-lg" role="button"
+               aria-disabled="true"><i class="fa fa-refresh"></i> Update STELLA App </a>
+        </div>
+        <div class="col-md-4 text-center">
+             <a href="{{ url_for('main.update_stella_app_gesis') }}" class="btn btn-primary btn-lg" role="button"
+               aria-disabled="true"><i class="fa fa-refresh"></i> Update STELLA App (GESIS)</a>
+        </div>
+        <div class="col-md-4 text-center">
+             <a href="{{ url_for('main.update_stella_app_livivo') }}" class="btn btn-primary btn-lg" role="button"
+               aria-disabled="true"><i class="fa fa-refresh"></i> Update STELLA App (LIVIVO)</a>
+        </div>
+    </div>
+
+    <footer>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.css">
+    </footer>
+    <style>
+        .badge-success {
+            background-color: green;
+        }
+
+        .badge-danger {
+            background-color: darkred;
+        }
+
+        .btnTable {
+            color: #fff;
+            display: inline-block;
+            line-height: 2.5;
+            padding: 0.115em 15px;
+            transition: .3s ease;
+            background: #525e8b;
+            border-color: #525e8b;
+        }
+
+        .btnTable:hover {
+            background: 0;
+            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            border: 2px solid;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 14px;
+            line-height: 2.5;
+            padding: 0.115em 15px;
+            border-color: #525e8b;
+            color: #201c2d;
+            transition: .3s ease;
+
+        }
+
+        .btn {
+            border-radius: 0px;
+            box-sizing: border-box;
+            color: #fff;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            letter-spacing: 0.075em;
+            line-height: 2.5;
+            padding: 0.25em 35px;
+            text-transform: uppercase;
+            transition: .3s ease;
+            background: #525e8b;
+            border-color: #525e8b;
+            margin-right: 15px;
+            border: 2px;
+            font-family: "Roboto", "Helvetica Neue", Helvetica, sans-serif;
+        }
+
+        .btn:hover {
+            background: 0;
+            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            border: 2px solid;
+            border-radius: 0px;
+            box-sizing: border-box;
+            display: inline-block;
+            font-size: 14px;
+            height: 3em;
+            padding: 0.25em 35px;
+            letter-spacing: 0.075em;
+            border-color: #525e8b;
+            color: #201c2d;
+            outline: 0;
+            text-transform: uppercase;
+            transition: .3s ease;
+
+        }
+    </style>
+
+{% endblock %}

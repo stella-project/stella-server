@@ -118,6 +118,10 @@ def systems():
     return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking,
                            current_user=current_user)
 
+@main.route('/administration')
+@login_required
+def administration():
+    return render_template('administration.html', current_user=current_user)
 
 @main.route('/uploads/<path:filename>', methods=['GET', 'POST'])
 def downloadTREC(filename):
@@ -272,3 +276,24 @@ def build():
     if makeComposeFile():
         flash('New "docker-compose.yaml" file created!')
     return render_template('index.html')
+
+
+@main.route('/stella-app/update')
+def update_stella_app():
+    Bot.update_stella_app(type='all', token=current_app.config['AUTOMATOR_GH_KEY'])
+    flash('Updated STELLA app!')
+    return render_template('administration.html')
+
+
+@main.route('/stella-app/update/gesis')
+def update_stella_app_gesis():
+    Bot.update_stella_app(type='rec', token=current_app.config['AUTOMATOR_GH_KEY'])
+    flash('Updated STELLA app for GESIS!')
+    return render_template('administration.html')
+
+
+@main.route('/stella-app/update/livivo')
+def update_stella_app_livivo():
+    Bot.update_stella_app(type='rank', token=current_app.config['AUTOMATOR_GH_KEY'])
+    flash('Updated STELLA app for LIVIVO!')
+    return render_template('administration.html')
