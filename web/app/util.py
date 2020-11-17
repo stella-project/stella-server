@@ -56,8 +56,8 @@ def setup_db(db):
     user_admin = User(username='stella-admin', email='admin@stella.org', role=admin_role, password='pass')
     user_part_a = User(username='participant_a', email='participant_a@stella.org', role=participant_role, password='pass')
     user_part_b = User(username='participant_b', email='participant_b@stella.org', role=participant_role, password='pass')
-    user_site_a = User(username='site_a', email='site_a@stella.org', role=site_role, password='pass')
-    user_site_b = User(username='site_b', email='site_b@stella.org', role=site_role, password='pass')
+    user_site_a = User(username='GESIS', email='gesis@stella.org', role=site_role, password='pass')
+    user_site_b = User(username='LIVIVO', email='livivo@stella.org', role=site_role, password='pass')
 
     db.session.add_all([
         admin_role,
@@ -93,14 +93,20 @@ def setup_db(db):
     # ])
 
     ranker_a = System(status='running', name='rank_dummy', participant_id=user_part_a.id, type='RANK',
-                      submitted='DOCKER', url='https://github.com/stella-project')
+                      submitted='DOCKER', url='https://github.com/stella-project', site=user_site_b.id)
     ranker_base_a = System(status='running', name='rank_dummy_base', participant_id=user_site_a.id, type='RANK',
-                           submitted='DOCKER', url='https://github.com/stella-project')
+                           submitted='DOCKER', url='https://github.com/stella-project', site=user_site_b.id)
 
-    recommender_a = System(status='running', name='gesis_rec_precom', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom')
-    recommender_base_a = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro')
+    recommender_a = System(status='running', name='gesis_rec_precom', participant_id=user_part_a.id,
+                           type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom',
+                           site=user_site_a.id)
+    recommender_base_a = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id,
+                                type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro',
+                                site=user_site_a.id)
 
     db.session.add_all([
+        ranker_a,
+        ranker_base_a,
         recommender_a,
         recommender_base_a,
     ])

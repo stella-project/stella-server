@@ -11,7 +11,7 @@ import json
 
 from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm, SubmitRanking
 
-from ..models import User, Session, System, Feedback, load_user, Result
+from ..models import User, Session, System, Feedback, Role, load_user
 
 from ..dashboard import Dashboard
 from ..auth.forms import LoginForm
@@ -63,7 +63,17 @@ def dashboard():
 @main.route('/systems', methods=['GET', 'POST'])
 @login_required
 def systems():
-    systems = System.query.filter_by(participant_id=current_user.id).all()
+
+    user_role = current_user.role_id
+
+    if user_role == Role.query.filter_by(name='Admin').first().id:
+        systems = System.query.filter_by().all()
+
+    if user_role == Role.query.filter_by(name='Participant').first().id:
+        systems = System.query.filter_by(participant_id=current_user.id).all()
+
+    if user_role == Role.query.filter_by(name='Site').first().id:
+        systems = System.query.filter_by(site=current_user.id).all()
 
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
@@ -81,7 +91,8 @@ def systems():
 
             systemname = formRanking.systemname.data
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
-
+            site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(
+                username='LIVIVO').first().id
             if current_app.config['AUTOMATOR_GH_KEY']:
                 gh_url = automator.create_precom_repo(token=current_app.config['AUTOMATOR_GH_KEY'],
                                                       repo_name=systemname,
@@ -92,7 +103,7 @@ def systems():
 
             system = System(status='submitted', name=systemname,
                             participant_id=current_user.id, type=type,
-                            submitted='TREC', url=gh_url)
+                            submitted='TREC', url=gh_url, site=site)
             db.session.add_all([system])
             db.session.commit()
 
@@ -108,8 +119,9 @@ def systems():
         systemName = formContainer.systemname.data
         systemUrl = formContainer.GitHubUrl.data
         type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
+        site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(username='LIVIVO').first().id
         system = System(status='submitted', name=systemName, participant_id=current_user.id, type=type,
-                        submitted='DOCKER', url=systemUrl)
+                        submitted='DOCKER', url=systemUrl, site=site)
         db.session.add_all([system])
         db.session.commit()
         flash('Container submitted')

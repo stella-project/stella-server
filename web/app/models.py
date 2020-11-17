@@ -361,6 +361,7 @@ class System(db.Model):
     url = db.Column(db.String(64), index=False)
     submitted = db.Column(db.String(64), index=False)
     status = db.Column(db.String(64), index=False)
+    site = db.Column(db.Integer, index=False)
 
 
 
