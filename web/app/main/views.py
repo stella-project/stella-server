@@ -317,7 +317,7 @@ def update_stella_app_livivo():
 
 
 @main.route('/system/<int:id>/start')
-def start(id):
+def activate(id):
     flash('Started system.')
     user_role = current_user.role_id
 
@@ -334,7 +334,7 @@ def start(id):
 
 
 @main.route('/system/<int:id>/stop')
-def stop(id):
+def deactivate(id):
     flash('Stopped system.')
 
     system = System.query.filter_by(id=id).first()
