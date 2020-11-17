@@ -22,6 +22,19 @@ from ..core.bot import Bot
 from ..util import makeComposeFile
 
 
+def get_systems(current_user):
+    user_role = current_user.role_id
+
+    if user_role == Role.query.filter_by(name='Admin').first().id:
+        return System.query.filter_by().all()
+
+    if user_role == Role.query.filter_by(name='Participant').first().id:
+        return System.query.filter_by(participant_id=current_user.id).all()
+
+    if user_role == Role.query.filter_by(name='Site').first().id:
+        return System.query.filter_by(site=current_user.id).all()
+
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
     form = LoginForm()
@@ -63,17 +76,7 @@ def dashboard():
 @main.route('/systems', methods=['GET', 'POST'])
 @login_required
 def systems():
-
-    user_role = current_user.role_id
-
-    if user_role == Role.query.filter_by(name='Admin').first().id:
-        systems = System.query.filter_by().all()
-
-    if user_role == Role.query.filter_by(name='Participant').first().id:
-        systems = System.query.filter_by(participant_id=current_user.id).all()
-
-    if user_role == Role.query.filter_by(name='Site').first().id:
-        systems = System.query.filter_by(site=current_user.id).all()
+    systems = get_systems(current_user)
 
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
@@ -130,10 +133,12 @@ def systems():
     return render_template('systems.html', systems=systems, formContainer=formContainer, formRanking=formRanking,
                            current_user=current_user)
 
+
 @main.route('/administration')
 @login_required
 def administration():
     return render_template('administration.html', current_user=current_user)
+
 
 @main.route('/uploads/<path:filename>', methods=['GET', 'POST'])
 def downloadTREC(filename):
@@ -309,3 +314,36 @@ def update_stella_app_livivo():
     Bot.update_stella_app(type='rank', token=current_app.config['AUTOMATOR_GH_KEY'])
     flash('Updated STELLA app for LIVIVO!')
     return render_template('administration.html')
+
+
+@main.route('/system/<int:id>/start')
+def start(id):
+    flash('Started system.')
+    user_role = current_user.role_id
+
+    system = System.query.filter_by(id=id).first()
+    system.status = 'running'
+    db.session.add_all([system])
+    db.session.commit()
+
+    return render_template('systems.html',
+                           systems=get_systems(current_user),
+                           formContainer=SubmitSystem(),
+                           formRanking=SubmitRanking(),
+                           current_user=current_user)
+
+
+@main.route('/system/<int:id>/stop')
+def stop(id):
+    flash('Stopped system.')
+
+    system = System.query.filter_by(id=id).first()
+    system.status = 'submitted'
+    db.session.add_all([system])
+    db.session.commit()
+
+    return render_template('systems.html',
+                           systems=get_systems(current_user),
+                           formContainer=SubmitSystem(),
+                           formRanking=SubmitRanking(),
+                           current_user=current_user)

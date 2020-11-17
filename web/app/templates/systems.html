@@ -23,8 +23,8 @@
             <th scope="col" style="text-align: center; vertical-align: middle;">Submission type</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Repository</th>
             {% if current_user.role.name != 'Participant' %}
-                <th scope="col">Start</th>
-                <th scope="col">Stop</th>
+                <th scope="col" style="text-align: center; vertical-align: middle;">Start</th>
+                <th scope="col" style="text-align: center; vertical-align: middle;">Stop</th>
             {% endif %}
             <th scope="col" style="text-align: center; vertical-align: middle;">Delete</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Feedback Data</th>
@@ -81,10 +81,12 @@
 
                 {% if current_user.role.name != 'Participant' %}
                     <td style="text-align: center; vertical-align: middle;">
-                        <button class="btnTable"><i class="fa fa-play"></i></button>
+                        <a href="{{ url_for('main.start', id=i.id) }}" class="btnTable" role="button"
+                       aria-disabled="true"><i class="fa fa-play"></i></a>
                     </td>
                     <td style="text-align: center; vertical-align: middle;">
-                        <button class="btnTable"><i class="fa fa-stop"></i></button>
+                        <a href="{{ url_for('main.stop', id=i.id) }}" class="btnTable" role="button"
+                       aria-disabled="true"><i class="fa fa-stop"></i></a>
                     </td>
                 {% endif %}
                 <td style="text-align: center; vertical-align: middle;">
