@@ -194,13 +194,13 @@ class Bot:
         yml_path = 'uploads/docker-compose.yml'
 
         if type == 'all':
-            systems = System.query.filter_by().all()
+            systems = System.query.filter_by(status='running').all()
             repo_name = 'stella-app'
         if type == 'rec':
-            systems = System.query.filter_by(type='REC').all()
+            systems = System.query.filter_by(type='REC', status='running').all()
             repo_name = 'stella-app'
         if type == 'rank':
-            systems = System.query.filter_by(type='RANK').all()
+            systems = System.query.filter_by(type='RANK', status='running').all()
             repo_name = 'stella-app'
 
         compose = {'version': '3',
