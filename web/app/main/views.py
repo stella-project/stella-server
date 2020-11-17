@@ -84,7 +84,7 @@ def systems():
 
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
-        # hasErrors = automator.validate(f)
+        # hasErrors = automator.validate(f, k=1500)
         hasErrors = False
         filename = secure_filename(f.filename)
         subdir = automator.saveFile(f, filename)

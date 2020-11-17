@@ -1,5 +1,6 @@
 import re
 import os
+import random
 
 from github import Github
 from datetime import datetime
@@ -11,88 +12,86 @@ import ruamel.yaml
 
 
 class Bot:
-
-    def validate(self, TRECstr):
-        def errorMessage(errorLog):
+    def validate(self, ranking_str, k=None):
+        def _construct_error_string(error_log):
             message = []
-            errorcount = sum([len(errorLog[s]) for s in errorLog])
-            message.append('Validation failed! There are {} errors in your file.'.format(str(errorcount)))
-            for errorType in errorLog:
-                if len(errorLog[errorType]) > 1:
+            error_count = sum([len(error_log[s]) for s in error_log])
+            message.append('There are {} errors in your file:\n'.format(str(error_count)))
+            for error_type in error_log:
+                if len(error_log[error_type]) > 1:
                     message.append(
-                        errorLog[errorType][0] + ' and {} more lines.'.format(str(len(errorLog[errorType]) - 1)))
+                        error_log[error_type][0] + ' and {} more lines.\n'.format(str(len(error_log[error_type]) - 1)))
                 else:
-                    message.append(errorLog[errorType][0])
+                    message.append(error_log[error_type][0] + '\n')
             return message
 
-        errorLog = {}
-        if TRECstr:
-            TRECstr_decoded = TRECstr.read().decode("utf-8")
-            lines = TRECstr_decoded.split('\n')[:-1]
-            topics = {}
-            for line in lines:
+        error_log = {}
+        run_tag = {}
+        topics = {}
+        samples = []
+        if ranking_str:
+            ranking_str_decodet = ranking_str.read().decode("utf-8")
+            lines = ranking_str_decodet.split('\n')[:-1]
+            if k:
+                for _ in range(0, k):
+                    s = lines[random.randint(0, len(lines) - 1)]
+                    samples.append(s)
+            else:
+                samples = lines
+
+            for line in samples:
                 if '\t' in line:
                     fields = line.split('\t')
                 elif ' ' in line:
                     fields = line.split(' ')
                 else:
-                    error = 'Error line {} - Could not detect delimeter\n'.format(str(lines.index(line) + 1))
-                    errorLog.setdefault('wrong delimeter', []).append(error)
+                    error_log.setdefault('wrong delimeter', []).append(
+                        'Error line {} - Could not detect delimeter'.format(str(lines.index(line) + 1)))
                     continue
-
-                if lines.index(line) == 0:
-                    runTag = fields[5]
 
                 if len(fields) != 6:
-                    error = 'Error line {} - Missing fields\n'.format(str(lines.index(line) + 1))
-                    errorLog.setdefault('missing fields', []).append(error)
+                    error_log.setdefault('missing fields', []).append(
+                        'Error line {} - Missing fields'.format(str(lines.index(line) + 1)))
                     continue
 
+                run_tag.setdefault('run_tag', fields[5])
                 if not re.search("^[A-Za-z0-9_.-]{1,24}$", fields[5]):
-                    error = 'Error line {} - Run tag {} is malformed\n'.format(str(lines.index(line) + 1),
-                                                                               str(fields[5]))
+                    error_log.setdefault('malformed run tag', []).append(
+                        'Error line {} - Run tag {} is malformed'.format(str(lines.index(line) + 1),
+                                                                         str(fields[5])))
                     continue
                 else:
-                    if not fields[5] == runTag:
-                        error = 'Error line {} - Run tag is inconsistent ({} and {})\n'.format(
-                            str(lines.index(line) + 1),
-                            str(fields[5]), str(runTag))
-                        errorLog.setdefault('inconsistent run tag', []).append(error)
+                    if not fields[5] == run_tag['run_tag']:
+                        error_log.setdefault('inconsistent run tag', []).append(
+                            'Error line {} - Run tag is inconsistent ({} and {})'.format(
+                                str(lines.index(line) + 1),
+                                str(fields[5]), str(run_tag['run_tag'])))
                         continue
-                if not fields[0].isdigit():
-                    error = 'Error line {} - Unknown topic {}\n'.format(str(lines.index(line) + 1), str(fields[0]))
-                    errorLog.setdefault('unknown topic', []).append(error)
-                    continue
-                else:
-                    if fields[0] not in topics:
-                        topics[fields[0]] = 1
-                    else:
-                        topics[fields[0]] += 1
-                    # todo: Topic anzahl abgleichen
+                # todo: Topic anzahl abgleichen
 
                 if 'Q0'.casefold() not in fields[1].casefold():
-                    error = 'Error line {} - "Field 2 is {} not "Q0"\n'.format(str(lines.index(line) + 1),
-                                                                               str(fields[1]))
-                    errorLog.setdefault('Q0', []).append(error)
+                    error_log.setdefault('Q0', []).append('Error line {} - "Field 2 is {} not "Q0"'.format(
+                        str(lines.index(line) + 1), str(fields[1])))
                     continue
 
                 if not fields[3].isdigit():
-                    error = 'Error line {} - "Column 4 (rank) {} must be an integer"\n'.format(
-                        str(lines.index(line) + 1), str(fields[3]))
-                    errorLog.setdefault('rank', []).append(error)
+                    error_log.setdefault('rank', []).append(
+                        'Error line {} - "Column 4 (rank) {} must be an integer"'.format(
+                            str(lines.index(line) + 1), str(fields[3])))
                     continue
 
                 # if not re.search("^[A-Za-z0-9-]{1,24}$", fields[2]):
-                    # error = 'Error line {} - "Invalid docid {}"\n'.format(str(lines.index(line) + 1),
-                                                                          # str(fields[2]))
-                    # errorLog.setdefault('docid', []).append(error)
-                    # continue
-
-            if len(errorLog) == 0:
+                # error = 'Error line {} - "Invalid docid {}"\n'.format(str(lines.index(line) + 1),
+                # str(fields[2]))
+                # error_log.setdefault('docid', []).append(error)
+                # continue
+                # if(error_log):
+                #     print(error_log)
+            if len(error_log) == 0:
                 return False
         else:
-            return 'TREC file is empty!'
-        return errorMessage(errorLog)
+            return 'Runfile is empty!'
+        return _construct_error_string(error_log)
 
     def compressFile(self, subdir):
 
@@ -114,7 +113,6 @@ class Bot:
         file.save(run_path)
 
         return subdir
-
 
 
     def saveSplits(self, TRECstr, filename):
