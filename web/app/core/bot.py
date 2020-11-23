@@ -214,6 +214,37 @@ class Bot:
                     }
                    }
 
+        if type == 'all':
+            ranksys = System.query.filter_by(type='REC', status='running').all()
+            recsys = System.query.filter_by(type='REC', status='running').all()
+
+            if ranksys and recsys:
+                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+                                                             'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+                                                             'RANKSYS_BASE=rank_dummy',
+                                                             'RECSYS_BASE=gesis_rec_micro']
+
+            if not ranksys and recsys:
+                compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+                                                             'RECSYS_BASE=gesis_rec_micro']
+
+            if ranksys and not recsys:
+                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+                                                             'RANKSYS_BASE=rank_dummy']
+
+        if type == 'rank':
+            ranksys = System.query.filter_by(type='REC', status='running').all()
+            if ranksys:
+                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+                                                             'RANKSYS_BASE=rank_dummy']
+
+        if type == 'rec':
+            recsys = System.query.filter_by(type='REC', status='running').all()
+            if recsys:
+                compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+                                                             'RECSYS_BASE=gesis_rec_micro']
+
+
         for system in systems:
             compose['services'][str(system.name)] = {
                 'build': system.url,
