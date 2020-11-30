@@ -222,11 +222,11 @@ class Bot:
                 compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
                                                              'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
                                                              'RANKSYS_BASE=rank_dummy',
-                                                             'RECSYS_BASE=gesis_rec_micro']
+                                                             'RECSYS_BASE=gesis_rec_precom']
 
             if not ranksys and recsys:
                 compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RECSYS_BASE=gesis_rec_micro']
+                                                             'RECSYS_BASE=gesis_rec_precom']
 
             if ranksys and not recsys:
                 compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
@@ -242,7 +242,7 @@ class Bot:
             recsys = System.query.filter_by(type='REC', status='running').all()
             if recsys:
                 compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RECSYS_BASE=gesis_rec_micro']
+                                                             'RECSYS_BASE=gesis_rec_precom']
 
 
         for system in systems:
