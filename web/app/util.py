@@ -94,21 +94,32 @@ def setup_db(db):
 
     ranker_a = System(status='running', name='rank_dummy', participant_id=user_part_a.id, type='RANK',
                       submitted='DOCKER', url='https://github.com/stella-project', site=user_site_b.id)
-    ranker_base_a = System(status='running', name='rank_dummy_base', participant_id=user_site_a.id, type='RANK',
+    ranker_base_a = System(status='running', name='rank_dummy_base', participant_id=user_site_b.id, type='RANK',
                            submitted='DOCKER', url='https://github.com/stella-project', site=user_site_b.id)
-
-    recommender_a = System(status='running', name='gesis_rec_precom', participant_id=user_part_a.id,
-                           type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom',
+    rec_pyterrier = System(status='running', name='gesis_rec_pyterrier', participant_id=user_part_a.id,
+                           type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_pyterrier',
                            site=user_site_a.id)
-    recommender_base_a = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id,
-                                type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro',
+    rec_pyserini = System(status='running', name='gesis_rec_pyserini', participant_id=user_part_a.id,
+                          type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_pyserini',
+                          site=user_site_a.id)
+    rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
+                        type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',
+                        site=user_site_a.id)
+    recommender_base_a = System(status='running', name='gesis_rec_precom', participant_id=user_site_a.id,
+                                type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom',
                                 site=user_site_a.id)
+    # rec_shuffle = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id,
+    #                      type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro',
+    #                      site=user_site_a.id)
+
 
     db.session.add_all([
         ranker_a,
         ranker_base_a,
-        recommender_a,
         recommender_base_a,
+        rec_pyterrier,
+        rec_pyserini,
+        rec_whoosh
     ])
 
     db.session.commit()
