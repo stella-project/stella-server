@@ -102,9 +102,9 @@ def setup_db(db):
     rec_pyserini = System(status='running', name='gesis_rec_pyserini', participant_id=user_part_a.id,
                           type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_pyserini',
                           site=user_site_a.id)
-    rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
-                        type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',
-                        site=user_site_a.id)
+    # rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
+    #                     type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',
+    #                     site=user_site_a.id)
     recommender_base_a = System(status='running', name='gesis_rec_precom', participant_id=user_site_a.id,
                                 type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_precom',
                                 site=user_site_a.id)
@@ -119,7 +119,7 @@ def setup_db(db):
         recommender_base_a,
         rec_pyterrier,
         rec_pyserini,
-        rec_whoosh
+        # rec_whoosh
     ])
 
     db.session.commit()
