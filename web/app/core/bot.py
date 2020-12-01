@@ -247,7 +247,7 @@ class Bot:
 
         for system in systems:
             compose['services'][str(system.name)] = {
-                'build': system.url,
+                'build': ''.join([system.url, '.git']),
                 'container_name': system.name,
                 'volumes': ['./data/:/data/'],
                 'networks': ['stella-shared']
@@ -261,7 +261,7 @@ class Bot:
 
         with open(yml_path) as yml_in:
             updated_content = yml_in.read()
-            print(updated_content)
+            # print(updated_content)
 
         if token:
             g = Github(token)
