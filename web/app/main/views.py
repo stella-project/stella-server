@@ -149,8 +149,8 @@ def downloadTREC(filename):
 @main.route('/download/<system_id>')
 @login_required
 def download(system_id):
-    if current_user.id == System.query.filter_by(id=system_id).all()[0].participant_id:
-
+    if current_user.id == System.query.filter_by(id=system_id).all()[0].participant_id or current_user.role_id == 1 or (current_user.role_id == 3) and (System.query.filter_by(id=system_id).all()[0].site == current_user.id) : # if user is owner, admin
+# or current_user.role_id ==
         system = System.query.filter_by(id=system_id).first()
 
         if system.type == 'REC':
@@ -174,10 +174,15 @@ def download(system_id):
 @main.route('/downloadall')
 @login_required
 def downloadAll():
-    systems = System.query.filter_by(participant_id=current_user.id).all()
+    if current_user.role_id == 1: # Admin
+        systems = System.query.all()
+    if current_user.role_id == 2:  # Participant
+        systems = System.query.filter_by(participant_id=current_user.id).all()
+    if current_user.role_id == 3:  # Site
+        systems = System.query.filter_by(site=current_user.id).all()
+
     export = {}
     for system in systems:
-
         if system.type == 'REC':
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_recommendation).filter(System.id == system.id).all()
