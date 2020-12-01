@@ -215,13 +215,13 @@ class Bot:
                    }
 
         if type == 'all':
-            ranksys = System.query.filter_by(type='REC', status='running').all()
+            ranksys = System.query.filter_by(type='RANK', status='running').all()
             recsys = System.query.filter_by(type='REC', status='running').all()
 
             if ranksys and recsys:
                 compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
                                                              'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RANKSYS_BASE=rank_dummy',
+                                                             'RANKSYS_BASE=livivo_base',
                                                              'RECSYS_BASE=gesis_rec_precom']
 
             if not ranksys and recsys:
@@ -230,13 +230,13 @@ class Bot:
 
             if ranksys and not recsys:
                 compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-                                                             'RANKSYS_BASE=rank_dummy']
+                                                             'RANKSYS_BASE=livivo_base']
 
         if type == 'rank':
             ranksys = System.query.filter_by(type='REC', status='running').all()
             if ranksys:
                 compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-                                                             'RANKSYS_BASE=rank_dummy']
+                                                             'RANKSYS_BASE=livivo_base']
 
         if type == 'rec':
             recsys = System.query.filter_by(type='REC', status='running').all()
