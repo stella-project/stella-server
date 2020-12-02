@@ -127,6 +127,22 @@ def setup_db(db):
                          url='https://github.com/stella-project/livivo_rank_precom',
                          site=user_site_b.id)
 
+    rank_pyterrier = System(status='running',
+                            name='livivo_rank_pyterrier',
+                            participant_id=user_part_b.id,
+                            type='RANK',
+                            submitted='DOCKER',
+                            url='https://github.com/stella-project/livivo_rank_pyterrier',
+                            site=user_site_b.id)
+
+    rank_pyserini = System(status='running',
+                            name='livivo_rank_pyserini',
+                            participant_id=user_part_b.id,
+                            type='RANK',
+                            submitted='DOCKER',
+                            url='https://github.com/stella-project/livivo_rank_pyserini',
+                            site=user_site_b.id)
+
     rec_pyterrier = System(status='running',
                            name='gesis_rec_pyterrier',
                            participant_id=user_part_a.id,
@@ -161,6 +177,8 @@ def setup_db(db):
     db.session.add_all([
         livivo_base,
         livivo_precom,
+        rank_pyserini,
+        rank_pyterrier,
         recommender_base_a,
         rec_pyterrier,
         rec_pyserini,
