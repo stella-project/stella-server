@@ -2,8 +2,8 @@
 
 The `stella-server` provides the following services:
 
-:busts_in_silhouette: User administration (administration of admins, participants and sites)  
-:bar_chart: Dashboard service  
+:busts_in_silhouette: User administration
+:bar_chart: Dashboard
 :robot: Automated generation of the STELLA app &rarr; `docker-compose.yml`  
 :floppy_disk: Data storage (user feedback) for data analysis, training, etc.
 
