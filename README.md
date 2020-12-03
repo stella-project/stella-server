@@ -9,7 +9,6 @@ The STELLA server provides the following services:
 
 ## Setup
 
-### Production-ready
 1. Build app with Docker:  `docker-compose up -d`
 2. Add toy data with the help of `util/simulate.py`
 
