@@ -1,11 +1,11 @@
 # STELLA Server
 
-The STELLA server provides the following services:
+The `stella-server` provides the following services:
 
-1. User administration (administration of admins, participants and sites)
-2. Dashboard service
-3. Automated generation of the STELLA app &rarr; `docker-compose.yml`  
-4. Data storage (user feedback) for data analysis, training, etc.
+:busts_in_silhouette: User administration (administration of admins, participants and sites)  
+:bar_chart: Dashboard service  
+:robot: Automated generation of the STELLA app &rarr; `docker-compose.yml`  
+:floppy_disk: Data storage (user feedback) for data analysis, training, etc.
 
 ## Setup
 
