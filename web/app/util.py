@@ -123,8 +123,8 @@ def setup_db(db):
                          name='livivo_base',
                          participant_id=user_site_b.id,
                          type='RANK',
-                         submitted='TREC',
-                         url='https://github.com/stella-project/livivo_rank_precom',
+                         submitted='DOCKER',
+                         url='https://github.com/stella-project/livivo_rank_base',
                          site=user_site_b.id)
 
     rank_pyterrier = System(status='running',
