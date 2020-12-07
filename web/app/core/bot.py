@@ -244,10 +244,24 @@ class Bot:
                 compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
                                                              'RECSYS_BASE=gesis_rec_precom']
 
-
         for system in systems:
+            # Please note: if you do not provide a GitHub token,
+            # the docker-compose file will not differentiate between main and master branches!
+            # This will make the build process of the stella-app fail in some cases with newer repositories.
+            if token:
+                g = Github(token)
+                repo_id = '/'.join(system.url.split('/')[-2:])
+                repo = g.get_repo(repo_id)
+                branches_names = [branch.name for branch in repo.get_branches()]
+                if 'main' in branches_names:
+                    gh_url = ''.join([system.url, '.git#main'])
+                else:
+                    gh_url = ''.join([system.url, '.git#master'])
+            else:
+                gh_url = ''.join([system.url, '.git'])
+
             compose['services'][str(system.name)] = {
-                'build': ''.join([system.url, '.git']),
+                'build': gh_url,
                 'container_name': system.name,
                 'volumes': ['./data/:/data/'],
                 'networks': ['stella-shared']
