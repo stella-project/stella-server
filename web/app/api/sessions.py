@@ -42,7 +42,7 @@ def get_session_systems(id):
 
     ranker_name = json_session.get('system_ranking') if json_session.get('system_ranking') is None else System.query.get_or_404(json_session.get('system_ranking')).name
 
-    recommender_name = json_session.get('system_recommendation') if json_session.get('system_ranking') is None else System.query.get_or_404(json_session.get('system_recommendation')).name
+    recommender_name = json_session.get('system_recommendation') if json_session.get('system_recommendation') is None else System.query.get_or_404(json_session.get('system_recommendation')).name
 
     return jsonify({'RANK': ranker_name,
                     'REC': recommender_name})
