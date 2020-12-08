@@ -1,10 +1,12 @@
 from flask import jsonify, request
+from flask_login import current_user, login_user, login_required
 from . import api
 from .. import db
 from ..models import Session, System, User, Feedback
 
 
 @api.route('/sessions/<int:id>/feedbacks', methods=['POST'])
+@login_required
 def post_feedback(id):
     '''
     This endpoint is used to make a feedback entry for a specific session identified by 'id'.
@@ -13,7 +15,10 @@ def post_feedback(id):
     @param id: Identifier of the session.
     @return: JSON/Dictionary with identifier of the feedback.
     '''
-    if request.method == 'POST':
+    if current_user.role_id != 3:  # Site
+        return jsonify({'message':'Unauthorized'}), 401
+
+    elif request.method == 'POST':
 
         session = Session.query.get_or_404(id)
         json_feedback = request.values

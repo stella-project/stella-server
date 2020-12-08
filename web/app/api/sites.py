@@ -1,5 +1,6 @@
 import json
 from flask import jsonify, request
+from flask_login import current_user, login_user, login_required
 from . import api
 from .. import db
 from datetime import datetime
@@ -7,6 +8,7 @@ from ..models import Session, System, User
 
 
 @api.route('/sites/<int:id>/sessions', methods=['POST'])
+@login_required
 def post_session(id):
     '''
     Use this endpoint to make a new database entry for a new session.
@@ -14,12 +16,15 @@ def post_session(id):
     @param id: Identifier of the site.
     @return: JSON/Dictionary with the identifier of the session that was created.
     '''
-    json_session = request.values
-    session = Session.from_json(json_session)
-    session.site_id = id
-    db.session.add(session)
-    db.session.commit()
-    return jsonify({'session_id': session.id})
+    if current_user.role_id != 3:  # Site
+        return jsonify({'message': 'Unauthorized'}), 401
+    else:
+        json_session = request.values
+        session = Session.from_json(json_session)
+        session.site_id = id
+        db.session.add(session)
+        db.session.commit()
+        return jsonify({'session_id': session.id})
 
 
 @api.route('/sites/<string:name>')
