@@ -12,6 +12,8 @@ The `stella-server` provides the following services:
 1. Build app with Docker:  `docker-compose up -d`
 2. Add toy data with the help of `util/simulate.py`
 
+**A setup guide for the entire infrastructure can be found [here](./doc/README.md).**
+
 ## Citation
 
 We provide citation information via the [CITATION file](./CITATION.cff). If you use `stella-server` in your work, please cite our repository as follows:
