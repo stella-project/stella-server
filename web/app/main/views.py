@@ -352,3 +352,21 @@ def deactivate(id):
                            formContainer=SubmitSystem(),
                            formRanking=SubmitRanking(),
                            current_user=current_user)
+
+
+@main.route('/system/<int:id>/delete')
+def delete(id):
+    system = System.query.filter_by(id=id).first()
+
+    if system.status == 'submitted':
+        db.session.delete(system)
+        db.session.commit()
+        flash('Deleted system')
+    else:
+        flash('Can only delete stopped systems', 'danger')
+
+    return render_template('systems.html',
+                           systems=get_systems(current_user),
+                           formContainer=SubmitSystem(),
+                           formRanking=SubmitRanking(),
+                           current_user=current_user)
