@@ -19,8 +19,8 @@
             <th scope="col" style="text-align: center; vertical-align: middle;">Name</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Active since</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Site</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">System type</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Submission type</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Task</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Type</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Repository</th>
             {% if current_user.role.name != 'Participant' %}
                 <th scope="col" style="text-align: center; vertical-align: middle;">Activate</th>
@@ -56,22 +56,20 @@
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     {% if i.type == 'RANK' %}
-                        Ranking
+                        ranking
                     {% elif i.type == 'REC' %}
-                        Recommender
+                        recommendation
                     {% else %}
                         unknown
                     {% endif %}
                 </td>
 
                 {% if i.submitted == 'TREC' %}
-                    <td style="text-align: center; vertical-align: middle;">TREC file</td>
-                    {# <td style="text-align: center; vertical-align: middle;"><a href="{{ url_for('main.downloadTREC', filename=i.url) }}" class="btnTable" role="button"
-                       aria-disabled="true"><i class="fa fa-eye"></i></a></td> #}
+                    <td style="text-align: center; vertical-align: middle;">pre-computed run</td>
                     <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% elif i.submitted == 'DOCKER' %}
-                    <td style="text-align: center; vertical-align: middle;">Docker Container</td>
+                    <td style="text-align: center; vertical-align: middle;">docker containers</td>
                     <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}"  class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% else %}
