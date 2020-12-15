@@ -5,9 +5,6 @@
 {% block title %}STELLA User{% endblock %}
 
 {% block page_content %}
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
     <div class="page-header">
         <h1>Systems</h1>
     </div>
@@ -15,19 +12,19 @@
     <table class="table table-hover table-bordered">
         <thead>
         <tr>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Status</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Name</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Submission date</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Site</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Task</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Type</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Repository</th>
+            <th scope="col">Status</th>
+            <th scope="col">Name</th>
+            <th scope="col">Submission date</th>
+            <th scope="col">Site</th>
+            <th scope="col">Task</th>
+            <th scope="col">Type</th>
+            <th scope="col">Repository</th>
             {% if current_user.role.name != 'Participant' %}
-                <th scope="col" style="text-align: center; vertical-align: middle;">Activate</th>
-                <th scope="col" style="text-align: center; vertical-align: middle;">Deactivate</th>
+                <th scope="col">Activate</th>
+                <th scope="col">Deactivate</th>
             {% endif %}
-            <th scope="col" style="text-align: center; vertical-align: middle;">Delete</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Feedback Data</th>
+            <th scope="col">Delete</th>
+            <th scope="col">Feedback Data</th>
         </tr>
         </thead>
         <tbody>
@@ -36,25 +33,25 @@
         {% for i in systems %}
             <tr>
                 {% if i.status == 'running' %}
-                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-success">running</span></td>
+                    <td scope="row"><span class="badge badge-success">running</span></td>
                 {% elif i.status == 'submitted' %}
-                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-secondary">submitted</span></td>
+                    <td scope="row"><span class="badge badge-secondary">submitted</span></td>
                 {% elif i.status == 'error' %}
-                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-danger">error</span></td>
+                    <td scope="row"><span class="badge badge-danger">error</span></td>
                 {% else %}
-                    <td scope="row" style="text-align: center; vertical-align: middle;"><span class="badge badge-danger">running</span></td>
+                    <td scope="row"><span class="badge badge-danger">running</span></td>
                 {% endif %}
 
-                <td style="text-align: center; vertical-align: middle;">{{ i.name  | replace("_"," ") }}</td>
-                <td style="text-align: center; vertical-align: middle;">{% if i.submission_date %}{{ i.submission_date }} {% else %} - {% endif %}</td>
-                <td style="text-align: center; vertical-align: middle;">
+                <td>{{ i.name  | replace("_"," ") }}</td>
+                <td>{% if i.submission_date %}{{ i.submission_date }} {% else %} - {% endif %}</td>
+                <td>
                     {% if i.type == 'RANK' %}
                         LIVIVO
                     {% elif i.type == 'REC' %}
                         GESIS
                     {% endif %}
                 </td>
-                <td style="text-align: center; vertical-align: middle;">
+                <td>
                     {% if i.type == 'RANK' %}
                         Ranking
                     {% elif i.type == 'REC' %}
@@ -65,12 +62,12 @@
                 </td>
 
                 {% if i.submitted == 'TREC' %}
-                    <td style="text-align: center; vertical-align: middle;">Pre-computed Run</td>
-                    <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}" class="btnTable" role="button"
+                    <td>Pre-computed Run</td>
+                    <td><a href="{{ i.url }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% elif i.submitted == 'DOCKER' %}
-                    <td style="text-align: center; vertical-align: middle;">Docker Container</td>
-                    <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}"  class="btnTable" role="button"
+                    <td>Docker Container</td>
+                    <td><a href="{{ i.url }}"  class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% else %}
                     <td>unknown</td>
@@ -78,20 +75,20 @@
                 {% endif %}
 
                 {% if current_user.role.name != 'Participant' %}
-                    <td style="text-align: center; vertical-align: middle;">
+                    <td>
                         <a href="{{ url_for('main.activate', id=i.id) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-play"></i></a>
                     </td>
-                    <td style="text-align: center; vertical-align: middle;">
+                    <td>
                         <a href="{{ url_for('main.deactivate', id=i.id) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-stop"></i></a>
                     </td>
                 {% endif %}
-                <td style="text-align: center; vertical-align: middle;">
+                <td>
                     <a href="{{ url_for('main.delete', id=i.id) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-trash"></i></a>
                 </td>
-                <td style="text-align: center; vertical-align: middle;">
+                <td>
                     <a href="{{ url_for('main.download', system_id=i.id) }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-save"></i></a>
                 </td>
@@ -185,6 +182,7 @@
     <footer>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.1/min/dropzone.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </footer>
     <style>
         .badge-success {
@@ -207,7 +205,7 @@
 
         .btnTable:hover {
             background: 0;
-            box-shadow: 0 0 1px 7px rgba(82, 94, 139, 0.2);
+            box-shadow: 0 0 1px 3px rgba(82, 94, 139, 0.2);
             border: 2px solid;
             box-sizing: border-box;
             display: inline-block;
@@ -219,6 +217,7 @@
             transition: .3s ease;
 
         }
+
 
         .btn {
             border-radius: 0px;
@@ -257,6 +256,17 @@
             transition: .3s ease;
 
         }
+        tr {
+           line-height: 60px;
+           min-height: 60px;
+           height: 60px;
+        }
+
+        td {
+            text-align: center; 
+            vertical-align: middle;
+        }
+
     </style>
 
 {% endblock %}
