@@ -56,20 +56,20 @@
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     {% if i.type == 'RANK' %}
-                        ranking
+                        Ranking
                     {% elif i.type == 'REC' %}
-                        recommendation
+                        Recommendation
                     {% else %}
                         unknown
                     {% endif %}
                 </td>
 
                 {% if i.submitted == 'TREC' %}
-                    <td style="text-align: center; vertical-align: middle;">pre-computed run</td>
+                    <td style="text-align: center; vertical-align: middle;">Pre-computed Run</td>
                     <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}" class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% elif i.submitted == 'DOCKER' %}
-                    <td style="text-align: center; vertical-align: middle;">docker containers</td>
+                    <td style="text-align: center; vertical-align: middle;">Docker Container</td>
                     <td style="text-align: center; vertical-align: middle;"><a href="{{ i.url }}"  class="btnTable" role="button"
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% else %}
