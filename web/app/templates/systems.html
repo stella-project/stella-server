@@ -17,7 +17,7 @@
         <tr>
             <th scope="col" style="text-align: center; vertical-align: middle;">Status</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Name</th>
-            <th scope="col" style="text-align: center; vertical-align: middle;">Active since</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Submission date</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Site</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Task</th>
             <th scope="col" style="text-align: center; vertical-align: middle;">Type</th>
@@ -46,7 +46,7 @@
                 {% endif %}
 
                 <td style="text-align: center; vertical-align: middle;">{{ i.name  | replace("_"," ") }}</td>
-                <td style="text-align: center; vertical-align: middle;">#Date goes here!</td>
+                <td style="text-align: center; vertical-align: middle;">{{ i.submission_date }}</td>
                 <td style="text-align: center; vertical-align: middle;">
                     {% if i.type == 'RANK' %}
                         LIVIVO
@@ -88,7 +88,8 @@
                     </td>
                 {% endif %}
                 <td style="text-align: center; vertical-align: middle;">
-                    <button class="btnTable"><i class="fa fa-trash"></i></button>
+                    <a href="{{ url_for('main.delete', id=i.id) }}" class="btnTable" role="button"
+                       aria-disabled="true"><i class="fa fa-trash"></i></a>
                 </td>
                 <td style="text-align: center; vertical-align: middle;">
                     <a href="{{ url_for('main.download', system_id=i.id) }}" class="btnTable" role="button"

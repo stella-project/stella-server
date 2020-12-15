@@ -5,6 +5,7 @@ from .. import db
 
 import os
 import re
+import datetime
 
 from . import main
 import json
@@ -106,7 +107,7 @@ def systems():
 
             system = System(status='submitted', name=systemname,
                             participant_id=current_user.id, type=type,
-                            submitted='TREC', url=gh_url, site=site)
+                            submitted='TREC', url=gh_url, site=site, submission_date=datetime.datetime.now().date())
             db.session.add_all([system])
             db.session.commit()
 
@@ -124,7 +125,7 @@ def systems():
         type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
         site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(username='LIVIVO').first().id
         system = System(status='submitted', name=systemName, participant_id=current_user.id, type=type,
-                        submitted='DOCKER', url=systemUrl, site=site)
+                        submitted='DOCKER', url=systemUrl, site=site, submission_date=datetime.datetime.now().date())
         db.session.add_all([system])
         db.session.commit()
         flash('Container submitted')
