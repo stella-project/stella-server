@@ -3,6 +3,7 @@ import ruamel.yaml
 import re
 import tarfile
 import os
+import datetime
 
 
 def make_tarfile(output_filename, source_dir):
@@ -117,7 +118,8 @@ def setup_db(db):
                            type='RANK',
                            submitted='TREC',
                            url='https://github.com/stella-project/livivo_rank_precom',
-                           site=user_site_b.id)
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6,10))
 
     livivo_base = System(status='running',
                          name='livivo_base',
@@ -125,7 +127,8 @@ def setup_db(db):
                          type='RANK',
                          submitted='DOCKER',
                          url='https://github.com/stella-project/livivo_rank_base',
-                         site=user_site_b.id)
+                         site=user_site_b.id,
+                         submission_date=datetime.date(2019, 6,10))
 
     rank_pyterrier = System(status='running',
                             name='livivo_rank_pyterrier',
@@ -133,7 +136,8 @@ def setup_db(db):
                             type='RANK',
                             submitted='DOCKER',
                             url='https://github.com/stella-project/livivo_rank_pyterrier',
-                            site=user_site_b.id)
+                            site=user_site_b.id,
+                            submission_date=datetime.date(2019, 6,10))
 
     rank_pyserini = System(status='running',
                             name='livivo_rank_pyserini',
@@ -141,7 +145,8 @@ def setup_db(db):
                             type='RANK',
                             submitted='DOCKER',
                             url='https://github.com/stella-project/livivo_rank_pyserini',
-                            site=user_site_b.id)
+                            site=user_site_b.id,
+                            submission_date=datetime.date(2019, 6,10))
 
     rec_pyterrier = System(status='running',
                            name='gesis_rec_pyterrier',
@@ -149,7 +154,8 @@ def setup_db(db):
                            type='REC',
                            submitted='DOCKER',
                            url='https://github.com/stella-project/gesis_rec_pyterrier',
-                           site=user_site_a.id)
+                           site=user_site_a.id,
+                           submission_date=datetime.date(2019, 6,10))
 
     rec_pyserini = System(status='running',
                           name='gesis_rec_pyserini',
@@ -157,7 +163,8 @@ def setup_db(db):
                           type='REC',
                           submitted='DOCKER',
                           url='https://github.com/stella-project/gesis_rec_pyserini',
-                          site=user_site_a.id)
+                          site=user_site_a.id,
+                          submission_date=datetime.date(2019, 6,10))
 
     recommender_base_a = System(status='running',
                                 name='gesis_rec_precom',
@@ -165,7 +172,8 @@ def setup_db(db):
                                 type='REC',
                                 submitted='TREC',
                                 url='https://github.com/stella-project/gesis_rec_precom',
-                                site=user_site_a.id)
+                                site=user_site_a.id,
+                                submission_date=datetime.date(2019, 6,10))
 
     # rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
     #                     type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',
