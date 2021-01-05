@@ -12,18 +12,6 @@
     <div class="container login-container">
         <div class="row border justify-content-center display-flex ">
             <div class="col-md-2"></div>
-            <div class="col-md-4 login-form-1 box">
-                <h3>About</h3>
-                <p>The DFG-funded STELLA project aims to create an evaluation infrastructure that allows to evaluate
-                    search and recommendation services within productive web-based search systems with real users.</p>
-                <br>
-
-                <a href="https://stella-project.org/" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Website</a>
-                <br>
-                <br>
-                <br>
-                <br>
-            </div>
 
             <div class="col-md-4 login-form-2">
                 {% if current_user.is_authenticated %}
@@ -48,6 +36,19 @@
                     </div>
                 {% endif %}
             </div>
+
+            <div class="col-md-4 login-form-1 box">
+                    <h3>About</h3>
+                    <p>The DFG-funded STELLA project aims to create an evaluation infrastructure that allows to evaluate
+                        search and recommendation services within productive web-based search systems with real users.</p>
+                    <br>
+
+                    <a href="https://stella-project.org/" class="btn btn-primary btn-lg" role="button" aria-disabled="true">Website</a>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                </div>
 
             <div class="col-md-2"></div>
         </div>
