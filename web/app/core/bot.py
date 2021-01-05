@@ -164,7 +164,7 @@ class Bot:
 
         for file in template.get_contents('.'):
             filename = file.name
-            if filename not in ['test', 'precom']:
+            if filename not in ['test', 'precom', 'resources']:
                 commit_msg = 'add ' + filename
                 repo.create_file(filename, commit_msg, file.decoded_content.decode('utf-8'))
 
@@ -172,6 +172,12 @@ class Bot:
             filename = test_file.name
             commit_msg = 'add ' + filename
             repo.create_file('test/'+filename, commit_msg, test_file.decoded_content.decode('utf-8'))
+
+        # head queries of livivo
+        file_hq = template.get_contents('resources/livivo')[0]
+        filename = file_hq.name
+        commit_msg = 'add ' + filename
+        repo.create_file('resources/livivo/' + filename, commit_msg, file_hq.decoded_content.decode('utf-8'))
 
         repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
         repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
