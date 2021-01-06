@@ -18,7 +18,7 @@ The `stella-server` provides the following services:
 
 We provide citation information via the [CITATION file](./CITATION.cff). If you use `stella-server` in your work, please cite our repository as follows:
 
-> Schaer P, Schaible J, Garcia Castro LJ, Breuer T, Tavakolpoursaleh N, Wolff B. STELLA Search. Available at https://github.com/stella-project/stella-server/
+> Schaer P, Schaible J, Garcia Castro LJ, Breuer T, Tavakolpoursaleh N, Wolff B. STELLA Server. Available at https://github.com/stella-project/stella-server/
 
 We recommend you include the retrieval date.
 
