@@ -12,19 +12,19 @@
     <table class="table table-hover table-bordered">
         <thead>
         <tr>
-            <th scope="col">Status</th>
-            <th scope="col">Name</th>
-            <th scope="col">Submission date</th>
-            <th scope="col">Site</th>
-            <th scope="col">Task</th>
-            <th scope="col">Type</th>
-            <th scope="col">Repository</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Status</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Name</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Submission date</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Site</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Task</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Type</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Repository</th>
             {% if current_user.role.name != 'Participant' %}
-                <th scope="col">Activate</th>
-                <th scope="col">Deactivate</th>
+                <th scope="col" style="text-align: center; vertical-align: middle;">Activate</th>
+                <th scope="col" style="text-align: center; vertical-align: middle;">Deactivate</th>
             {% endif %}
-            <th scope="col">Delete</th>
-            <th scope="col">Feedback Data</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">&nbsp;Delete&nbsp;</th>
+            <th scope="col" style="text-align: center; vertical-align: middle;">Feedback Data</th>
         </tr>
         </thead>
         <tbody>
