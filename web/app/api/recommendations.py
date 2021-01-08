@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import g, request, jsonify
 from flask_login import current_user, login_user, login_required
 from . import api
 from .. import db
@@ -13,8 +13,8 @@ def post_recommendation(id):
     @param id: Identifier of the feedback.
     @return: JSON/Dictionary with id of the recommendation.
     '''
-    if current_user.role_id != 3:  # Site
-        return jsonify({'message':'Unauthorized'}), 401
+    if g.current_user.role_id != 3:  # Site
+        return jsonify({'message': 'Unauthorized'}), 401
 
     elif request.method == 'POST':
         feedback = Feedback.query.get_or_404(id)
