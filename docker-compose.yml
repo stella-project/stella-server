@@ -10,6 +10,12 @@ services:
              python manage.py db migrate &&
              python manage.py db upgrade &&
              /usr/local/bin/gunicorn -w 2 -b :8000 stella-server:app"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PW=change-me
+      - POSTGRES_DB=postgres
+      - SECRET_KEY=you-do-not-know
+      - AUTOMATOR_GH_KEY=
     links:
       - db:db
     depends_on:
