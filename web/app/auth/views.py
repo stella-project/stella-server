@@ -2,7 +2,7 @@ from flask import render_template, redirect, request, url_for, flash
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth
 from .. import db
-from ..models import User
+from ..models import User, Role
 from .forms import LoginForm, RegistrationForm
 
 
@@ -35,6 +35,7 @@ def register():
     if form.validate_on_submit():
         user = User(email=form.email.data.lower(),
                     username=form.username.data,
+                    role_id=Role.query.filter_by(name='Participant').first().id,
                     password=form.password.data)
         db.session.add(user)
         db.session.commit()
