@@ -15,7 +15,7 @@ def makeComposeFile():
     systems = System.query.filter_by().all()
     compose = {'version': '3',
                'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
-            'services': {
+               'services': {
                 'app': {
                     'build': './app', 'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
                     'ports': ["8080:8000"],
@@ -55,9 +55,9 @@ def setup_db(db):
     site_role = Role(name='Site')
 
     user_admin = User(username='stella-admin',
-                      email='admin@stella.org',
+                      email=os.environ.get('ADMIN_MAIL') or 'admin@stella.org',
                       role=admin_role,
-                      password='pass')
+                      password=os.environ.get('ADMIN_PASS') or 'pass')
 
     user_part_a = User(username='participant_a',
                        email='participant_a@stella.org',
@@ -70,14 +70,14 @@ def setup_db(db):
                        password='pass')
 
     user_site_a = User(username='GESIS',
-                       email='gesis@stella.org',
+                       email=os.environ.get('GESIS_MAIL') or 'gesis@stella.org',
                        role=site_role,
-                       password='pass')
+                       password=os.environ.get('GESIS_PASS') or 'pass')
 
     user_site_b = User(username='LIVIVO',
-                       email='livivo@stella.org',
+                       email=os.environ.get('LIVIVO_MAIL') or 'livivo@stella.org',
                        role=site_role,
-                       password='pass')
+                       password=os.environ.get('LIVIVO_PASS') or 'pass')
 
     db.session.add_all([
         admin_role,
@@ -119,7 +119,7 @@ def setup_db(db):
                            submitted='TREC',
                            url='https://github.com/stella-project/livivo_rank_precom',
                            site=user_site_b.id,
-                           submission_date=datetime.date(2019, 6,10))
+                           submission_date=datetime.date(2019, 6, 10))
 
     livivo_base = System(status='running',
                          name='livivo_base',
@@ -128,7 +128,7 @@ def setup_db(db):
                          submitted='DOCKER',
                          url='https://github.com/stella-project/livivo_rank_base',
                          site=user_site_b.id,
-                         submission_date=datetime.date(2019, 6,10))
+                         submission_date=datetime.date(2019, 6, 10))
 
     rank_pyterrier = System(status='running',
                             name='livivo_rank_pyterrier',
@@ -137,7 +137,7 @@ def setup_db(db):
                             submitted='DOCKER',
                             url='https://github.com/stella-project/livivo_rank_pyterrier',
                             site=user_site_b.id,
-                            submission_date=datetime.date(2019, 6,10))
+                            submission_date=datetime.date(2019, 6, 10))
 
     rank_pyserini = System(status='running',
                             name='livivo_rank_pyserini',
@@ -146,7 +146,7 @@ def setup_db(db):
                             submitted='DOCKER',
                             url='https://github.com/stella-project/livivo_rank_pyserini',
                             site=user_site_b.id,
-                            submission_date=datetime.date(2019, 6,10))
+                            submission_date=datetime.date(2019, 6, 10))
 
     rec_pyterrier = System(status='running',
                            name='gesis_rec_pyterrier',
@@ -155,7 +155,7 @@ def setup_db(db):
                            submitted='DOCKER',
                            url='https://github.com/stella-project/gesis_rec_pyterrier',
                            site=user_site_a.id,
-                           submission_date=datetime.date(2019, 6,10))
+                           submission_date=datetime.date(2019, 6, 10))
 
     rec_pyserini = System(status='running',
                           name='gesis_rec_pyserini',
@@ -164,7 +164,7 @@ def setup_db(db):
                           submitted='DOCKER',
                           url='https://github.com/stella-project/gesis_rec_pyserini',
                           site=user_site_a.id,
-                          submission_date=datetime.date(2019, 6,10))
+                          submission_date=datetime.date(2019, 6, 10))
 
     recommender_base_a = System(status='running',
                                 name='gesis_rec_precom',
@@ -173,7 +173,7 @@ def setup_db(db):
                                 submitted='TREC',
                                 url='https://github.com/stella-project/gesis_rec_precom',
                                 site=user_site_a.id,
-                                submission_date=datetime.date(2019, 6,10))
+                                submission_date=datetime.date(2019, 6, 10))
 
     # rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
     #                     type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',

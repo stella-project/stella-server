@@ -14,8 +14,14 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PW=change-me
       - POSTGRES_DB=postgres
-      - SECRET_KEY=you-do-not-know
+      - SECRET_KEY=change-me
       - AUTOMATOR_GH_KEY=
+      - ADMIN_MAIL=admin@stella.org
+      - ADMIN_PASS=pass
+      - GESIS_MAIL=gesis@stella.org
+      - GESIS_PASS=pass
+      - LIVIVO_MAIL=livivo@stella.org
+      - LIVIVO_PASS=pass
     links:
       - db:db
     depends_on:
