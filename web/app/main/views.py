@@ -366,8 +366,9 @@ def delete(id):
     else:
         flash('Can only delete stopped systems', 'danger')
 
-    return render_template('systems.html',
-                           systems=get_systems(current_user),
-                           formContainer=SubmitSystem(),
-                           formRanking=SubmitRanking(),
-                           current_user=current_user)
+    return redirect(url_for('main.systems'))
+    # return render_template('systems.html',
+    #                        systems=get_systems(current_user),
+    #                        formContainer=SubmitSystem(),
+    #                        formRanking=SubmitRanking(),
+    #                        current_user=current_user)

@@ -5,7 +5,9 @@ from wtforms.fields.html5 import URLField
 from wtforms.fields import SelectField
 from wtforms import ValidationError
 from flask_wtf.file import FileField, FileRequired, FileAllowed
-from ..models import User
+from ..models import User, System
+from flask import flash
+import re
 
 
 class Dropdown(FlaskForm):
@@ -48,13 +50,22 @@ class SubmitSystem(FlaskForm):
     systemname = StringField('System Name', validators=[
         DataRequired(), Length(1, 64),
         Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
-               'Systemname must have only letters, numbers, dots or '
-               'underscores')])
+               'Systemname must have only letters, numbers, dots or underscores')])
     site_type = SelectField('Site & System type', choices=['GESIS (Dataset recommender)', 'LIVIVO (Document ranker)'])
     GitHubUrl = URLField('URL', validators=[DataRequired(message="Enter URL Please"),
                                             URL(message="Enter Valid URL Please.")])
 
+    def validate_systemname(self, field):
+        if re.match('^[A-Za-z][A-Za-z0-9_.]*$', field.data):
+            if System.query.filter_by(name=field.data).first():
+                flash('System name already in use.', 'danger')
+                raise ValidationError('System name already in use.')
+        else:
+            flash('Systemname must have only letters, numbers, dots or underscores', 'danger')
+
     submit = SubmitField('Submit')
+
+
 
 
 class SubmitRanking(FlaskForm):
