@@ -150,7 +150,7 @@ def setup_db(db):
 
     rec_pyterrier = System(status='running',
                            name='gesis_rec_pyterrier',
-                           participant_id=user_part_a.id,
+                           participant_id=user_site_a.id,
                            type='REC',
                            submitted='DOCKER',
                            url='https://github.com/stella-project/gesis_rec_pyterrier',
@@ -168,7 +168,7 @@ def setup_db(db):
 
     recommender_base_a = System(status='running',
                                 name='gesis_rec_precom',
-                                participant_id=user_site_a.id,
+                                participant_id=user_part_a.id,
                                 type='REC',
                                 submitted='TREC',
                                 url='https://github.com/stella-project/gesis_rec_precom',
