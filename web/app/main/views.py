@@ -12,7 +12,7 @@ import json
 
 from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm, SubmitRanking
 
-from ..models import User, Session, System, Feedback, Role, load_user
+from ..models import User, Session, System, Result, Feedback, Role, load_user
 
 from ..dashboard import Dashboard
 from ..auth.forms import LoginForm
@@ -157,16 +157,20 @@ def download(system_id):
         if system.type == 'REC':
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_recommendation).filter(System.id == system_id).all()
+
         else:
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_ranking).filter(System.id == system_id).all()
 
+        queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
+
         export = {system.name: [{
-            'clicks': r.clicks,
-            'start': r.start,
-            'end': r.end,
-            'interleave': r.interleave
-        } for r in feedbacks]}
+            'clicks': f.clicks,
+            'start': f.start,
+            'end': f.end,
+            'interleave': f.interleave,
+            'query': q
+        } for f, q in zip(feedbacks, queries)]}
         return jsonify(export)
     else:
         return render_template('404.html'), 404
@@ -191,12 +195,15 @@ def downloadAll():
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_ranking).filter(System.id == system.id).all()
 
+        queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
+
         export[system.name] = [{
-            'clicks': r.clicks,
-            'start': r.start,
-            'end': r.end,
-            'interleave': r.interleave
-        } for r in feedbacks]
+            'clicks': f.clicks,
+            'start': f.start,
+            'end': f.end,
+            'interleave': f.interleave,
+            'query': q
+        } for f, q in zip(feedbacks, queries)]
     return jsonify(export)
 
 
