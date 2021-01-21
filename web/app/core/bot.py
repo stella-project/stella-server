@@ -195,7 +195,7 @@ class Bot:
     @staticmethod
     def update_stella_app(type='all', token=None):
 
-        yml_path = 'uploads/docker-compose.yml'
+        yml_path = 'uploads/stella-app.yml'
 
         if type == 'all':
             systems = System.query.filter_by(status='running').all()
@@ -208,47 +208,93 @@ class Bot:
             repo_name = 'stella-app'
 
         compose = {'version': '3',
-                   'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
+                   # 'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
                    'services': {
                        'app': {
                            'build': './app',
                            'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
                            'ports': ["8080:8000"],
                            'depends_on': [system.name for system in systems],
-                           'networks': ['stella-shared']
+                           # 'networks': ['stella-shared']
                      }
                     }
                    }
 
         if type == 'all':
-            ranksys = System.query.filter_by(type='RANK', status='running').all()
-            recsys = System.query.filter_by(type='REC', status='running').all()
-
-            if ranksys and recsys:
-                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-                                                             'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RANKSYS_BASE=livivo_base',
-                                                             'RECSYS_BASE=gesis_rec_precom']
-
-            if not ranksys and recsys:
-                compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RECSYS_BASE=gesis_rec_precom']
-
-            if ranksys and not recsys:
-                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-                                                             'RANKSYS_BASE=livivo_base']
+            ranksys = System.query.filter_by(type='RANK', status='running', submitted='DOCKER').all()
+            ranksys_precom = System.query.filter_by(type='RANK', status='running', submitted='TREC').all()
+            recsys = System.query.filter_by(type='REC', status='running', submitted='DOCKER').all()
+            recsys_precom = System.query.filter_by(type='REC', status='running', submitted='TREC').all()
 
         if type == 'rank':
-            ranksys = System.query.filter_by(type='REC', status='running').all()
-            if ranksys:
-                compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-                                                             'RANKSYS_BASE=livivo_base']
+            ranksys = System.query.filter_by(type='RANK', status='running', submitted='DOCKER').all()
+            ranksys_precom = System.query.filter_by(type='RANK', status='running', submitted='TREC').all()
+            recsys = None
+            recsys_precom = None
 
         if type == 'rec':
-            recsys = System.query.filter_by(type='REC', status='running').all()
-            if recsys:
-                compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-                                                             'RECSYS_BASE=gesis_rec_precom']
+            ranksys = None
+            ranksys_precom = None
+            recsys = System.query.filter_by(type='REC', status='running', submitted='DOCKER').all()
+            recsys_precom = System.query.filter_by(type='REC', status='running', submitted='TREC').all()
+
+        compose['services']['app']['environment'] = []
+
+        if ranksys:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys])]
+
+        if ranksys_precom:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RANKSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in ranksys_precom])]
+
+        if ranksys or ranksys_precom:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RANKSYS_BASE=livivo_base']
+
+        if recsys:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys])]
+
+        if recsys_precom:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RECSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in recsys_precom])]
+
+        if recsys or recsys_precom:
+            compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RECSYS_BASE=gesis_rec_pyserini']
+
+        compose['services']['app']['environment'] = compose['services']['app']['environment'] + [
+            'STELLA_SERVER_ADDRESS=nginx',
+            'STELLA_SERVER_USER=gesis@stella.org',
+            'STELLA_SERVER_PASS=pass',
+            'STELLA_SERVER_USERNAME=GESIS',
+            'INTERLEAVE=True',
+            'BULK_INDEX=True',
+            'DELETE_SENT_SESSION=True',
+            'INTERVAL_DB_CHECK=3',
+            'SESSION_EXPIRATION=6']
+
+            # if ranksys and recsys and ranksys_precom and recsys_precom:
+            #     compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+            #                                                  'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+            #                                                  'RANKSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in ranksys_precom]),
+            #                                                  'RECSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in recsys_precom]),
+            #                                                  'RANKSYS_BASE=livivo_base',
+            #                                                  'RECSYS_BASE=gesis_rec_pyserini']
+            # if not ranksys and recsys:
+            #     compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+            #                                                  'RECSYS_BASE=gesis_rec_precom']
+            #
+            # if ranksys and not recsys:
+            #     compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+            #                                                  'RANKSYS_BASE=livivo_base']
+
+        # if type == 'rank':
+        #     ranksys = System.query.filter_by(type='REC', status='running').all()
+        #     if ranksys:
+        #         compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
+        #                                                      'RANKSYS_BASE=livivo_base']
+        #
+        # if type == 'rec':
+        #     recsys = System.query.filter_by(type='REC', status='running').all()
+        #     if recsys:
+        #         compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
+        #                                                      'RECSYS_BASE=gesis_rec_precom']
 
         for system in systems:
             # Please note: if you do not provide a GitHub token,
@@ -270,7 +316,7 @@ class Bot:
                 'build': gh_url,
                 'container_name': system.name,
                 'volumes': ['./data/:/data/'],
-                'networks': ['stella-shared']
+                # 'networks': ['stella-shared']
             }
 
         yaml = ruamel.yaml.YAML()
@@ -289,11 +335,11 @@ class Bot:
             stella_project = g.get_organization(orga_name)
             stella_app = stella_project.get_repo(repo_name)
 
-            file = stella_app.get_contents('docker-compose.yml')
+            file = stella_app.get_contents('stella-app.yml')
 
             commit_message = 'automatic update'
 
             with open(yml_path) as yml_in:
                 updated_content = yml_in.read()
 
-            stella_app.update_file('docker-compose.yml', commit_message, updated_content, file.sha)
+            stella_app.update_file('stella-app.yml', commit_message, updated_content, file.sha)
