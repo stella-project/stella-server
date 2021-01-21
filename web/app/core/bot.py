@@ -184,12 +184,12 @@ class Bot:
         repo.create_file('resources/livivo/' + filename, commit_msg, file_hq.decoded_content.decode('utf-8'))
         time.sleep(1)
 
-        repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
-        time.sleep(1)
-        repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
-        time.sleep(1)
-        repo.create_file('precom/rec/publications/.gitkeep', 'add rec pub dir', " ")
-        time.sleep(1)
+        # repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
+        # time.sleep(1)
+        # repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
+        # time.sleep(1)
+        # repo.create_file('precom/rec/publications/.gitkeep', 'add rec pub dir', " ")
+        # time.sleep(1)
 
         if type == 'RANK':
             run_tar_path = 'precom/rank/run.tar.gz'
