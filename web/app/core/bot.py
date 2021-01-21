@@ -1,6 +1,7 @@
 import re
 import os
 import random
+import time
 
 from github import Github
 from datetime import datetime
@@ -161,27 +162,34 @@ class Bot:
         stella_project = g.get_organization(orga_name)
         template = stella_project.get_repo('stella-micro-template-precom')
         repo = stella_project.create_repo(repo_name + '_precom', private=True)
+        time.sleep(1)
 
         for file in template.get_contents('.'):
             filename = file.name
             if filename not in ['test', 'precom', 'resources']:
                 commit_msg = 'add ' + filename
                 repo.create_file(filename, commit_msg, file.decoded_content.decode('utf-8'))
+                time.sleep(1)
 
         for test_file in template.get_contents('test'):
             filename = test_file.name
             commit_msg = 'add ' + filename
             repo.create_file('test/'+filename, commit_msg, test_file.decoded_content.decode('utf-8'))
+            time.sleep(1)
 
         # head queries of livivo
         file_hq = template.get_contents('resources/livivo')[0]
         filename = file_hq.name
         commit_msg = 'add ' + filename
         repo.create_file('resources/livivo/' + filename, commit_msg, file_hq.decoded_content.decode('utf-8'))
+        time.sleep(1)
 
         repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
+        time.sleep(1)
         repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
+        time.sleep(1)
         repo.create_file('precom/rec/publications/.gitkeep', 'add rec pub dir', " ")
+        time.sleep(1)
 
         if type == 'RANK':
             run_tar_path = 'precom/rank/run.tar.gz'
