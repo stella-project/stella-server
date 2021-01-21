@@ -9,19 +9,19 @@ services:
              python manage.py db init &&
              python manage.py db migrate &&
              python manage.py db upgrade &&
-             /usr/local/bin/gunicorn -w 2 -b :8000 stella-server:app"
+             /usr/local/bin/gunicorn -w 2 --timeout 60 -b :8000 stella-server:app"
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PW=change-me
+      - POSTGRES_PW=seWovS4iAHwk6tRR
       - POSTGRES_DB=postgres
-      - SECRET_KEY=change-me
-      - AUTOMATOR_GH_KEY=
+      - SECRET_KEY=ymqpGW9mS4CNGsTy
+      - AUTOMATOR_GH_KEY=f2a60de2aabb71770c975823d943b879cc864383
       - ADMIN_MAIL=admin@stella.org
-      - ADMIN_PASS=pass
+      - ADMIN_PASS=LEdY7u2gwg3nHHGv
       - GESIS_MAIL=gesis@stella.org
-      - GESIS_PASS=pass
+      - GESIS_PASS=hgEyCnYK8X6Wb6MP
       - LIVIVO_MAIL=livivo@stella.org
-      - LIVIVO_PASS=pass
+      - LIVIVO_PASS=ADFnVCo4sT53uTy3
     links:
       - db:db
     depends_on:
@@ -32,7 +32,7 @@ services:
       - 5432:5432
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=change-me
+      - POSTGRES_PASSWORD=seWovS4iAHwk6tRR
       - POSTGRES_DB=postgres
   nginx:
     restart: always
