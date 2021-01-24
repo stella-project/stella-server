@@ -66,8 +66,6 @@ class SubmitSystem(FlaskForm):
     submit = SubmitField('Submit')
 
 
-
-
 class SubmitRanking(FlaskForm):
     systemname = StringField('System name', validators=[
         DataRequired(), Length(1, 64),
@@ -76,7 +74,14 @@ class SubmitRanking(FlaskForm):
                'underscores')])
     site_type = SelectField('Site & System type', choices=['GESIS (Dataset recommender)', 'LIVIVO (Document ranker)'])
     upload = FileField('Run file', validators=[FileRequired(),
-                                               FileAllowed(['out', 'txt'], 'Images only!')]
-                       )
+                                               FileAllowed(['tar.xz', 'tar.gz', 'txt'], 'Please upload a *.txt, *.tar.xz, or *.tar.gz file!')])
+
+    def validate_systemname(self, field):
+        if re.match('^[A-Za-z][A-Za-z0-9_.]*$', field.data):
+            if System.query.filter_by(name=field.data).first():
+                flash('System name already in use.', 'danger')
+                raise ValidationError('System name already in use.')
+        else:
+            flash('Systemname must have only letters, numbers, dots or underscores', 'danger')
 
     submit2 = SubmitField('Submit')

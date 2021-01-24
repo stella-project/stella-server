@@ -2,8 +2,31 @@ from .models import Role, System, User
 import ruamel.yaml
 import re
 import tarfile
+from zipfile import ZipFile
 import os
+import glob
 import datetime
+
+
+def mkdir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+
+
+def unpack(f_in, target_dir):
+    mkdir(target_dir)
+    if f_in.endswith(('.xz', '.gz')):
+        with tarfile.open(f_in) as tf_in:
+            tf_in.extractall(target_dir)
+
+    if f_in.endswith(('.zip')):
+        with ZipFile(f_in) as zf_in:
+            zf_in.extractall(target_dir)
+
+    run_upload = glob.glob(os.path.join(target_dir, '*.txt'))[0]
+    run_path = os.path.join(target_dir, 'run.txt')
+    os.rename(run_upload, run_path)
+    return run_path
 
 
 def make_tarfile(output_filename, source_dir):

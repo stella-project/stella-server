@@ -2,24 +2,17 @@ from flask import render_template, session, redirect, url_for, current_app, requ
 from flask_login import current_user, login_user, login_required
 from werkzeug.utils import secure_filename
 from .. import db
-
 import os
 import re
 import datetime
-
 from . import main
 import json
-
 from .forms import SubmitSystem, ChangeUsernameForm, ChangePassword, ChangeEmailForm, SubmitRanking
-
 from ..models import User, Session, System, Result, Feedback, Role, load_user
-
 from ..dashboard import Dashboard
 from ..auth.forms import LoginForm
 import plotly.offline
-
 from ..core.bot import Bot
-
 from ..util import makeComposeFile
 
 
@@ -85,13 +78,16 @@ def systems():
 
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
-        # hasErrors = automator.validate(f, k=1500)
-        hasErrors = False
         filename = secure_filename(f.filename)
-        subdir = automator.saveFile(f, filename)
-        if not hasErrors:
+        try:
+            if filename.endswith('.txt'):
+                subdir = automator.saveFile(f)
+                tar_path = automator.compressFile(subdir)
 
-            tar_path = automator.compressFile(subdir)
+            if filename.endswith(('.zip', '.xz', '.gz')):
+                # unpack(archive_file, filename)
+                subdir = automator.saveArchive(f)
+                tar_path = automator.compressFile(subdir)
 
             systemname = formRanking.systemname.data
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
@@ -115,8 +111,8 @@ def systems():
 
             flash('Run file submitted')
             return redirect(url_for('main.systems'))
-        else:
-            flash(hasErrors, 'danger')
+        except Exception as e:
+            flash(' '.join(['Upload not possible:', e]), 'danger')
             return redirect(url_for('main.systems'))
 
     if formContainer.submit.data and formContainer.validate():

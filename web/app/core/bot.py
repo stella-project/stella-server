@@ -2,12 +2,9 @@ import re
 import os
 import random
 import time
-
 from github import Github
 from datetime import datetime
-
-from ..util import make_tarfile
-
+from ..util import make_tarfile, unpack
 from ..models import System
 import ruamel.yaml
 
@@ -101,17 +98,33 @@ class Bot:
         make_tarfile(output, input)
         return output
 
-    def saveFile(self, file, filename):
+    def saveFile(self, file):
         if not os.path.exists('uploads'):
             os.makedirs('uploads')
 
-        subdir = os.path.join('uploads', filename)
+        subdir = os.path.join('uploads', file.filename.split('.')[0])
         if not os.path.exists(subdir):
             os.makedirs(subdir)
 
         run_path = os.path.join(subdir, 'run.txt')
 
         file.save(run_path)
+
+        return subdir
+
+    def saveArchive(self, archive):
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+
+        subdir = os.path.join('uploads', archive.filename.split('.')[0])
+        if not os.path.exists(subdir):
+            os.makedirs(subdir)
+
+        save_path = os.path.join(subdir, archive.filename)
+
+        archive.save(save_path)
+
+        unpack(save_path, subdir)
 
         return subdir
 
