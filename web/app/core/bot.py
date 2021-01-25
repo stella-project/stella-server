@@ -98,11 +98,12 @@ class Bot:
         make_tarfile(output, input)
         return output
 
-    def saveFile(self, file):
+    def saveFile(self, file, systemname):
         if not os.path.exists('uploads'):
             os.makedirs('uploads')
 
-        subdir = os.path.join('uploads', file.filename.split('.')[0])
+        # subdir = os.path.join('uploads', file.filename.split('.')[0])
+        subdir = os.path.join('uploads', systemname)
         if not os.path.exists(subdir):
             os.makedirs(subdir)
 
@@ -112,11 +113,12 @@ class Bot:
 
         return subdir
 
-    def saveArchive(self, archive):
+    def saveArchive(self, archive, systemname):
         if not os.path.exists('uploads'):
             os.makedirs('uploads')
 
-        subdir = os.path.join('uploads', archive.filename.split('.')[0])
+        # subdir = os.path.join('uploads', archive.filename.split('.')[0])
+        subdir = os.path.join('uploads', systemname)
         if not os.path.exists(subdir):
             os.makedirs(subdir)
 
@@ -124,7 +126,10 @@ class Bot:
 
         archive.save(save_path)
 
-        unpack(save_path, subdir)
+        try:
+            unpack(save_path, subdir)
+        except Exception as e:
+            print(str(e))
 
         return subdir
 

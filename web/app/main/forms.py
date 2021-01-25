@@ -74,7 +74,7 @@ class SubmitRanking(FlaskForm):
                'underscores')])
     site_type = SelectField('Site & System type', choices=['GESIS (Dataset recommender)', 'LIVIVO (Document ranker)'])
     upload = FileField('Run file', validators=[FileRequired(),
-                                               FileAllowed(['tar.xz', 'tar.gz', 'txt'], 'Please upload a *.txt, *.tar.xz, or *.tar.gz file!')])
+                                               FileAllowed(['tar.xz', 'tar.gz', 'zip', 'txt'], 'Please upload a *.txt, *.tar.xz, or *.tar.gz file!')])
 
     def validate_systemname(self, field):
         if re.match('^[A-Za-z][A-Za-z0-9_.]*$', field.data):

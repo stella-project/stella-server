@@ -14,6 +14,7 @@ from ..auth.forms import LoginForm
 import plotly.offline
 from ..core.bot import Bot
 from ..util import makeComposeFile
+import shutil
 
 
 def get_systems(current_user):
@@ -71,7 +72,6 @@ def dashboard():
 @login_required
 def systems():
     systems = get_systems(current_user)
-
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
     automator = Bot()
@@ -79,20 +79,20 @@ def systems():
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
         filename = secure_filename(f.filename)
+        systemname = formRanking.systemname.data
+        subdir = None
+        DELETE_UPLOAD = True  # move this to configs
         try:
             if filename.endswith('.txt'):
-                subdir = automator.saveFile(f)
+                subdir = automator.saveFile(f, systemname)
                 tar_path = automator.compressFile(subdir)
 
             if filename.endswith(('.zip', '.xz', '.gz')):
-                # unpack(archive_file, filename)
-                subdir = automator.saveArchive(f)
+                subdir = automator.saveArchive(f, systemname)
                 tar_path = automator.compressFile(subdir)
 
-            systemname = formRanking.systemname.data
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
-            site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(
-                username='LIVIVO').first().id
+            site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(username='LIVIVO').first().id
             if current_app.config['AUTOMATOR_GH_KEY']:
                 gh_url = automator.create_precom_repo(token=current_app.config['AUTOMATOR_GH_KEY'],
                                                       repo_name=systemname,
@@ -107,12 +107,18 @@ def systems():
             db.session.add_all([system])
             db.session.commit()
 
+            if subdir and DELETE_UPLOAD:
+                shutil.rmtree(subdir)
+
             # automator.saveSplits(file, filename)
 
             flash('Run file submitted')
             return redirect(url_for('main.systems'))
+
         except Exception as e:
-            flash(' '.join(['Upload not possible:', e]), 'danger')
+            if subdir and DELETE_UPLOAD:
+                shutil.rmtree(subdir)
+            flash(' '.join(['Upload not possible. Use the following message for debugging:', str(e)]), 'danger')
             return redirect(url_for('main.systems'))
 
     if formContainer.submit.data and formContainer.validate():
