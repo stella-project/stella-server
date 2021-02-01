@@ -221,6 +221,9 @@ class Bot:
     @staticmethod
     def update_stella_app(type='all', token=None):
 
+        if not os.path.exists('uploads'):
+            os.makedirs('uploads')
+
         yml_path = 'uploads/stella-app.yml'
 
         if type == 'all':
