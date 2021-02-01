@@ -285,7 +285,7 @@ class Bot:
             compose['services']['app']['environment'] = compose['services']['app']['environment'] + ['RECSYS_BASE=gesis_rec_pyserini']
 
         compose['services']['app']['environment'] = compose['services']['app']['environment'] + [
-            'STELLA_SERVER_ADDRESS=nginx',
+            'STELLA_SERVER_ADDRESS=https://lilas.stella-project.org',
             'STELLA_SERVER_USER=gesis@stella.org',
             'STELLA_SERVER_PASS=pass',
             'STELLA_SERVER_USERNAME=GESIS',
