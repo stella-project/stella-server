@@ -39,6 +39,11 @@ services:
     build: ./nginx
     ports:
       - 80:80
+      - 443:443
+    volumes:
+      - /etc/ssl:/etc/ssl
+      - /etc/letsencrypt/live:/etc/letsencrypt/live
+      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     links:
       - web:web
     depends_on:
