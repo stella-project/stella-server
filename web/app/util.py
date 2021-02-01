@@ -78,27 +78,27 @@ def setup_db(db):
     site_role = Role(name='Site')
 
     user_admin = User(username='stella-admin',
-                      email=os.environ.get('ADMIN_MAIL') or 'admin@stella.org',
+                      email=os.environ.get('ADMIN_MAIL') or 'admin@stella-project.org',
                       role=admin_role,
                       password=os.environ.get('ADMIN_PASS') or 'pass')
 
     user_part_a = User(username='participant_a',
-                       email='participant_a@stella.org',
+                       email=os.environ.get('PARTA_MAIL') or 'participant_a@stella-project.org',
                        role=participant_role,
-                       password='pass')
+                       password=os.environ.get('PARTA_PASS') or 'pass')
 
     user_part_b = User(username='participant_b',
-                       email='participant_b@stella.org',
+                       email=os.environ.get('PARTB_MAIL') or 'participant_b@stella-project.org',
                        role=participant_role,
-                       password='pass')
+                       password=os.environ.get('PARTB_PASS') or 'pass')
 
     user_site_a = User(username='GESIS',
-                       email=os.environ.get('GESIS_MAIL') or 'gesis@stella.org',
+                       email=os.environ.get('GESIS_MAIL') or 'gesis@stella-project.org',
                        role=site_role,
                        password=os.environ.get('GESIS_PASS') or 'pass')
 
     user_site_b = User(username='LIVIVO',
-                       email=os.environ.get('LIVIVO_MAIL') or 'livivo@stella.org',
+                       email=os.environ.get('LIVIVO_MAIL') or 'livivo@stella-project.org',
                        role=site_role,
                        password=os.environ.get('LIVIVO_PASS') or 'pass')
 
