@@ -25,7 +25,7 @@ def post_ranking(id):
         ranking.site_id = site
         ranking.session_id = session.id
         ranking.feedback_id = id
-        ranking.system_id = session.system_ranking
+        ranking.system_id = json_ranking.get('system_id') if json_ranking.get('system_id') else session.system_ranking
         ranking.participant_id = System.query.get_or_404(session.system_ranking).participant_id
         ranking.type = 'RANK'
         db.session.add(ranking)
