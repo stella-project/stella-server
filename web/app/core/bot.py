@@ -243,9 +243,15 @@ class Bot:
                            'build': './app',
                            'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
                            'ports': ["8080:8000"],
-                           'depends_on': [system.name for system in systems],
+                           'links': ['db:db'],
+                           'depends_on': ['db'] + [system.name for system in systems],
                            # 'networks': ['stella-shared']
-                     }
+                     },
+                       'db': {
+                           'image': 'postgres',
+                           'ports': ['5432:5432'],
+                           'environment': ['POSTGRES_USER=postgres', 'POSTGRES_PASSWORD=postgres', 'POSTGRES_DB=postgres']
+                       }
                     }
                    }
 
