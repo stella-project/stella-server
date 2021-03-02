@@ -19,8 +19,7 @@ class Dashboard:
         if user_role_id == 2:  # user is participant
             self.systems = System.query.filter_by(participant_id=user_id).all()
         if user_role_id == 3:  # user is site
-            system_ids = Session.query.filter_by(site_id=user_id).with_entities(Session.system_recommendation).distinct().all() + Session.query.filter_by(site_id=user_id).with_entities(Session.system_ranking).distinct().all()
-            self.systems = System.query.filter(System.id.in_([s[0] for s in system_ids])).all()
+            self.systems = System.query.filter(System.site == user_id).all()
 
         site_ids = Session.query.filter(Session.system_ranking.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all() + Session.query.filter(Session.system_recommendation.in_([r.id for r in self.systems])).with_entities(Session.site_id).distinct().all()
 
@@ -63,15 +62,14 @@ class Dashboard:
                     for r in results:
                         if r.session_id not in session_ids:
                             session_ids.append(r.session_id)
-                    self.sessions = [Session.query.filter_by(id=sid, system_ranking=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
+                    self.sessions = [Session.query.filter_by(id=sid).first() for sid in session_ids]
                 if self.ranker.type == 'REC':
                     results = Result.query.filter_by(system_id=self.ranker.id, site_id=self.site_id, type='REC').all()
                     session_ids = []
                     for r in results:
                         if r.session_id not in session_ids:
                             session_ids.append(r.session_id)
-                    self.sessions = [Session.query.filter_by(id=sid, system_recommendation=self.ranker.id, site_id=self.site[0]).one() for sid in session_ids]
-
+                    self.sessions = [Session.query.filter_by(id=sid).first() for sid in session_ids]
             sids = [s.id for s in self.sessions]
             self.feedbacks = Feedback.query.filter(Feedback.session_id.in_(sids)).all()
 
