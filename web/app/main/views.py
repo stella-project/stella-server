@@ -152,18 +152,11 @@ def downloadTREC(filename):
 @main.route('/download/<system_id>')
 @login_required
 def download(system_id):
-    if current_user.id == System.query.filter_by(id=system_id).all()[0].participant_id or current_user.role_id == 1 or (current_user.role_id == 3) and (System.query.filter_by(id=system_id).all()[0].site == current_user.id) : # if user is owner, admin
-# or current_user.role_id ==
+    if current_user.id == System.query.filter_by(id=system_id).all()[0].participant_id or current_user.role_id == 1 or (current_user.role_id == 3) and (System.query.filter_by(id=system_id).all()[0].site == current_user.id):
+
         system = System.query.filter_by(id=system_id).first()
-
-        if system.type == 'REC':
-            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-                System, System.id == Session.system_recommendation).filter(System.id == system_id).all()
-
-        else:
-            feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
-                System, System.id == Session.system_ranking).filter(System.id == system_id).all()
-
+        results = Result.query.filter_by(system_id=system_id).all()
+        feedbacks = [Feedback.query.filter(Feedback.id == r.feedback_id).first() for r in results]
         queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
 
         export = {system.name: [{
