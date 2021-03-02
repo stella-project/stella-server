@@ -224,15 +224,16 @@ class Bot:
         if not os.path.exists('uploads'):
             os.makedirs('uploads')
 
-        yml_path = 'uploads/stella-app.yml'
-
         if type == 'all':
+            yml_path = 'uploads/stella-app.yml'
             systems = System.query.filter_by(status='running').all()
             repo_name = 'stella-app'
         if type == 'rec':
+            yml_path = 'uploads/gesis.yml'
             systems = System.query.filter_by(type='REC', status='running').all()
             repo_name = 'stella-app'
         if type == 'rank':
+            yml_path = 'uploads/livivo.yml'
             systems = System.query.filter_by(type='RANK', status='running').all()
             repo_name = 'stella-app'
 
@@ -370,11 +371,18 @@ class Bot:
             stella_project = g.get_organization(orga_name)
             stella_app = stella_project.get_repo(repo_name)
 
-            file = stella_app.get_contents('stella-app.yml')
+            if type == 'all':
+                filename = 'stella-app.yml'
+            if type == 'rec':
+                filename = 'gesis.yml'
+            if type == 'rank':
+                filename = 'livivo.yml'
+
+            file = stella_app.get_contents(filename)
 
             commit_message = 'automatic update'
 
             with open(yml_path) as yml_in:
                 updated_content = yml_in.read()
 
-            stella_app.update_file('stella-app.yml', commit_message, updated_content, file.sha)
+            stella_app.update_file(filename, commit_message, updated_content, file.sha)
