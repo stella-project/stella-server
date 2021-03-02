@@ -79,7 +79,6 @@ class Dashboard:
                     self.impressions.update({date: 1})
                 else:
                     self.impressions[date] = self.impressions[date] + 1
-
             for f in self.feedbacks:
                 clicks = f.clicks
                 cnt_base = 0
@@ -105,6 +104,19 @@ class Dashboard:
                     self.loss += 1
                 if cnt_exp == cnt_base:
                     self.tie += 1
+
+            # if displayed results are from the baseline system, flip wins and losses
+            exp_sys = [
+                Session.query.filter(
+                    Session.id == self.feedbacks[0].session_id).first().system_ranking,
+               Session.query.filter(
+                   Session.id == self.feedbacks[0].session_id).first().system_recommendation
+                       ]
+            if not (int(self.system_id) in exp_sys):
+                tmp = self.win
+                self.win = self.loss
+                self.loss = tmp
+
 
             if len(self.impressions) > 0:
                 self.CTR = round(len(self.clicks_exp) / len(self.impressions), 4)
