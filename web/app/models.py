@@ -354,7 +354,7 @@ class System(db.Model):
     '''
     __tablename__ = 'systems'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True)
+    name = db.Column(db.String(512), index=True)
     participant_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     type = db.Column(db.String(64), index=True)
     results = db.relationship('Result', backref='system', lazy='dynamic')
