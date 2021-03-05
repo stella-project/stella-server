@@ -358,7 +358,7 @@ class System(db.Model):
     participant_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     type = db.Column(db.String(64), index=True)
     results = db.relationship('Result', backref='system', lazy='dynamic')
-    url = db.Column(db.String(64), index=False)
+    url = db.Column(db.String(512), index=False)
     submitted = db.Column(db.String(64), index=False)
     status = db.Column(db.String(64), index=False)
     site = db.Column(db.Integer, index=False)
