@@ -98,6 +98,10 @@ class Dashboard:
                         else:
                             self.clicks_base[date] = self.clicks_base[date] + 1
                         cnt_base += 1
+
+                if cnt_base == 0 and cnt_exp == 0:
+                    continue
+
                 if cnt_exp > cnt_base:
                     self.win += 1
                 if cnt_exp < cnt_base:
@@ -119,7 +123,7 @@ class Dashboard:
 
 
             if len(self.impressions) > 0:
-                self.CTR = round(len(self.clicks_exp) / len(self.impressions), 4)
+                self.CTR = round(len(self.clicks_exp) / len(self.feedbacks), 4)
 
             if self.win > 0 or self.loss > 0:
                 self.outcome = "{0:.4f}".format(self.win / (self.win + self.loss))
@@ -216,15 +220,23 @@ class Dashboard:
         return dict(
             data=[
                 dict(type='table',
-                     header=dict(values=['Metric', 'Value'],
-                                 align='left', fill={"color": "#201C2D"},
+                     columnwidth=[25, 15, 100],
+                     header=dict(values=['Metric', 'Value', 'Explanation'],
+
+                                 align='center', fill={"color": "#201C2D"},
                                  line={"width": "1", "color": 'black'},
                                  font={"family": "Arial",
                                        "size": "12",
                                        "color": "white"}),
-                     cells=dict(values=[['Win', 'Loss', 'Tie', 'Outcome', 'CTR'],
-                                        [self.win, self.loss, self.tie, self.outcome, self.CTR]],
-                                align='left',
+                     cells=dict(values=[['Win', 'Loss', 'Tie', 'Outcome', 'Impressions', 'CTR'],
+                                        [self.win, self.loss, self.tie, self.outcome, len(self.sessions), self.CTR],
+                                        ["A system 'wins' if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
+                                        "Opposite of 'Win'. Number of times when the system has less clicks on results than the baseline system.",
+                                        "Equal number of clicks for your system and the baseline. Only results having at least two clicks are included.",
+                                        "#Wins / (#Wins + #Loss)",
+                                        "Total number of sessions for which your system was used.",
+                                        "Click-through rate"]],
+                                align='center',
                                 line={"width": "1", "color": 'black'},
                                 fill={"color": "#506784"},
                                 font={"family": "Arial",
