@@ -351,7 +351,7 @@ class Bot:
             compose['services'][str(system.name)] = {
                 'build': gh_url,
                 'container_name': system.name,
-                'volumes': ['./data/:/data/'],
+                'volumes': ['./data/:/data/', ''.join([os.path.join('./index/', system.name), ':/index/'])],
                 # 'networks': ['stella-shared']
             }
 
