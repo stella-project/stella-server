@@ -50,9 +50,9 @@ def dashboard():
     if current_user.is_anonymous:
         return render_template('index.html')
     else:
-        if request.method == 'POST' and request.form.get('system') is not None and request.form.get('site') is not None:
+        if request.method == 'POST' and request.form.get('system') is not None:
             system_id = request.form.get('system')
-            site_id = request.form.get('site')
+            site_id = System.query.filter_by(id=system_id).first().site
             dashboard = Dashboard(current_user.id, system_id, site_id)
         else:
             dashboard = Dashboard(current_user.id)

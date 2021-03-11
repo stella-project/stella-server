@@ -141,13 +141,9 @@ class Dashboard:
             pass
 
     def dropdown(self):
-
-        self.form.system.choices = [(r.id, r.name) for r in self.systems]
+        self.form.system.choices = [(r.id, r.name + '@' + User.query.filter_by(id=r.site).first().username) for r in self.systems]
         if len(self.form.system.choices) != 0:
             self.form.system.default = self.form.system.choices[0]
-        self.form.site.choices = [(s.id, s.username) for s in self.sites]
-        if len(self.form.site.choices) != 0:
-            self.form.site.default = self.form.site.choices[0]
         return self.form
 
     def get_impressions(self):

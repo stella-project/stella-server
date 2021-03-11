@@ -11,9 +11,8 @@ import re
 
 
 class Dropdown(FlaskForm):
-    system = SelectField(choices=[])
-    site = SelectField(choices=[])
-    submit = SubmitField('Display results')
+    system = SelectField('', choices=[])
+    submit = SubmitField('Show results')
 
 
 class ChangeUsernameForm(FlaskForm):
