@@ -81,12 +81,15 @@ class Dashboard:
                 else:
                     self.impressions[date] = self.impressions[date] + 1
 
+            _rid_date = []
             for r in results:
                 date = r.q_date.strftime('%Y-%m-%d')
                 if self.impressions_results.get(date) is None:
                     self.impressions_results.update({date: 1})
-                else:
+                    _rid_date.append((r.session_id, r.q_date))
+                elif (r.session_id, r.q_date) not in _rid_date:
                     self.impressions_results[date] = self.impressions_results[date] + 1
+                    _rid_date.append((r.session_id, r.q_date))
 
 
             for f in self.feedbacks:
