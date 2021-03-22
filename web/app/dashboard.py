@@ -43,6 +43,7 @@ class Dashboard:
         self.loss = 0
         self.tie = 0
         self.outcome = 0
+        self.num_clicks = 0
         self.CTR = 0
 
         try:
@@ -133,10 +134,15 @@ class Dashboard:
                 tmp = self.win
                 self.win = self.loss
                 self.loss = tmp
+                self.num_clicks = sum(self.clicks_base.values())
+            else:
+                self.num_clicks = sum(self.clicks_exp.values())
+
+
 
 
             if len(self.impressions) > 0:
-                self.CTR = round(sum(self.clicks_exp.values()) / sum(self.impressions_results.values()), 4)
+                self.CTR = round(self.num_clicks / sum(self.impressions_results.values()), 4)
 
             if self.win > 0 or self.loss > 0:
                 self.outcome = "{0:.4f}".format(self.win / (self.win + self.loss))
@@ -249,7 +255,7 @@ class Dashboard:
                                        "size": "12",
                                        "color": "white"}),
                      cells=dict(values=[['Win', 'Loss', 'Tie', 'Outcome', 'Sessions', 'Impressions', 'Clicks', 'CTR'],
-                                        [self.win, self.loss, self.tie, self.outcome, sum(self.impressions.values()), sum(self.impressions_results.values()), sum(self.clicks_exp.values()), self.CTR],
+                                        [self.win, self.loss, self.tie, self.outcome, sum(self.impressions.values()), sum(self.impressions_results.values()), self.num_clicks, self.CTR],
                                         ["A system 'wins' if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
                                         "Opposite of 'Win'. Number of times when the system has less clicks on results than the baseline system.",
                                         "Equal number of clicks for your system and the baseline. Only results having at least two clicks are included.",
