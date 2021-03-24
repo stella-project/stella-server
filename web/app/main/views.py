@@ -190,7 +190,11 @@ def downloadAll():
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_ranking).filter(System.id == system.id).all()
 
-        queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
+        queries = []
+        for f in feedbacks:
+            results = Result.query.filter_by(feedback_id=f.id)
+            if results.first():
+                queries.append(results.first().q)
 
         export[system.name] = [{
             'clicks': f.clicks,
