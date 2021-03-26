@@ -190,11 +190,7 @@ def downloadAll():
             feedbacks = Feedback.query.join(Session, Session.id == Feedback.session_id).join(
                 System, System.id == Session.system_ranking).filter(System.id == system.id).all()
 
-        queries = []
-        for f in feedbacks:
-            results = Result.query.filter_by(feedback_id=f.id)
-            if results.first():
-                queries.append(results.first().q)
+        queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
 
         export[system.name] = [{
             'clicks': f.clicks,
@@ -378,3 +374,34 @@ def delete(id):
     #                        formContainer=SubmitSystem(),
     #                        formRanking=SubmitRanking(),
     #                        current_user=current_user)
+
+
+@main.route('/statistics')
+@login_required
+def statistics():
+    import pandas as pd
+    systems = System.query.all()
+    systems_sites = [(sys.id, sys.site) for sys in systems]
+    data_dict = {}
+    sessions_impressions_clicks = []
+    idx_names = []
+    for system_site in systems_sites:
+        dash = Dashboard(current_user.id, system_id=system_site[0], site_id=system_site[1])
+        system_name = System.query.filter_by(id=dash.system_id).first().name
+        data_dict[system_name] = [dash.win, dash.loss, dash.tie,
+                                  dash.outcome, sum(dash.impressions.values()),
+                                  sum(dash.impressions_results.values()), dash.num_clicks, dash.CTR]
+
+        sessions_impressions_clicks.append(dash.impressions)
+        sessions_impressions_clicks.append(dash.impressions_results)
+        sessions_impressions_clicks.append(dash.clicks_exp)
+        sessions_impressions_clicks.append(dash.clicks_base)
+        idx_names.append('_'.join([system_name, 'sessions']))
+        idx_names.append('_'.join([system_name, 'impressions']))
+        idx_names.append('_'.join([system_name, 'clicks']))
+        idx_names.append('_'.join([system_name, 'clicks_base']))
+
+    pd.DataFrame(data=data_dict, index=['win', 'loss', 'tie', 'outcome', 'sessions', 'impressions', 'clicks', 'ctr']).transpose().to_csv('overall_stats.csv')
+    pd.DataFrame(data=sessions_impressions_clicks, index=idx_names, dtype=pd.Int64Dtype()).to_csv('sessions_impressions.csv')
+
+    return 'CSV files dumped.', 200
