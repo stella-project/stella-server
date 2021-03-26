@@ -177,7 +177,7 @@ class Dashboard:
             layout=dict(
                 title='Sessions & Impressions',
                 margin=dict(
-                    l=15,
+                    l=40,
                     r=15,
                     t=50,
                     b=50
@@ -211,7 +211,7 @@ class Dashboard:
             layout=dict(
                 title='Clicks',
                 margin=dict(
-                    l=15,
+                    l=40,
                     r=15,
                     t=50,
                     b=50
