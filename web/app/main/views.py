@@ -156,6 +156,7 @@ def download(system_id):
 
         system = System.query.filter_by(id=system_id).first()
         results = Result.query.filter_by(system_id=system_id).all()
+        results = [result for result in results if 'BASE' in [val['type'] for val in result.items.values()]]
         feedbacks = [Feedback.query.filter(Feedback.id == r.feedback_id).first() for r in results]
         queries = [Result.query.filter_by(feedback_id=f.id).first().q for f in feedbacks]
 
