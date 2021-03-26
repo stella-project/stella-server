@@ -181,6 +181,18 @@ class Dashboard:
                     r=15,
                     t=50,
                     b=50
+                ),
+                legend=dict(
+                    yanchor="top",
+                    xanchor="right",
+                    traceorder="reversed",
+                    title_font_family="Times New Roman",
+                    font=dict(
+                        size=12,
+                        color="black"
+                    ),
+                    bgcolor="LightSteelBlue",
+                    borderwidth=1
                 )
             )
         )
@@ -215,8 +227,20 @@ class Dashboard:
                     r=15,
                     t=50,
                     b=50
+                ),
+                legend=dict(
+                    yanchor="top",
+                    xanchor="right",
+                    traceorder="reversed",
+                    title_font_family="Times New Roman",
+                    font=dict(
+                        size=12,
+                        color="black"
+                    ),
+                    bgcolor="LightSteelBlue",
+                    borderwidth=1
                 )
-            )
+                )
         )
 
     def get_pie_chart(self):
