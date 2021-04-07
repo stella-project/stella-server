@@ -14,11 +14,27 @@ from .models import Role, System, User
 
 
 def mkdir(path):
+    """Create directory if it does not exists.
+
+    Args:
+        path (str):  Directory path.
+
+    """
     if not os.path.exists(path):
         os.makedirs(path)
 
 
 def unpack(f_in, target_dir):
+    """Unpack an archived run file and rename it to run.txt.
+
+    Args:
+        f_in (str): Filename or path to unpack.
+        target_dir: Directory the file gets unpacked to.
+
+    Returns:
+        str: Path to unpacked file.
+
+    """
     mkdir(target_dir)
     if f_in.endswith(('.xz', '.gz')):
         with tarfile.open(f_in) as tf_in:
@@ -35,11 +51,24 @@ def unpack(f_in, target_dir):
 
 
 def make_tarfile(output_filename, source_dir):
+    """Create a tar archive from a given file in an given directory.
+
+    Args:
+        output_filename (str): Name and directory of the new archive.
+        source_dir (str): Directory of the file to archive.
+
+    """
     with tarfile.open(output_filename, "w:gz") as tar:
         tar.add(source_dir, arcname=os.path.basename(source_dir))
 
 
 def makeComposeFile():
+    """DEPRECATED: Creates an docker-compose.yaml file for the stella app.
+
+    Returns:
+        bool: True if successful
+
+    """
     systems = System.query.filter_by().all()
     compose = {'version': '3',
                'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
@@ -70,12 +99,12 @@ def makeComposeFile():
 
 
 def setup_db(db):
-    '''
-    Use this function to setup a database with set of pre-registered users.
+    """Use this function to setup a database with set of pre-registered users.
 
-    @param db: SQLAlchemy() instance.
-    @return: -
-    '''
+    Args:
+        db (object): SQLAlchemy() instance.
+
+    """
     db.drop_all()
     db.create_all()
 
@@ -225,6 +254,15 @@ def setup_db(db):
 
 
 def validate(ranking_str, k=None):
+    """DEPRECATED: Validate a precomputed run file by the standardized TREC format.
+
+    Args:
+        ranking_str (str): run file as string.
+        k (int): Number random sample lines to check
+
+    Returns:
+        bool/str: True: if no errors in run file. If errors exist, str: with error message.
+    """
     def _construct_error_string(error_log):
         message = []
         error_count = sum([len(error_log[s]) for s in error_log])
