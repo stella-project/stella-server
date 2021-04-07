@@ -1,6 +1,7 @@
 # STELLA Server
 
 [![Python application](https://github.com/stella-project/stella-server/actions/workflows/push.yml/badge.svg?branch=master)](https://github.com/stella-project/stella-server/actions/workflows/push.yml)
+[![GPLv3 license](https://img.shields.io/badge/License-GPLv3-blue.svg)](http://perso.crans.org/besson/LICENSE.html)
 
 
 The `stella-server` provides the following services:
