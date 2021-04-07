@@ -12,8 +12,8 @@ from ..models import User, Session, System, Result, Feedback, Role, load_user
 from ..dashboard import Dashboard
 from ..auth.forms import LoginForm
 import plotly.offline
-from ..core.bot import Bot
-from ..util import makeComposeFile
+# from ..core.bot import Bot
+from ..util import makeComposeFile, compress_file, save_file, save_archive, create_precom_repo, create_stella_app_yaml
 import shutil
 
 
@@ -74,7 +74,6 @@ def systems():
     systems = get_systems(current_user)
     formContainer = SubmitSystem()
     formRanking = SubmitRanking()
-    automator = Bot()
 
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
@@ -84,17 +83,17 @@ def systems():
         DELETE_UPLOAD = True  # move this to configs
         try:
             if filename.endswith('.txt'):
-                subdir = automator.saveFile(f, systemname)
-                tar_path = automator.compressFile(subdir)
+                subdir = save_file(f, systemname)
+                tar_path = compress_file(subdir)
 
             if filename.endswith(('.zip', '.xz', '.gz')):
-                subdir = automator.saveArchive(f, systemname)
-                tar_path = automator.compressFile(subdir)
+                subdir = save_archive(f, systemname)
+                tar_path = compress_file(subdir)
 
             type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
             site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(username='LIVIVO').first().id
             if current_app.config['AUTOMATOR_GH_KEY']:
-                gh_url = automator.create_precom_repo(token=current_app.config['AUTOMATOR_GH_KEY'],
+                gh_url = create_precom_repo(token=current_app.config['AUTOMATOR_GH_KEY'],
                                                       repo_name=systemname,
                                                       run_tar_in=tar_path,
                                                       type=type)
@@ -291,12 +290,6 @@ def upload_files():
     return redirect(url_for('main.uploads'))
 
 
-# @main.route('/upload')
-# @login_required
-# def uploads():
-#     return render_template('upload.html', current_user=current_user)
-
-
 @main.route('/buildCompose')
 def build():
     if makeComposeFile():
@@ -306,21 +299,21 @@ def build():
 
 @main.route('/stella-app/update')
 def update_stella_app():
-    Bot.update_stella_app(type='all', token=current_app.config['AUTOMATOR_GH_KEY'])
+    create_stella_app_yaml(type='all', token=current_app.config['AUTOMATOR_GH_KEY'])
     flash('Updated STELLA app!')
     return render_template('administration.html')
 
 
 @main.route('/stella-app/update/gesis')
 def update_stella_app_gesis():
-    Bot.update_stella_app(type='rec', token=current_app.config['AUTOMATOR_GH_KEY'])
+    create_stella_app_yaml(type='rec', token=current_app.config['AUTOMATOR_GH_KEY'])
     flash('Updated STELLA app for GESIS!')
     return render_template('administration.html')
 
 
 @main.route('/stella-app/update/livivo')
 def update_stella_app_livivo():
-    Bot.update_stella_app(type='rank', token=current_app.config['AUTOMATOR_GH_KEY'])
+    create_stella_app_yaml(type='rank', token=current_app.config['AUTOMATOR_GH_KEY'])
     flash('Updated STELLA app for LIVIVO!')
     return render_template('administration.html')
 
