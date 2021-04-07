@@ -1,5 +1,8 @@
 # STELLA Server
 
+[![Python application](https://github.com/stella-project/stella-server/actions/workflows/push.yml/badge.svg?branch=master)](https://github.com/stella-project/stella-server/actions/workflows/push.yml)
+
+
 The `stella-server` provides the following services:
 
 :busts_in_silhouette: User administration  
