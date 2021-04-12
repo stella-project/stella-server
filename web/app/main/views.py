@@ -78,7 +78,7 @@ def systems():
     if formRanking.submit2.data and formRanking.validate():
         f = formRanking.upload.data
         filename = secure_filename(f.filename)
-        systemname = formRanking.systemname.data
+        systemname = formRanking.systemname.data.lower()
         subdir = None
         DELETE_UPLOAD = True  # move this to configs
         try:
@@ -121,7 +121,7 @@ def systems():
             return redirect(url_for('main.systems'))
 
     if formContainer.submit.data and formContainer.validate():
-        systemName = formContainer.systemname.data
+        systemName = formContainer.systemname.data.lower()
         systemUrl = formContainer.GitHubUrl.data
         type = 'REC' if formContainer.site_type.data == 'GESIS (Dataset recommender)' else 'RANK'
         site = User.query.filter_by(username='GESIS').first().id if type == 'REC' else User.query.filter_by(username='LIVIVO').first().id
