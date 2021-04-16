@@ -63,7 +63,7 @@ def make_tarfile(output_filename, source_dir):
 
 
 def makeComposeFile():
-    """DEPRECATED: Creates an docker-compose.yaml file for the stella app.
+    """Creates an docker-compose.yaml file for the stella app.
 
     Returns:
         bool: True if successful
@@ -150,26 +150,6 @@ def setup_db(db):
 
     db.session.commit()
 
-    # ranker_a = System(status='running', name='rank_elastic', participant_id=user_part_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
-    # ranker_b = System(status='submitted', name='experimental_ranker_b', participant_id=user_part_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic.git')
-    # recommender_a = System(status='error', name='recom_tfidf', participant_id=user_part_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
-    # recommender_b = System(status='running', name='experimental_recommender_b', participant_id=user_part_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf.git')
-    # ranker_base_a = System(status='running', name='rank_elastic_base', participant_id=user_site_a.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
-    # ranker_base_b = System(status='running', name='baseline_ranker_b', participant_id=user_site_b.id, type='RANK', submitted='DOCKER', url='https://github.com/stella-project/rank_elastic_base.git')
-    # recommender_base_a = System(status='running', name='recom_tfidf_base', participant_id=user_site_a.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
-    # recommender_base_b = System(status='running', name='baseline_recommender_b', participant_id=user_site_b.id, type='REC', submitted='DOCKER', url='https://github.com/stella-project/recom_tfidf_base.git')
-
-    # db.session.add_all([
-    #     ranker_a,
-    #     ranker_b,
-    #     recommender_a,
-    #     recommender_b,
-    #     ranker_base_a,
-    #     ranker_base_b,
-    #     recommender_base_a,
-    #     recommender_base_b
-    # ])
-
     livivo_precom = System(status='running',
                            name='livivo_rank_precom',
                            participant_id=user_part_b.id,
@@ -233,13 +213,6 @@ def setup_db(db):
                                 site=user_site_a.id,
                                 submission_date=datetime.date(2019, 6, 10))
 
-    # rec_whoosh = System(status='running', name='gesis_rec_whoosh', participant_id=user_part_b.id,
-    #                     type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_whoosh',
-    #                     site=user_site_a.id)
-    # rec_shuffle = System(status='running', name='gesis_rec_micro', participant_id=user_site_a.id,
-    #                      type='REC', submitted='DOCKER', url='https://github.com/stella-project/gesis_rec_micro',
-    #                      site=user_site_a.id)
-
     db.session.add_all([
         livivo_base,
         livivo_precom,
@@ -254,7 +227,7 @@ def setup_db(db):
 
 
 def validate(ranking_str, k=None):
-    """DEPRECATED: Validate a precomputed run file by the standardized TREC format.
+    """Validate a precomputed run file by the standardized TREC format.
 
     Args:
         ranking_str (str): run file as string.
@@ -280,8 +253,8 @@ def validate(ranking_str, k=None):
     topics = {}
     samples = []
     if ranking_str:
-        ranking_str_decodet = ranking_str.read().decode("utf-8")
-        lines = ranking_str_decodet.split('\n')[:-1]
+        ranking_str_decoded = ranking_str.read().decode("utf-8")
+        lines = ranking_str_decoded.split('\n')[:-1]
         if k:
             for _ in range(0, k):
                 s = lines[random.randint(0, len(lines) - 1)]
@@ -423,7 +396,7 @@ def create_repo(token, repo_name, orga='stella-project'):
 
 
 def create_precom_repo(token, repo_name, run_tar_in, type):
-    """Create a new GitHub Reposetory from template for an uploaded precomputed run file inside our organization and
+    """Create a new GitHub Repository from template for an uploaded precomputed run file inside our organization and
     push the precomputed run file to it.
 
     Args:
@@ -462,13 +435,6 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
     repo.create_file('resources/livivo/' + filename, commit_msg, file_hq.decoded_content.decode('utf-8'))
     time.sleep(1)
 
-    # repo.create_file('precom/rank/.gitkeep', 'add rank dir', " ")
-    # time.sleep(1)
-    # repo.create_file('precom/rec/datasets/.gitkeep', 'add rec data dir', " ")
-    # time.sleep(1)
-    # repo.create_file('precom/rec/publications/.gitkeep', 'add rec pub dir', " ")
-    # time.sleep(1)
-
     if type == 'RANK':
         run_tar_path = 'precom/rank/run.tar.gz'
     if type == 'REC':
@@ -480,7 +446,7 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
 
 
 def create_stella_app_yaml(type='all', token=None):
-    """Create a new docker-compose.yaml file for the STELLA app and push it to the STELLA app reposetory.
+    """Create a new docker-compose.yaml file for the STELLA app and push it to the STELLA app repository.
     All systems specified by type get included.
 
     Args:
@@ -505,15 +471,13 @@ def create_stella_app_yaml(type='all', token=None):
         repo_name = 'stella-app'
 
     compose = {'version': '3',
-               # 'networks': {'stella-shared': {'external': {'name': 'stella-server_default'}}},
                'services': {
                    'app': {
                        'build': './app',
                        'volumes': ['/var/run/docker.sock/:/var/run/docker.sock', './app/log:/app/log'],
                        'ports': ["8080:8000"],
                        'links': ['db:db'],
-                       'depends_on': ['db'] + [system.name for system in systems],
-                       # 'networks': ['stella-shared']
+                       'depends_on': ['db'] + [system.name for system in systems]
                    },
                    'db': {
                        'image': 'postgres',
@@ -578,33 +542,6 @@ def create_stella_app_yaml(type='all', token=None):
         'INTERVAL_DB_CHECK=3',
         'SESSION_EXPIRATION=6']
 
-    # if ranksys and recsys and ranksys_precom and recsys_precom:
-    #     compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-    #                                                  'RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-    #                                                  'RANKSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in ranksys_precom]),
-    #                                                  'RECSYS_PRECOM_LIST=' + ' '.join([sys.name for sys in recsys_precom]),
-    #                                                  'RANKSYS_BASE=livivo_base',
-    #                                                  'RECSYS_BASE=gesis_rec_pyserini']
-    # if not ranksys and recsys:
-    #     compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-    #                                                  'RECSYS_BASE=gesis_rec_precom']
-    #
-    # if ranksys and not recsys:
-    #     compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-    #                                                  'RANKSYS_BASE=livivo_base']
-
-    # if type == 'rank':
-    #     ranksys = System.query.filter_by(type='REC', status='running').all()
-    #     if ranksys:
-    #         compose['services']['app']['environment'] = ['RANKSYS_LIST=' + ' '.join([sys.name for sys in ranksys]),
-    #                                                      'RANKSYS_BASE=livivo_base']
-    #
-    # if type == 'rec':
-    #     recsys = System.query.filter_by(type='REC', status='running').all()
-    #     if recsys:
-    #         compose['services']['app']['environment'] = ['RECSYS_LIST=' + ' '.join([sys.name for sys in recsys]),
-    #                                                      'RECSYS_BASE=gesis_rec_precom']
-
     for system in systems:
         # Please note: if you do not provide a GitHub token,
         # the docker-compose file will not differentiate between main and master branches!
@@ -624,8 +561,7 @@ def create_stella_app_yaml(type='all', token=None):
         compose['services'][str(system.name)] = {
             'build': gh_url,
             'container_name': system.name,
-            'volumes': ['./data/:/data/', ''.join([os.path.join('./index/', system.name), ':/index/'])],
-            # 'networks': ['stella-shared']
+            'volumes': ['./data/:/data/', ''.join([os.path.join('./index/', system.name), ':/index/'])]
         }
 
     yaml = ruamel.yaml.YAML()
@@ -633,10 +569,6 @@ def create_stella_app_yaml(type='all', token=None):
 
     with open(yml_path, 'w') as file:
         yaml.dump(compose, file)
-
-    with open(yml_path) as yml_in:
-        updated_content = yml_in.read()
-        # print(updated_content)
 
     if token:
         g = Github(token)
