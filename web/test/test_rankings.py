@@ -43,8 +43,8 @@ def generate_session(rankers=None, recommenders=None):
 
     return {
         'site_user': site_user,
-        'start': session_start_date.strftime("%Y-%m-%d %H:%M:%S"),
-        'end': session_end_date.strftime("%Y-%m-%d %H:%M:%S"),
+        'start': session_start_date,
+        'end': session_end_date,
         'system_ranking': ranker,
         'system_recommendation': recommender
     }
@@ -52,6 +52,44 @@ def generate_session(rankers=None, recommenders=None):
 
 def random_date(start, end, prop):
     return str_time_prop(start, end, "%Y-%m-%d %H:%M:%S", prop)
+
+
+def generate_feedback(number_of_feedbacks, session_start_date, session_end_date):
+    for f in range(0, number_of_feedbacks):
+
+        click_dict = {
+            "1": {"docid": "doc1", "clicked": False, "date": None, "type": "EXP"},
+            "2": {"docid": "doc14", "clicked": False, "date": None, "type": "BASE"},
+            "3": {"docid": "doc2", "clicked": False, "date": None, "type": "EXP"},
+            "4": {"docid": "doc14", "clicked": False, "date": None, "type": "BASE"},
+            "5": {"docid": "doc3", "clicked": False, "date": None, "type": "EXP"},
+            "6": {"docid": "doc13", "clicked": False, "date": None, "type": "BASE"},
+            "7": {"docid": "doc4", "clicked": False, "date": None, "type": "EXP"},
+            "8": {"docid": "doc14", "clicked": False, "date": None, "type": "BASE"},
+            "9": {"docid": "doc5", "clicked": False, "date": None, "type": "EXP"},
+            "10": {"docid": "doc15", "clicked": False, "date": None, "type": "BASE"}
+        }
+
+        serp_entries = 10
+        num_clicks = random.randint(1, serp_entries)
+        rank_clicks = random.sample(range(1, serp_entries + 1), num_clicks)
+
+        for click in rank_clicks:
+            click_time_str = random_date(session_start_date.strftime("%Y-%m-%d %H:%M:%S"),
+                                         session_end_date.strftime("%Y-%m-%d %H:%M:%S"),
+                                         random.random())
+            click_time = datetime.datetime.strptime(click_time_str, "%Y-%m-%d %H:%M:%S")
+            tmp = click_dict.get(str(click))
+            tmp['clicked'] = True
+            tmp['date'] = click_time_str
+            click_dict[click] = tmp
+
+        yield {
+            'start': session_start_date.strftime("%Y-%m-%d %H:%M:%S"),
+            'end': session_end_date.strftime("%Y-%m-%d %H:%M:%S"),
+            'interleave': True,
+            'clicks': json.dumps(click_dict)
+        }
 
 
 @pytest.fixture
@@ -88,6 +126,13 @@ def get_site_info(client, email, password, site):
     return json.loads(rv.data)
 
 
+def get_session_info(client, email, password, session_id):
+    credentials = b64encode(str.encode(':'.join([email, password]))).decode('utf-8')
+    rv = client.get(''.join(['/stella/api/v1/sessions/', str(session_id)]),
+                    headers={"Authorization": f"Basic {credentials}"})
+    return json.loads(rv.data)
+
+
 def test_token(client):
     token = get_token(client, CORRECT_MAIL, CORRECT_PASS)
     assert token is not None
@@ -104,3 +149,27 @@ def test_post_session(client):
     assert 200 == session_info.status_code
     session_id = session_info.json.get('session_id')
     assert isinstance(session_id, int)
+
+
+def test_post_feedbacks(client):
+    site_info = get_site_info(client, CORRECT_MAIL, CORRECT_PASS, SITE)
+    site_id = site_info.get('id')
+    session = generate_session(rankers=RANKERS)
+    credentials = b64encode(str.encode(':'.join([CORRECT_MAIL, CORRECT_PASS]))).decode('utf-8')
+    rv = client.post('/stella/api/v1/sites/' + str(site_id) + '/sessions',
+                     headers={"Authorization": f"Basic {credentials}"},
+                     json=session)
+
+    session_id = rv.json.get('session_id')
+    number_of_feedbacks = random.randint(0, 4)
+    feedbacks = generate_feedback(number_of_feedbacks,
+                                  session.get('start'),
+                                  session.get('end'))
+
+    for feedback in feedbacks:
+        credentials = b64encode(str.encode(':'.join([CORRECT_MAIL, CORRECT_PASS]))).decode('utf-8')
+        rv = client.post('/stella/api/v1/sessions/' + str(session_id) + '/feedbacks',
+                         headers={"Authorization": f"Basic {credentials}"},
+                         data=feedback)
+        assert 200 == rv.status_code
+        assert isinstance(rv.json.get('feedback_id'), int)
