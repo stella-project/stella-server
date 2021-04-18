@@ -92,6 +92,19 @@ def generate_feedback(number_of_feedbacks, session_start_date, session_end_date)
         }
 
 
+def generate_result(session_start_date):
+    return {
+        'q': 'query goes here!',
+        'q_date': session_start_date,
+        'q_time': 300,
+        'num_found': 10,
+        'page': 1,
+        'rpp': 10,
+        'items': json.dumps({"1": "doc1", "2": "doc2", "3": "doc3", "4": "doc4", "5": "doc5",
+                             "6": "doc6", "7": "doc7", "8": "doc8", "9": "doc9", "10": "doc10"})
+    }
+
+
 @pytest.fixture
 def client():
     app = create_app('default')
@@ -173,3 +186,34 @@ def test_post_feedbacks(client):
                          data=feedback)
         assert 200 == rv.status_code
         assert isinstance(rv.json.get('feedback_id'), int)
+
+
+def test_post_results(client):
+    site_info = get_site_info(client, CORRECT_MAIL, CORRECT_PASS, SITE)
+    site_id = site_info.get('id')
+    session = generate_session(rankers=RANKERS)
+    credentials = b64encode(str.encode(':'.join([CORRECT_MAIL, CORRECT_PASS]))).decode('utf-8')
+    rv = client.post('/stella/api/v1/sites/' + str(site_id) + '/sessions',
+                     headers={"Authorization": f"Basic {credentials}"},
+                     data=session)
+
+    session_id = rv.json.get('session_id')
+    number_of_feedbacks = random.randint(0, 4)
+    feedbacks = generate_feedback(number_of_feedbacks,
+                                  session.get('start'),
+                                  session.get('end'))
+
+    for feedback in feedbacks:
+        credentials = b64encode(str.encode(':'.join([CORRECT_MAIL, CORRECT_PASS]))).decode('utf-8')
+        rv = client.post('/stella/api/v1/sessions/' + str(session_id) + '/feedbacks',
+                         headers={"Authorization": f"Basic {credentials}"},
+                         data=feedback)
+        feedback_id = rv.json.get('feedback_id')
+        pass
+
+        result = generate_result(session.get('start'))
+        rv = client.post('/stella/api/v1/feedbacks/' + str(feedback_id) + '/rankings',
+                         headers={"Authorization": f"Basic {credentials}"},
+                         data=result)
+        assert 200 == rv.status_code
+        assert isinstance(rv.json.get('ranking_id'), int)
