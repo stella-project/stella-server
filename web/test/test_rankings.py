@@ -146,6 +146,12 @@ def get_session_info(client, email, password, session_id):
     return json.loads(rv.data)
 
 
+def get_site_sessions(client, email, password, site_id):
+    credentials = b64encode(str.encode(':'.join([email, password]))).decode('utf-8')
+    rv = client.get(''.join(['/stella/api/v1/sites/', str(site_id), '/sessions']), headers={"Authorization": f"Basic {credentials}"})
+    return json.loads(rv.data)
+
+
 def test_token(client):
     token = get_token(client, CORRECT_MAIL, CORRECT_PASS)
     assert token is not None
@@ -217,3 +223,6 @@ def test_post_results(client):
                          data=result)
         assert 200 == rv.status_code
         assert isinstance(rv.json.get('ranking_id'), int)
+
+    site_sessions = get_site_sessions(client, CORRECT_MAIL, CORRECT_PASS, site_id)
+    assert len(site_sessions) >= 1
