@@ -5,8 +5,9 @@ from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_style('darkgrid')
 
-PLOT_DIR = 'plots'
+RESULT_DIR = 'results'
 FILENAME = 'livivo_click_distribution.pdf'
+
 
 def livivo_click_distribution(feedbacks):
     click_distr = dict.fromkeys(['title',
@@ -31,7 +32,7 @@ def livivo_click_distribution(feedbacks):
 
 def main():
 
-    mkdir(PLOT_DIR)
+    mkdir(RESULT_DIR)
 
     ranking_systems = [s.id for s in systems.select().where(and_(systems.c.type != 'REC', systems.c.name != 'livivo_base')).execute().fetchall()]
     ranking_sessions = sessions.select(sessions.c.system_ranking.in_(ranking_systems)).execute().fetchall()
@@ -44,7 +45,7 @@ def main():
     pd.DataFrame.from_dict(lcd, orient='index', columns=['Number of clicks']).plot.bar()
     plt.xlabel('SERP element')
     plt.ylabel('Number of clicks')
-    plt.savefig(os.path.join(PLOT_DIR, FILENAME), bbox_inches='tight')
+    plt.savefig(os.path.join(RESULT_DIR, FILENAME), bbox_inches='tight')
     plt.show()
 
     pass
