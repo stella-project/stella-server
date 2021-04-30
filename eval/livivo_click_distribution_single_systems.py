@@ -1,14 +1,12 @@
 from db import *
 from util import *
+from config import *
 import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_style('darkgrid')
 
-RESULT_DIR = 'results'
-FILENAME = 'livivo_click_distribution.pdf'
-NOT_PARTICIPATED = ['livivo_rank_pyterrier', 'lemuren_elk_docker', 'livivo_rank_precom']
-
+FILENAME = 'livivo_click_distribution.csv'
 
 def livivo_click_distribution(feedbacks, type='EXP'):
     click_distr = dict.fromkeys(['title',
@@ -55,7 +53,7 @@ def main():
     data['livivo_exp'] = livivo_click_distribution(system_feedbacks)
     data['livivo_base'] = livivo_click_distribution(system_feedbacks, type='BASE')
 
-    pd.DataFrame.from_dict(data).transpose().fillna(0).astype(int).to_csv(os.path.join(RESULT_DIR, 'livivo_click_distribution.csv'))
+    pd.DataFrame.from_dict(data).transpose().fillna(0).astype(int).to_csv(os.path.join(RESULT_DIR, FILENAME))
 
     pass
 

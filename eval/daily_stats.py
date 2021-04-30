@@ -1,14 +1,10 @@
 from db import *
 from util import *
+from config import *
 import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_style('darkgrid')
-
-RESULT_DIR = 'results'
-FILENAME = 'livivo_click_distribution.pdf'
-NOT_PARTICIPATED = ['livivo_rank_pyterrier', 'lemuren_elk_docker', 'livivo_rank_precom']
-BASELINE_SYSTEMS = ['livivo_base', 'gesis_rec_pyserini']
 
 
 def main():

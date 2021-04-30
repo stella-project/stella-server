@@ -1,10 +1,7 @@
 from db import *
-import pandas as pd
 from util import *
-
-RESULT_DIR = 'results'
-BASELINE_SYSTEMS = ['livivo_base', 'gesis_rec_pyserini']
-NOT_PARTICIPATED = ['livivo_rank_pyterrier', 'lemuren_elk_docker', 'livivo_rank_precom']
+from config import *
+import pandas as pd
 
 
 def system_stats(system_name):

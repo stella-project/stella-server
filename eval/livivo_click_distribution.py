@@ -1,11 +1,11 @@
 from db import *
 from util import *
+from config import *
 import pandas as pd
 from matplotlib import pyplot as plt
 import seaborn as sns
 sns.set_style('darkgrid')
 
-RESULT_DIR = 'results'
 FILENAME = 'livivo_click_distribution.pdf'
 
 
@@ -47,8 +47,6 @@ def main():
     plt.ylabel('Number of clicks')
     plt.savefig(os.path.join(RESULT_DIR, FILENAME), bbox_inches='tight')
     plt.show()
-
-    pass
 
 
 if __name__ == '__main__':

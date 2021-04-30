@@ -1,6 +1,5 @@
+from config import DATABASE_URI
 from sqlalchemy import create_engine, MetaData, Table, and_, not_
-
-DATABASE_URI = 'postgresql+psycopg2://postgres:postgres@localhost:5432/postgres'
 
 engine = create_engine(DATABASE_URI, convert_unicode=True)
 metadata = MetaData(bind=engine)
