@@ -6,3 +6,4 @@ web/migrations/*
 trecos/*
 *.sqlite
 web/uploads/*
+eval/plots/*
