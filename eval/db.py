@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, MetaData, Table, and_
+from sqlalchemy import create_engine, MetaData, Table, and_, not_
 
 DATABASE_URI = 'postgresql+psycopg2://postgres:postgres@localhost:5432/postgres'
 
