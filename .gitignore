@@ -7,3 +7,4 @@ trecos/*
 *.sqlite
 web/uploads/*
 eval/plots/*
+eval/results/*
