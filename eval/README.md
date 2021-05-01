@@ -22,7 +22,8 @@ pip install -r requirements.txt
 
 | Script | Output | Description | Requirements |
 | --- | --- | --- | --- |
-| `daily_stats.py` | `results/daily_stats.csv` | Outputs a csv file with the total number of sessions, impressions, clicks, and clicks of the baseline for each system on a daily basis. | - |
-| `livivo_click_distribution.py` | `results/livivo_click_distribution.pdf` | Outputs a bar histogram with click counts across SERP elements. | - |
-| `livivo_click_distribution_single_systems.py` | `results/livivo_click_distribution.csv` | Outputs a csv file with click counts across SERP elements for each system. | - |
-| `overall_stats.py` | `results/overall_stats.csv` | Outputs a csv file with Wins, Losses, Ties, ... for each system. | - |
+| `daily_stats.py` | `results/daily_stats.csv` | Outputs a csv file with the total number of sessions, impressions, clicks, and clicks of the baseline for each system on a daily basis. | **Running database** |
+| `livivo_click_distribution.py` | `results/livivo_click_distribution.pdf` | Outputs a bar histogram with click counts across SERP elements. |  **Running database** |
+| `livivo_click_distribution_single_systems.py` | `results/livivo_click_distribution.csv` | Outputs a csv file with click counts across SERP elements for each system. | **Running database** |
+| `overall_stats.py` | `results/overall_stats.csv` | Outputs a csv file with Wins, Losses, Ties, ... for each system. |  **Running database** |
+| `overall_stats_plots.py` | Several plots | Outputs bar charts with `sessions vs. impressions` and `number of clicks - exp vs. base` | **Running database**, `results/overall_stats.csv` |
