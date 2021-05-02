@@ -26,4 +26,5 @@ pip install -r requirements.txt
 | `livivo_click_distribution.py` | `results/livivo_click_distribution.pdf` | Outputs a bar histogram with click counts across SERP elements. |  **Running database** |
 | `livivo_click_distribution_single_systems.py` | `results/livivo_click_distribution.csv` | Outputs a csv file with click counts across SERP elements for each system. | **Running database** |
 | `overall_stats.py` | `results/overall_stats.csv` | Outputs a csv file with Wins, Losses, Ties, ... for each system. |  **Running database** |
-| `overall_stats_plots.py` | Several plots | Outputs bar charts with `sessions vs. impressions` and `number of clicks - exp vs. base` | **Running database**, `results/overall_stats.csv` |
+| `daily_stats_plots.py` | Several plots | Outputs bar charts with `sessions vs. impressions` and `number of clicks - exp vs. base` | **Running database**, `results/overall_stats.csv` |
+| `pie_charts.py` | Several plots | Outputs several plots with pie charts containing Wins, Losses, and Ties | `results/overall_stats.csv` |
