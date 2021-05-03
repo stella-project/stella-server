@@ -49,11 +49,29 @@ def main():
             wlt[session.start] = get_wlt(system_feedbacks)
         df = pd.DataFrame.from_dict(wlt)
         if not df.empty:
-            df.transpose().cumsum().plot.line()
-            plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties']))
-            plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.pdf'])),
-                        format='pdf', bbox_inches='tight')
-            plt.show()
+            if OUTCOME:
+                df = df.transpose().cumsum()
+                df['outcome'] = df['win'] / (df['win'] + df['loss'])
+                ax = df.plot(secondary_y=['outcome'], mark_right=False)
+                # ax.legend(loc='center left', bbox_to_anchor=(1.2, 0.5))
+                ax.set_ylabel('Total number of Wins, Losses, Ties')
+                ax.right_ax.set_ylabel('Outcome')
+                # df[['win', 'loss', 'tie']].plot()
+                # ax = df['outcome'].plot(secondary_y=True)
+                plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties + Outcome']))
+
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions_outcome.pdf'])),
+                            format='pdf', bbox_inches='tight')
+                plt.show()
+
+            else:
+                df.transpose().cumsum().plot.line()
+                plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties']))
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.pdf'])),
+                            format='pdf', bbox_inches='tight')
+                plt.show()
+
+
 
 
 if __name__ == '__main__':
