@@ -414,10 +414,10 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
     template = stella_project.get_repo('stella-micro-template-precom')
     repo = stella_project.create_repo(repo_name + '_precom', private=True)
     time.sleep(1)
-
+    files = template.get_contents('.')
     for file in template.get_contents('.'):
         filename = file.name
-        if filename not in ['test', 'precom', 'resources']:
+        if filename not in ['test', 'precom', 'resources', '.github']:
             commit_msg = 'add ' + filename
             repo.create_file(filename, commit_msg, file.decoded_content.decode('utf-8'))
             time.sleep(1)
@@ -428,7 +428,13 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
         repo.create_file('test/' + filename, commit_msg, test_file.decoded_content.decode('utf-8'))
         time.sleep(1)
 
-    # head queries of livivo
+    for workflow in template.get_contents('.github/workflows'):
+        filename = workflow.name
+        commit_msg = 'add ' + filename
+        repo.create_file('.github/workflows/' + filename, commit_msg, workflow.decoded_content.decode('utf-8'))
+        time.sleep(1)
+
+        # head queries of livivo
     file_hq = template.get_contents('resources/livivo')[0]
     filename = file_hq.name
     commit_msg = 'add ' + filename
