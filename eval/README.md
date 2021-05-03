@@ -29,3 +29,4 @@ pip install -r requirements.txt
 | `daily_stats_plots.py` | Several plots | Outputs bar charts with `sessions vs. impressions` and `number of clicks - exp vs. base`. | **Running database**, `results/overall_stats.csv` |
 | `pie_charts.py` | Several plots | Outputs several plots with pie charts containing Wins, Losses, and Ties. | `results/overall_stats.csv` |
 | `wlt_vs_sessions.py` | Several plots | Outputs plots with cumulative Wins, Losses, and Ties for each systems. | **Running database** |
+| `render_pdf.py` | Lab reports | Outputs lab reports for each system. | **Running database**, all previous outputs |
