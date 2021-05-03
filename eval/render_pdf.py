@@ -1,3 +1,8 @@
+from db import *
+from util import *
+from config import *
+
+
 import os
 from svglib.svglib import svg2rlg
 from reportlab.pdfgen import canvas
@@ -6,7 +11,7 @@ from reportlab.lib.pagesizes import A4
 
 
 def make_report(system_name):
-    c = canvas.Canvas('_'.join([system_name, 'report.pdf']), pagesize=A4)
+    c = canvas.Canvas(os.path.join('results','_'.join([system_name, 'report.pdf'])), pagesize=A4)
 
     # pie chart
     drawing = svg2rlg(os.path.join('results', '_'.join([system_name, 'pie.svg'])))
@@ -34,6 +39,7 @@ def make_report(system_name):
 
     c.showPage()
 
+    # Clicks
     drawing = svg2rlg(os.path.join('results', '_'.join([system_name, 'clicks.svg'])))
     drawing.rotate(-90)
     sx = sy = 0.6
@@ -42,6 +48,7 @@ def make_report(system_name):
     x, y = 40, 750  # coordinates (from left bottom)
     renderPDF.draw(drawing, c, x, y, showBoundary=False)
 
+    # Sessions vs. Impressions
     drawing = svg2rlg(os.path.join('results', '_'.join([system_name, 'sessions_vs_impressions.svg'])))
     drawing.rotate(-90)
     sx = sy = 0.6
@@ -54,4 +61,5 @@ def make_report(system_name):
 
 
 if __name__ == '__main__':
-    make_report('gesis_rec_pyterrier')
+    for system in systems.select().where(not_(systems.c.name.in_(NOT_PARTICIPATED))).execute().fetchall():
+        make_report(system.name)
