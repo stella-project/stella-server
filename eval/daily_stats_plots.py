@@ -21,6 +21,8 @@ for system_name in system_names:
     plt.title(' '.join(['Sessions vs. Impressions -', system_name]))
     plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'sessions_vs_impressions.pdf'])),
                              format='pdf', bbox_inches='tight')
+    plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'sessions_vs_impressions.svg'])),
+                             format='svg', bbox_inches='tight')
     plt.show()
 
     df_sys = df.loc[['_'.join([system_name, 'clicks']), '_'.join([system_name, 'clicks_base'])]]
@@ -30,4 +32,6 @@ for system_name in system_names:
     plt.title(' '.join(['Number of clicks -', system_name]))
     plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'clicks.pdf'])),
                              format='pdf', bbox_inches='tight')
+    plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'clicks.svg'])),
+                             format='svg', bbox_inches='tight')
     plt.show()

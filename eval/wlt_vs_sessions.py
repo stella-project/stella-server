@@ -62,6 +62,8 @@ def main():
 
                 plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions_outcome.pdf'])),
                             format='pdf', bbox_inches='tight')
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions_outcome.svg'])),
+                            format='svg', bbox_inches='tight')
                 plt.show()
 
             else:
@@ -69,6 +71,8 @@ def main():
                 plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties']))
                 plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.pdf'])),
                             format='pdf', bbox_inches='tight')
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.svg'])),
+                            format='svg', bbox_inches='tight')
                 plt.show()
 
 

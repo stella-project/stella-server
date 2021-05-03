@@ -21,5 +21,7 @@ for row in df.iterrows():
     fig.gca().add_artist(centre_circle)
     plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'pie.pdf'])),
                              format='pdf', bbox_inches='tight')
+    plt.savefig(os.path.join(RESULT_DIR, '_'.join([system_name, 'pie.svg'])),
+                             format='svg', bbox_inches='tight')
 
     plt.show()
