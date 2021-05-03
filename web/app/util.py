@@ -414,7 +414,6 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
     template = stella_project.get_repo('stella-micro-template-precom')
     repo = stella_project.create_repo(repo_name + '_precom', private=True)
     time.sleep(1)
-    files = template.get_contents('.')
     for file in template.get_contents('.'):
         filename = file.name
         if filename not in ['test', 'precom', 'resources', '.github']:
