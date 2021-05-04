@@ -11,6 +11,7 @@ services:
              python manage.py db upgrade &&
              /usr/local/bin/gunicorn -w 2 --timeout 60 -b :8000 stella-server:app"
     environment:
+      - FLASK_CONFIG=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PW=change-me
       - POSTGRES_DB=postgres
