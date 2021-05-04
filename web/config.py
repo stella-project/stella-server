@@ -28,7 +28,21 @@ class PostgresConfig(Config):
                                                                            url=POSTGRES_URL,
                                                                            db=POSTGRES_DB)
 
+
+class DemoConfig(Config):
+    DEBUG = False
+    POSTGRES_USER = os.environ.get('POSTGRES_USER') or 'postgres'
+    POSTGRES_PW = os.environ.get('POSTGRES_PW') or 'change-me'
+    POSTGRES_URL = os.environ.get('POSTGRES_URL') or 'db:5430'
+    POSTGRES_DB = os.environ.get('POSTGRES_DB') or 'postgres'
+    SQLALCHEMY_DATABASE_URI = 'postgresql://{user}:{pw}@{url}/{db}'.format(user=POSTGRES_USER,
+                                                                           pw=POSTGRES_PW,
+                                                                           url=POSTGRES_URL,
+                                                                           db=POSTGRES_DB)
+
+
 config = {
     'default': DevelopmentConfig,
+    'demo': DemoConfig,
     'postgres': PostgresConfig
 }
