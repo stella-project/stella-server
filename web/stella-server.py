@@ -1,10 +1,11 @@
+import os
 from app import create_app, db
 from app.util import setup_db
 from flask_migrate import Migrate
 
 
-# app = create_app('default')  # Use 'default' for local installation with SQLite database.
-app = create_app('postgres')  # When running in production use 'postgres'.
+# app = create_app(os.getenv('FLASK_CONFIG') or 'postgres')  # Use 'default' for local installation with SQLite database.
+app = create_app(os.getenv('FLASK_CONFIG') or 'postgres')  # When running in production use 'postgres'.
 migrate = Migrate(app, db)
 
 if __name__ == '__main__':
