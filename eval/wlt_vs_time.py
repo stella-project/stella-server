@@ -45,7 +45,7 @@ def main():
     mkdir(RESULT_DIR)
     all_systems = systems.select().where(not_(systems.c.name.in_(NOT_PARTICIPATED))).execute().fetchall()
     for system in all_systems:
-        cnt = 0
+
         wlt = {}
 
         if system.type == 'RANK':
@@ -63,9 +63,7 @@ def main():
 
         for session in system_sessions:
             system_feedbacks = feedbacks.select(feedbacks.c.session_id == session.id).execute().fetchall()
-            # wlt[session.start] = get_wlt(system_feedbacks, base=system.name in BASELINE_SYSTEMS)
-            wlt[cnt] = get_wlt(system_feedbacks, base=system.name in BASELINE_SYSTEMS)
-            cnt += 1
+            wlt[session.start] = get_wlt(system_feedbacks, base=system.name in BASELINE_SYSTEMS)
         df = pd.DataFrame.from_dict(wlt)
         if not df.empty:
             if OUTCOME:
@@ -75,22 +73,22 @@ def main():
                 # ax.legend(loc='center left', bbox_to_anchor=(1.2, 0.5))
                 ax.set_ylabel('Total number of Wins, Losses, Ties')
                 ax.right_ax.set_ylabel('Outcome')
-                ax.set_xlabel('Number of Sessions')
                 # df[['win', 'loss', 'tie']].plot()
                 # ax = df['outcome'].plot(secondary_y=True)
                 plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties + Outcome']))
-                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions_outcome.pdf'])),
+
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_time_outcome.pdf'])),
                             format='pdf', bbox_inches='tight')
-                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions_outcome.svg'])),
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_time_outcome.svg'])),
                             format='svg', bbox_inches='tight')
                 plt.show()
 
             else:
                 df.transpose().cumsum().plot.line()
                 plt.title(' - '.join([system.name, 'Cumulative Wins, Losses, and Ties']))
-                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.pdf'])),
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_time.pdf'])),
                             format='pdf', bbox_inches='tight')
-                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_sessions.svg'])),
+                plt.savefig(os.path.join(RESULT_DIR, '_'.join([system.name, 'wlt_vs_time.svg'])),
                             format='svg', bbox_inches='tight')
                 plt.show()
 
