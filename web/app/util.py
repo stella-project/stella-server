@@ -150,6 +150,52 @@ def setup_db(db):
 
     db.session.commit()
 
+    gesis_rank_pyserini = System(status='running',
+                           name='gesis_rank_pyserini',
+                           participant_id=user_part_a.id,
+                           type='RANK',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/gesis_rank_pyserini',
+                           site=user_site_a.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    gesis_rank_precom_base = System(status='running',
+                           name='gesis_rank_precom_base',
+                           participant_id=user_part_a.id,
+                           type='RANK',
+                           submitted='TREC',
+                           url='https://github.com/stella-project/gesis_rank_precom_base',
+                           site=user_site_a.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    gesis_rank_precom = System(status='running',
+                           name='gesis_rank_precom',
+                           participant_id=user_part_b.id,
+                           type='RANK',
+                           submitted='TREC',
+                           url='https://github.com/stella-project/gesis_rank_precom',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    gesis_rank_pyserini_base = System(status='running',
+                           name='gesis_rank_pyserini_base',
+                           participant_id=user_part_a.id,
+                           type='RANK',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/gesis_rank_pyserini_base',
+                           site=user_site_a.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    gesis_rec_pyserini = System(status='running',
+                           name='gesis_rec_pyserini',
+                           participant_id=user_part_a.id,
+                           type='REC',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/gesis_rec_pyserini',
+                           site=user_site_a.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+
     livivo_precom = System(status='running',
                            name='livivo_rank_precom',
                            participant_id=user_part_b.id,
