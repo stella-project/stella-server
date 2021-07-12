@@ -267,6 +267,15 @@ def setup_db(db):
         recommender_base_a,
         rec_pyterrier,
         rec_pyserini,
+        gesis_rank_pyserini,
+        gesis_rank_precom_base,
+        gesis_rank_precom,
+        gesis_rank_pyserini_base,
+        gesis_rec_pyserini
+
+
+
+
     ])
 
     db.session.commit()
