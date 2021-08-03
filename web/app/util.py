@@ -150,6 +150,7 @@ def setup_db(db):
 
     db.session.commit()
 
+    # gesis demo systems:
     gesis_rank_pyserini = System(status='running',
                            name='gesis_rank_pyserini',
                            participant_id=user_part_a.id,
@@ -161,7 +162,7 @@ def setup_db(db):
 
     gesis_rank_precom_base = System(status='running',
                            name='gesis_rank_precom_base',
-                           participant_id=user_part_a.id,
+                           participant_id=user_site_a.id,
                            type='RANK',
                            submitted='TREC',
                            url='https://github.com/stella-project/gesis_rank_precom_base',
@@ -174,7 +175,7 @@ def setup_db(db):
                            type='RANK',
                            submitted='TREC',
                            url='https://github.com/stella-project/gesis_rank_precom',
-                           site=user_site_b.id,
+                           site=user_site_a.id,
                            submission_date=datetime.date(2019, 6, 10))
 
     gesis_rank_pyserini_base = System(status='running',
@@ -196,6 +197,55 @@ def setup_db(db):
                            submission_date=datetime.date(2019, 6, 10))
 
 
+    # livivo demo systems:
+    livivo_rank_base = System(status='running',
+                           name='livivo_rank_base',
+                           participant_id=user_part_a.id,
+                           type='RANK',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/livivo_rank_base',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    livivo_rank_precom = System(status='running',
+                           name='livivo_rank_precom',
+                           participant_id=user_part_b.id,
+                           type='RANK',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/livivo_rank_precom',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    livivo_rank_pyserini = System(status='running',
+                           name='livivo_rank_pyserini',
+                           participant_id=user_part_a.id,
+                           type='RANK',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/livivo_rank_pyserini',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    livivo_rec_pyserini = System(status='running',
+                           name='livivo_rec_pyserini',
+                           participant_id=user_part_a.id,
+                           type='REC',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/livivo_rec_pyserini',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+    livivo_rec_pyterrier = System(status='running',
+                           name='livivo_rec_pyterrier',
+                           participant_id=user_part_b.id,
+                           type='REC',
+                           submitted='DOCKER',
+                           url='https://github.com/stella-project/livivo_rec_pyterrier',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
+
+
+    # dev systems
     livivo_precom = System(status='running',
                            name='livivo_rank_precom',
                            participant_id=user_part_b.id,
@@ -271,11 +321,12 @@ def setup_db(db):
         gesis_rank_precom_base,
         gesis_rank_precom,
         gesis_rank_pyserini_base,
-        gesis_rec_pyserini
-
-
-
-
+        gesis_rec_pyserini,
+        livivo_rank_base,
+        livivo_rank_precom,
+        livivo_rank_pyserini,
+        livivo_rec_pyserini,
+        livivo_rec_pyterrier
     ])
 
     db.session.commit()
