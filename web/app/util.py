@@ -243,6 +243,15 @@ def setup_db(db):
                            site=user_site_b.id,
                            submission_date=datetime.date(2019, 6, 10))
 
+    livivo_rec_precom = System(status='running',
+                           name='livivo_rec_precom',
+                           participant_id=user_part_b.id,
+                           type='REC',
+                           submitted='TREC',
+                           url='https://github.com/stella-project/livivo_rec_precom',
+                           site=user_site_b.id,
+                           submission_date=datetime.date(2019, 6, 10))
+
 
 
     # dev systems
@@ -326,7 +335,8 @@ def setup_db(db):
         livivo_rank_precom,
         livivo_rank_pyserini,
         livivo_rec_pyserini,
-        livivo_rec_pyterrier
+        livivo_rec_pyterrier,
+        livivo_rec_precom
     ])
 
     db.session.commit()
