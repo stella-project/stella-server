@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y libpq-dev gcc
 # need gcc to compile psycopg2
 
 COPY requirements.txt requirements.txt
-RUN python -m pip install -r requirements.txt
+RUN pip install --upgrade pip && python -m pip install -r requirements.txt
 
 COPY . .
 
