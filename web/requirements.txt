@@ -5,7 +5,7 @@ MarkupSafe
 SQLAlchemy
 Werkzeug
 gunicorn
-itsdangerous
+itsdangerous==2.0.1
 psycopg2
 flask-bootstrap
 flask-wtf
