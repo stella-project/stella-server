@@ -1,7 +1,0 @@
-sqlalchemy
-pandas
-matplotlib
-seaborn
-reportlab
-svglib
-lxml
