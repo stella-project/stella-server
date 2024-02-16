@@ -4,7 +4,7 @@ import pytest
 import time
 import random
 import datetime
-from app import create_app, db
+from app.app import create_app, db
 from app.util import setup_db
 
 CORRECT_MAIL = "gesis@stella-project.org"

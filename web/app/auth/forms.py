@@ -9,7 +9,7 @@ from wtforms import (
 from wtforms.validators import DataRequired, Email, EqualTo, Length, Regexp
 
 from ..models import User
-from .. import db
+from app.extensions import db
 
 
 class LoginForm(FlaskForm):

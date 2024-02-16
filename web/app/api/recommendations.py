@@ -1,7 +1,7 @@
 from flask import g, jsonify, request
 from flask_login import current_user, login_required, login_user
 
-from .. import db
+from app.extensions import db
 from ..models import Feedback, Result, Session, System
 from . import api
 

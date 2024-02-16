@@ -15,7 +15,7 @@ from wtforms.fields import SelectField
 from wtforms.validators import URL, DataRequired, Email, EqualTo, Length, Regexp
 
 from ..models import System, User
-from .. import db
+from app.extensions import db
 
 
 class Dropdown(FlaskForm):

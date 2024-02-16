@@ -1,4 +1,4 @@
-from . import db
+from app.extensions import db
 from .main.forms import Dropdown
 from .models import Feedback, Result, Session, System, User
 
@@ -7,7 +7,7 @@ class Dashboard:
 
     def __init__(self, user_id, system_id=None, site_id=None):
 
-        user_role_id = db.session.quary(User).filter_by(id=user_id).first().role_id
+        user_role_id = db.session.query(User).filter_by(id=user_id).first().role_id
 
         self.system_id = system_id
         self.site_id = site_id
@@ -16,21 +16,21 @@ class Dashboard:
             self.site_id = user_id
 
         if user_role_id == 1:  # user is admin
-            self.systems = db.session.quary(System).filter().distinct().all()
+            self.systems = db.session.query(System).filter().distinct().all()
         if user_role_id == 2:  # user is participant
             self.systems = (
-                db.session.quary(System).filter_by(participant_id=user_id).all()
+                db.session.query(System).filter_by(participant_id=user_id).all()
             )
         if user_role_id == 3:  # user is site
-            self.systems = db.session.quary(System).filter(System.site == user_id).all()
+            self.systems = db.session.query(System).filter(System.site == user_id).all()
 
         site_ids = (
-            db.session.quary(Session)
+            db.session.query(Session)
             .filter(Session.system_ranking.in_([r.id for r in self.systems]))
             .with_entities(Session.site_id)
             .distinct()
             .all()
-            + db.session.quary(Session)
+            + db.session.query(Session)
             .filter(Session.system_recommendation.in_([r.id for r in self.systems]))
             .with_entities(Session.site_id)
             .distinct()
@@ -38,15 +38,15 @@ class Dashboard:
         )
 
         if user_role_id == 1:  # user is admin
-            self.sites = db.session.quary(User).filter_by(role_id=3).distinct().all()
+            self.sites = db.session.query(User).filter_by(role_id=3).distinct().all()
         if user_role_id == 2:  # user is participant
             self.sites = (
-                db.session.quary(User)
+                db.session.query(User)
                 .filter(User.id.in_([s[0] for s in site_ids]))
                 .all()
             )
         if user_role_id == 3:  # user is site
-            self.sites = [db.session.quary(User).filter_by(id=user_id).first()]
+            self.sites = [db.session.query(User).filter_by(id=user_id).first()]
 
         self.form = Dropdown()
         self.sessions = []
@@ -69,12 +69,12 @@ class Dashboard:
                 self.ranker = self.systems[0]
             else:
                 self.ranker = (
-                    db.session.quary(System).filter_by(id=self.system_id).first()
+                    db.session.query(System).filter_by(id=self.system_id).first()
                 )
 
             if self.site_id == None:  # get first site at which ranker is deployed
                 self.site = (
-                    db.session.quary(Session)
+                    db.session.query(Session)
                     .with_entities(Session.site_id)
                     .distinct()
                     .filter_by(system_ranking=self.ranker.id)
@@ -82,13 +82,13 @@ class Dashboard:
                 )
             else:
                 self.site = [
-                    db.session.quary(User).filter_by(id=self.site_id).first().id
+                    db.session.query(User).filter_by(id=self.site_id).first().id
                 ]
 
             if self.site is not None:
                 if self.ranker.type == "RANK":
                     results = (
-                        db.session.quary(Result)
+                        db.session.query(Result)
                         .filter_by(
                             system_id=self.ranker.id, site_id=self.site_id, type="RANK"
                         )
@@ -99,12 +99,12 @@ class Dashboard:
                         if r.session_id not in session_ids:
                             session_ids.append(r.session_id)
                     self.sessions = [
-                        db.session.quary(Session).filter_by(id=sid).first()
+                        db.session.query(Session).filter_by(id=sid).first()
                         for sid in session_ids
                     ]
                 if self.ranker.type == "REC":
                     results = (
-                        db.session.quary(Result)
+                        db.session.query(Result)
                         .filter_by(
                             system_id=self.ranker.id, site_id=self.site_id, type="REC"
                         )
@@ -115,12 +115,12 @@ class Dashboard:
                         if r.session_id not in session_ids:
                             session_ids.append(r.session_id)
                     self.sessions = [
-                        db.session.quary(Session).filter_by(id=sid).first()
+                        db.session.query(Session).filter_by(id=sid).first()
                         for sid in session_ids
                     ]
             sids = [s.id for s in self.sessions]
             self.feedbacks = (
-                db.session.quary(Feedback).filter(Feedback.session_id.in_(sids)).all()
+                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).all()
             )
 
             for s in self.sessions:
@@ -172,11 +172,11 @@ class Dashboard:
 
             # if displayed results are from the baseline system, flip wins and losses
             exp_sys = [
-                db.session.quary(Session)
+                db.session.query(Session)
                 .filter(Session.id == self.feedbacks[0].session_id)
                 .first()
                 .system_ranking,
-                db.session.quary(Session)
+                db.session.query(Session)
                 .filter(Session.id == self.feedbacks[0].session_id)
                 .first()
                 .system_recommendation,
@@ -205,7 +205,7 @@ class Dashboard:
                 r.id,
                 r.name
                 + "@"
-                + db.session.quary(User).filter_by(id=r.site).first().username,
+                + db.session.query(User).filter_by(id=r.site).first().username,
             )
             for r in self.systems
         ]

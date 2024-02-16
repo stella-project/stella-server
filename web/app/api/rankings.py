@@ -1,6 +1,6 @@
 from flask import g, jsonify, request
 
-from .. import db
+from app.extensions import db
 from ..models import Feedback, Result, Session, System
 from . import api
 

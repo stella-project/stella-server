@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 import jwt
 from flask import current_app
@@ -7,7 +7,7 @@ from flask_login import UserMixin
 from sqlalchemy.orm import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from . import db, login_manager
+from app.extensions import db, login_manager
 
 
 class Role(db.Model):
@@ -35,7 +35,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), unique=True, index=True)
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"))
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(256))
 
     @property
     def password(self):
@@ -50,26 +50,28 @@ class User(UserMixin, db.Model):
         self.password_hash = generate_password_hash(password)
 
     def generate_auth_token(self, expiration):
+        expiration_timestamp = datetime.now(tz=timezone.utc) + timedelta(
+            seconds=expiration
+        )
         access_token = jwt.encode(
-            {"id": self.id}, current_app.config["SECRET_KEY"], algorithm="HS256"
+            {"id": self.id, "exp": expiration_timestamp},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
         )
         return access_token
-        # create_access_token(
-        #     identity=self.id, expires_delta=expiration
-        # )
-        # s = Serializer(current_app.config["SECRET_KEY"], max_age=expiration)
-        # return s.dumps({"id": self.id}).decode("utf-8")
 
     @staticmethod
     def verify_auth_token(token):
-
-        # s = Serializer(current_app.config["SECRET_KEY"])
         try:
             data = jwt.decode(
                 token, current_app.config["SECRET_KEY"], algorithms="HS256"
             )
             # data = s.loads(token)
-        except:
+        except jwt.ExpiredSignatureError:
+            print("Token expired.")
+            return None
+        except jwt.InvalidTokenError:
+            print("Invalid Token")
             return None
         return db.session.get(User, data["id"])
 

@@ -1,12 +1,12 @@
 import pytest
 
-from app import create_app, db
+from app.app import create_app, db
 from app.util import setup_db
 
 
 @pytest.fixture
 def client():
-    app = create_app('default')
+    app = create_app("default")
 
     with app.test_client() as client:
         with app.app_context():
@@ -15,5 +15,5 @@ def client():
 
 
 def test_index(client):
-    rv = client.get('/')
+    rv = client.get("/")
     assert 200 == rv.status_code
