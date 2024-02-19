@@ -6,9 +6,7 @@ from app.models import Role, System, User
 from flask.cli import with_appcontext
 
 
-@click.command("seed-db")
-@with_appcontext
-def init_db_command():
+def init_db():
     """Use this function to setup a database with set of pre-registered users."""
     db.drop_all()
     db.create_all()
@@ -292,3 +290,9 @@ def init_db_command():
     )
 
     db.session.commit()
+
+
+@click.command("seed-db")
+@with_appcontext
+def init_db_command():
+    init_db()

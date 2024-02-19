@@ -1,10 +1,6 @@
-import pytest
-
 from base64 import b64encode
 import json
 
-from app.app import create_app, db
-from app.util import setup_db
 
 CORRECT_MAIL = "livivo@stella-project.org"
 CORRECT_PASS = "pass"
@@ -27,16 +23,6 @@ def get_systems(client, email, password, site_id):
         headers={"Authorization": f"Basic {credentials}"},
     )
     return json.loads(rv.data)
-
-
-@pytest.fixture
-def client():
-    app = create_app("default")
-
-    with app.test_client() as client:
-        with app.app_context():
-            setup_db(db)
-        yield client
 
 
 def test_system(client):

@@ -1,11 +1,9 @@
 import json
 from base64 import b64encode
-import pytest
 import time
 import random
 import datetime
-from app.app import create_app, db
-from app.util import setup_db
+
 
 CORRECT_MAIL = "livivo@stella-project.org"
 CORRECT_PASS = "pass"
@@ -127,17 +125,6 @@ def generate_result(session_start_date):
             }
         ),
     }
-
-
-@pytest.fixture
-def client():
-    app = create_app("default")
-    app.config["WTF_CSRF_ENABLED"] = False
-    app.config["TESTING"] = True
-    with app.test_client() as client:
-        with app.app_context():
-            setup_db(db)
-        yield client
 
 
 def get_token(client, email, password):
