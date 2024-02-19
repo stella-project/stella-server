@@ -1,9 +1,10 @@
 import logging
-import sys
 import os
-from app.commands import init_db_command
+import sys
+
 from app.api import api as api_blueprint
 from app.auth import auth as auth_blueprint
+from app.commands import init_db_command
 from app.extensions import bootstrap, db, login_manager, migrate
 from app.main import main as main_blueprint
 from config import config
@@ -16,7 +17,7 @@ def create_app():
     :param config_object: The configuration object to use.
     """
     config_name = os.getenv("FLASK_CONFIG") or "default"
-    print(__name__)
+    print("Create app from:", __name__)
     app = Flask(__name__.split(".")[0])
     app.config.from_object(config[config_name])
     configure_logger(app)

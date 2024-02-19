@@ -5,6 +5,7 @@ import re
 import shutil
 
 import plotly.offline
+from app.extensions import db
 from flask import (
     current_app,
     flash,
@@ -18,7 +19,6 @@ from flask import (
 from flask_login import current_user, login_required, login_user
 from werkzeug.utils import secure_filename
 
-from app.extensions import db
 from ..auth.forms import LoginForm
 from ..dashboard import Dashboard
 from ..models import Feedback, Result, Role, Session, System, User, load_user
