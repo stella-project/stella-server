@@ -8,10 +8,6 @@ class Config:
     AUTOMATOR_GH_KEY = os.environ.get("AUTOMATOR_GH_KEY") or None
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    # @staticmethod
-    # def init_app(app):
-    #     pass
-
 
 class DevelopmentConfig(Config):
     DEBUG = True

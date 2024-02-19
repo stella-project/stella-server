@@ -9,7 +9,4 @@ RUN pip install --upgrade pip && python -m pip install -r requirements.txt
 COPY . .
 
 
-
-#CMD python manage.py db init &&\
-#    python manage.py db migrate &&\
-#    python manage.py db upgrade
+ENTRYPOINT ["/entrypoint.sh"]

@@ -14,6 +14,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PW=change-me
       - POSTGRES_DB=postgres
+      - POSTGRES_URL=db:5432
       - SECRET_KEY=change-me
       - AUTOMATOR_GH_KEY=
       - ADMIN_MAIL=admin@stella-project.org
@@ -26,15 +27,13 @@ services:
       - PARTA_PASS=pass
       - PARTB_MAIL=participant_b@stella-project.org
       - PARTB_PASS=pass
-    command: bash -c "flask seed-db &&
-              flask db init &&
-              flask db migrate &&
-              flask db upgrade &&
-              gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'"
+    command: gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'
     links:
       - stella-server-db:db
     depends_on:
-      - stella-server-db
+      stella-server-db:
+        condition: service_healthy
+
   stella-server-db:
     image: postgres
     ports:
@@ -43,6 +42,12 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=change-me
       - POSTGRES_DB=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d postgres -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # nginx:
   #   restart: always
   #   build: ./nginx
@@ -54,6 +59,6 @@ services:
   #     - /etc/letsencrypt/live:/etc/letsencrypt/live
   #     - /etc/letsencrypt/archive:/etc/letsencrypt/archive
   #   links:
-  #     - web:web
+  #     - stella-server:web
   #   depends_on:
-  #     - web
+  #     - stella-server
