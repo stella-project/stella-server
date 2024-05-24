@@ -172,6 +172,7 @@ def get_site_sessions(client, email, password, site_id):
         "".join(["/stella/api/v1/sites/", str(site_id), "/sessions"]),
         headers={"Authorization": f"Basic {credentials}"},
     )
+    print(rv)
     return json.loads(rv.data)
 
 
@@ -254,7 +255,6 @@ def test_post_results(client):
             data=feedback,
         )
         feedback_id = rv.json.get("feedback_id")
-        pass
 
         result = generate_result(session.get("start"))
         rv = client.post(

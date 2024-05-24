@@ -13,3 +13,7 @@ def client():
             init_db()
             seed_db()
         yield client
+
+        # Teardown code, if necessary
+        with app.app_context():
+            db.drop_all()
