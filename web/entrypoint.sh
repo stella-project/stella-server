@@ -1,4 +1,7 @@
 #!/bin/sh
+
+./wait-for-it.sh db:5432
+
 # Create and seed the database
 echo "Creating database tables..."
 flask seed-db
