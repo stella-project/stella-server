@@ -8,8 +8,13 @@ from flask.cli import with_appcontext
 
 def init_db():
     """Use this function to setup a database with set of pre-registered users."""
-    db.drop_all()
     db.create_all()
+
+
+def seed_db():
+    """Use this function to setup a database with set of pre-registered users."""
+    # TODO: Make this more verbose and configurable
+    # add ranking systems to database
 
     admin_role = Role(name="Admin")
     participant_role = Role(name="Participant")
@@ -292,7 +297,13 @@ def init_db():
     db.session.commit()
 
 
-@click.command("seed-db")
+@click.command("init-db")
 @with_appcontext
 def init_db_command():
     init_db()
+
+
+@click.command("seed-db")
+@with_appcontext
+def seed_db_command():
+    seed_db()

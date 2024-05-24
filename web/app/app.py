@@ -4,7 +4,7 @@ import sys
 
 from app.api import api as api_blueprint
 from app.auth import auth as auth_blueprint
-from app.commands import init_db_command
+from app.commands import init_db_command, seed_db_command
 from app.extensions import bootstrap, db, login_manager, migrate
 from app.main import main as main_blueprint
 from config import config
@@ -55,3 +55,4 @@ def register_blueprints(app):
 def register_commands(app):
     """Register Click commands."""
     app.cli.add_command(init_db_command)
+    app.cli.add_command(seed_db_command)
