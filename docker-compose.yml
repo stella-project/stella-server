@@ -1,7 +1,7 @@
 name: stella-server
 
 services:
-  stella-server:
+  web:
     build: ./web
     expose:
       - "8000"
@@ -18,21 +18,18 @@ services:
       - AUTOMATOR_GH_KEY=
       - ADMIN_MAIL=admin@stella-project.org
       - ADMIN_PASS=pass
-      - GESIS_MAIL=gesis@stella-project.org
-      - GESIS_PASS=pass
-      - LIVIVO_MAIL=livivo@stella-project.org
-      - LIVIVO_PASS=pass
-      - PARTA_MAIL=participant_a@stella-project.org
-      - PARTA_PASS=pass
-      - PARTB_MAIL=participant_b@stella-project.org
-      - PARTB_PASS=pass
+      - SITE_MAIL=site@stella-project.org
+      - SITE_PASS=pass
+      - EXPERIMENTER_MAIL=experimenter@stella-project.org
+      - EXPERIMENTER_PASS=pass
+
     command: gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'
     links:
-      - stella-server-db:db
+      - db:db
     depends_on:
-      - stella-server-db
+      - db
 
-  stella-server-db:
+  db:
     image: postgres
     ports:
       - 5432:5432
@@ -53,6 +50,6 @@ services:
     #   - /etc/letsencrypt/live:/etc/letsencrypt/live
     #   - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     links:
-      - stella-server:web
+      - web:web
     depends_on:
-      - stella-server
+      - web
