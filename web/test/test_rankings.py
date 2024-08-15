@@ -5,10 +5,10 @@ import random
 import datetime
 
 
-CORRECT_MAIL = "livivo@stella-project.org"
+CORRECT_MAIL = "site@stella-project.org"
 CORRECT_PASS = "pass"
-SITE = "LIVIVO"
-RANKERS = ["livivo_rank_pyserini", "livivo_rank_pyterrier", "livivo_rank_precom"]
+SITE = "site"
+RANKERS = ["gesis_rank_pyserini_base"]
 USERS = [
     "123.123.123.123",
     "234.234.234.234",

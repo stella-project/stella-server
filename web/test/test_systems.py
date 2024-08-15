@@ -2,7 +2,7 @@ from base64 import b64encode
 import json
 
 
-CORRECT_MAIL = "livivo@stella-project.org"
+CORRECT_MAIL = "experimenter@stella-project.org"
 CORRECT_PASS = "pass"
 SITE = "LIVIVO"
 
@@ -30,7 +30,9 @@ def test_system(client):
     site_id = site_info.get("id")
     systems = get_systems(client, CORRECT_MAIL, CORRECT_PASS, site_id)
 
-    base_system = list(filter(lambda x: x.get("name") == "livivo_base", systems))
+    base_system = list(
+        filter(lambda x: x.get("name") == "gesis_rank_pyserini_base", systems)
+    )
     assert len(base_system) >= 1
-    assert base_system[0].get("name") == "livivo_base"
+    assert base_system[0].get("name") == "gesis_rank_pyserini_base"
     assert base_system[0].get("type") == "RANK"
