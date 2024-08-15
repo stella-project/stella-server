@@ -1,36 +1,34 @@
-version: '3'
+name: stella-server
+
 services:
   web:
-    restart: always
     build: ./web
     expose:
       - "8000"
-    command: bash -c "python setup_db.py &&
-             python manage.py db init &&
-             python manage.py db migrate &&
-             python manage.py db upgrade &&
-             /usr/local/bin/gunicorn -w 2 --timeout 60 -b :8000 stella-server:app"
+    ports:
+      - "8000:8000"
     environment:
+      - FLASK_APP=app/app
       - FLASK_CONFIG=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PW=change-me
       - POSTGRES_DB=postgres
+      - POSTGRES_URL=db:5432
       - SECRET_KEY=change-me
       - AUTOMATOR_GH_KEY=
       - ADMIN_MAIL=admin@stella-project.org
       - ADMIN_PASS=pass
-      - GESIS_MAIL=gesis@stella-project.org
-      - GESIS_PASS=pass
-      - LIVIVO_MAIL=livivo@stella-project.org
-      - LIVIVO_PASS=pass
-      - PARTA_MAIL=participant_a@stella-project.org
-      - PARTA_PASS=pass
-      - PARTB_MAIL=participant_b@stella-project.org
-      - PARTB_PASS=pass
+      - SITE_MAIL=site@stella-project.org
+      - SITE_PASS=pass
+      - EXPERIMENTER_MAIL=experimenter@stella-project.org
+      - EXPERIMENTER_PASS=pass
+
+    command: gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'
     links:
       - db:db
     depends_on:
       - db
+
   db:
     image: postgres
     ports:
@@ -39,16 +37,18 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=change-me
       - POSTGRES_DB=postgres
+
+
   nginx:
     restart: always
     build: ./nginx
     ports:
       - 80:80
-      - 443:443
-    volumes:
-      - /etc/ssl:/etc/ssl
-      - /etc/letsencrypt/live:/etc/letsencrypt/live
-      - /etc/letsencrypt/archive:/etc/letsencrypt/archive
+      # - 443:443
+    # volumes:
+    #   - /etc/ssl:/etc/ssl
+    #   - /etc/letsencrypt/live:/etc/letsencrypt/live
+    #   - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     links:
       - web:web
     depends_on:
