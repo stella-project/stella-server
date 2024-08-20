@@ -6,11 +6,24 @@ from . import api
 from .authentication import auth
 
 
+@api.route("/sites/<string:name>")
+def get_site_info_by_name(name):
+    """Get the user ID of a user by its username
+    Tested: True
+
+    @param name: Name of the site.
+    @return: JSON/Dictionary containing information (also the identifier) about the site specified by 'name'.
+    """
+    site = db.session.query(User).filter_by(username=name).first()
+    return jsonify(site.serialize)
+
+
 @api.route("/sites/<int:id>/sessions", methods=["POST"])
 @auth.login_required
 def post_session(id):
     """
     Use this endpoint to make a new database entry for a new session.
+    Tested: True
 
     @param id: Identifier of the site.
     @return: JSON/Dictionary with the identifier of the session that was created.
@@ -26,21 +39,12 @@ def post_session(id):
         return jsonify({"session_id": session.id})
 
 
-@api.route("/sites/<string:name>")
-def get_site_info_by_name(name):
-    """
-
-    @param name: Name of the site.
-    @return: JSON/Dictionary containing information (also the identifier) about the site specified by 'name'.
-    """
-    site = db.session.query(User).filter_by(username=name).first()
-    return jsonify(site.serialize)
-
-
 @api.route("/sites/<int:id>/sessions")
 def get_site_sessions(id):
-    """
+    """Get all sessions from a site by its user ID
 
+    tested: True
+    TODO: This uses a different authentication as the above. Why?
     @param id: Identifier of the site.
     @return: JSON/Dictionary with information about all sessions from the site specified by the identifier.
     """
@@ -51,7 +55,7 @@ def get_site_sessions(id):
 @api.route("/sites/<int:id>/systems")
 def get_site_systems(id):
     """
-
+    TODO: test this function
     @param id: Identifier of the site.
     @return: JSON/Dictionary with information about all the systems that are deployed at the site.
     """

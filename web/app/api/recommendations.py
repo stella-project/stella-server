@@ -10,6 +10,7 @@ from . import api
 def post_recommendation(id):
     """
     Use this endpoint to add a recommendation for a specific feedback and the corresponding session.
+    tested: true
 
     @param id: Identifier of the feedback.
     @return: JSON/Dictionary with id of the recommendation.
@@ -26,6 +27,7 @@ def post_recommendation(id):
         recommendation.site_id = site
         recommendation.session_id = session.id
         recommendation.feedback_id = id
+        
         recommendation.system_id = (
             json_recommendation.get("system_id")
             if json_recommendation.get("system_id")
@@ -34,6 +36,7 @@ def post_recommendation(id):
         recommendation.participant_id = db.get_or_404(
             System, session.system_recommendation
         ).participant_id
+        
         recommendation.type = "REC"
         db.session.add(recommendation)
         db.session.commit()
@@ -58,13 +61,14 @@ def recommendation(id):
         recommendation = db.get_or_404(Result, id)
         recommendation.update(json_recommendation)
         db.session.commit()
-        return 200
+        return jsonify(recommendation.to_json())
 
 
 @api.route("/recommendations")
 def get_recommendations():
     """
-
+    TODO: This endpoint is protected. But where?
+    Tested: True
     @return: JSON/Dictionary with identifiers of all recommendations in database.
     """
     results = db.session.query(Result).filter_by(type="REC")

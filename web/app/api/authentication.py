@@ -39,8 +39,6 @@ def get_token():
     @return: JSON/Dictionary containing the JSON Web Token (JWT) and information about the expiration,
              if user is authorized.
     """
-    if g.current_user.is_anonymous or g.token_used:
-        return jsonify({"error": "unauthorized", "message": "Invalid credentials"}), 401
     return jsonify(
         {
             "token": g.current_user.generate_auth_token(expiration=3600),

@@ -10,8 +10,8 @@ from . import api
 
 @api.route("/participants/<int:id>/systems")
 def get_participant_systems(id):
-    """
-
+    """Get all ids of the systems a user submitted
+    tested: True
     @param id: Identifier of the participant.
     @return: JSON/Dictionary with information about the systems by the participant identified by 'id'.
     """
@@ -21,7 +21,9 @@ def get_participant_systems(id):
 
 @api.route("/participants/<int:id>/sessions")
 def get_participant_sessions(id):
-    """
+    """Get all sessions for all systems of a participant
+
+    tested: True
 
     @param id: Identifier of the participant.
     @return: JSON/Dictionary with all sessions in which systems of the participant identified by 'id' took part.

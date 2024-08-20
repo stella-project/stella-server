@@ -67,3 +67,5 @@ def edit_feedback(id):
     feedback = db.get_or_404(Feedback, id)
     feedback.update(json_feedback)
     db.session.commit()
+
+    return jsonify(feedback.to_json())

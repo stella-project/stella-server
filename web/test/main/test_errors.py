@@ -1,3 +1,5 @@
+import pytest
+
 MSG_NOT_FOUND = b"<title>Page Not Found</title>\n"
 
 
