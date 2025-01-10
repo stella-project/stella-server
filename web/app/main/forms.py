@@ -79,7 +79,7 @@ class SubmitSystem(FlaskForm):
     )
     site_type = SelectField(
         "Site & System type",
-        choices=["GESIS (Dataset recommender)", "LIVIVO (Document ranker)"],
+        choices=["Recommender", " Ranker"],
     )
     GitHubUrl = URLField(
         "URL",
@@ -118,7 +118,7 @@ class SubmitRanking(FlaskForm):
     )
     site_type = SelectField(
         "Site & System type",
-        choices=["GESIS (Dataset recommender)", "LIVIVO (Document ranker)"],
+        choices=["Recommender", "Ranker"],
     )
     upload = FileField(
         "Run file",
