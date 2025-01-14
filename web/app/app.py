@@ -9,7 +9,7 @@ from app.extensions import bootstrap, db, login_manager, migrate
 from app.main import main as main_blueprint
 from config import config
 from flask import Flask
-from dotenv import load_dotenv
+
 
 
 def create_app():
@@ -17,7 +17,7 @@ def create_app():
 
     :param config_object: The configuration object to use.
     """
-    load_dotenv()
+    
     config_name = os.getenv("FLASK_CONFIG") or "default"
     print("Create app from:", __name__)
     app = Flask(__name__.split(".")[0])
