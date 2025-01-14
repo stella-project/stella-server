@@ -454,21 +454,6 @@ def update_stella_app():
     flash("Updated STELLA app!")
     return render_template("administration.html")
 
-
-@main.route("/stella-app/update/gesis")
-def update_stella_app_gesis():
-    create_stella_app_yaml(type="rec", token=current_app.config["AUTOMATOR_GH_KEY"])
-    flash("Updated STELLA app for GESIS!")
-    return render_template("administration.html")
-
-
-@main.route("/stella-app/update/livivo")
-def update_stella_app_livivo():
-    create_stella_app_yaml(type="rank", token=current_app.config["AUTOMATOR_GH_KEY"])
-    flash("Updated STELLA app for LIVIVO!")
-    return render_template("administration.html")
-
-
 @main.route("/system/<int:id>/start")
 def activate(id):
     flash("Started system.")
