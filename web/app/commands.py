@@ -34,6 +34,13 @@ def seed_db():
         password=os.environ.get("EXPERIMENTER_PASS") or "pass",
     )
 
+    user_part_b = User(
+        username="GESIS",
+        email=os.environ.get("EXPERIMENTER_MAIL_REC") or "experimenter_rec@stella-project.org",
+        role=participant_role,
+        password=os.environ.get("EXPERIMENTER_PASS") or "pass",
+    )
+
     # user_part_b = User(
     #     username="participant_b",
     #     email=os.environ.get("PARTB_MAIL") or "participant_b@stella-project.org",
@@ -62,7 +69,7 @@ def seed_db():
             site_role,
             user_admin,
             user_part_a,
-            # user_part_b,
+            user_part_b,
             user_site_a,
             # user_site_b,
         ]
