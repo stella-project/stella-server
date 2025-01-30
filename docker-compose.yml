@@ -1,5 +1,13 @@
 name: stella-server
 
+networks:
+  stella-shared:
+    name: stella-shared
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+
 services:
   web:
     build: ./web
@@ -7,13 +15,17 @@ services:
       - "8000"
     ports:
       - "8000:8000"
+    networks:
+      stella-shared:
+        aliases:
+          - server-web
     environment:
       - FLASK_APP=app/app
       - FLASK_CONFIG=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PW=change-me
       - POSTGRES_DB=postgres
-      - POSTGRES_URL=db:5432
+      - POSTGRES_URL=server-db:5432
       - SECRET_KEY=change-me
       - AUTOMATOR_GH_KEY=
       - ADMIN_MAIL=admin@stella-project.org
@@ -24,32 +36,35 @@ services:
       - EXPERIMENTER_PASS=pass
 
     command: gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'
-    links:
-      - db:db
     depends_on:
       - db
 
   db:
     image: postgres
+    expose:
+      - "5432"
     ports:
-      - 5432:5432
+      - "5432:5432"
+    networks:
+      stella-shared:
+        aliases:
+          - server-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=change-me
       - POSTGRES_DB=postgres
 
-
   nginx:
     restart: always
     build: ./nginx
     ports:
-      - 80:80
+      - "80:80"
       # - 443:443
     # volumes:
     #   - /etc/ssl:/etc/ssl
     #   - /etc/letsencrypt/live:/etc/letsencrypt/live
     #   - /etc/letsencrypt/archive:/etc/letsencrypt/archive
-    links:
-      - web:web
+    networks:
+      - stella-shared
     depends_on:
       - web
