@@ -1,0 +1,74 @@
+name: stella-server-dev
+
+networks:
+  stella-shared:
+    name: stella-shared
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.100.0/24
+
+services:
+  server:
+    build: 
+      context: ./web
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./web:/app
+    expose:
+      - "8000"
+    ports:
+      - "8000:8000"
+    networks:
+      stella-shared:
+        aliases:
+          - stella-server
+    environment:
+      - FLASK_APP=app/app
+      - FLASK_CONFIG=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PW=change-me
+      - POSTGRES_DB=postgres
+      - POSTGRES_URL=db-server:5432
+      - SECRET_KEY=change-me
+      - ADMIN_MAIL=admin@stella-project.org
+      - ADMIN_PASS=pass
+      - SITE_MAIL=site@stella-project.org
+      - SITE_PASS=pass
+      - EXPERIMENTER_MAIL=experimenter@stella-project.org
+      - EXPERIMENTER_PASS=pass
+
+    command: flask run --host=0.0.0.0 --port=8000 --reload --debug
+    depends_on:
+      - db-server
+
+  db-server:
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - ./data/db-server-data:/var/lib/postgresql/data
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    networks:
+      - stella-shared
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=change-me
+      - POSTGRES_DB=postgres
+  
+  nginx:
+    restart: always
+    build: ./nginx
+    ports:
+      - "80:80"
+      # - 443:443
+    # volumes:
+    #   - /etc/ssl:/etc/ssl
+    #   - /etc/letsencrypt/live:/etc/letsencrypt/live
+    #   - /etc/letsencrypt/archive:/etc/letsencrypt/archive
+    networks:
+      - stella-shared
+    depends_on:
+      - server
