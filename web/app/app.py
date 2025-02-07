@@ -11,11 +11,13 @@ from config import config
 from flask import Flask
 
 
+
 def create_app():
     """Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
 
     :param config_object: The configuration object to use.
     """
+    
     config_name = os.getenv("FLASK_CONFIG") or "default"
     print("Create app from:", __name__)
     app = Flask(__name__.split(".")[0])

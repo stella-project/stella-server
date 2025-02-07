@@ -43,3 +43,23 @@ All notable changes to this project will be documented in this file.
     - Add `wait-for-it.sh`
     - Update the entrypoint to use `wait-for-it.sh`
 
+
+## UI Generalization
+
+### Updates made in `template/systems.html` and `template/administration.html`:
+
+- **Renaming of instances of `LIVIVO` and `GESIS`**
+    - All instances of the terms `LIVIVO` and `GESIS` have been renamed to `ranker` and `recommender` to generalize the UI.
+
+### Specific Changes:
+
+1. **In `systems.html`:**
+    - Replaced references of `LIVIVO` with `ranker`
+    - Replaced references of `GESIS` with `recommender`
+
+2. **In `administration.html`:**
+    - Replaced instances of `LIVIVO` with `ranker`
+    - Replaced instances of `GESIS` with `recommender`
+
+
+
