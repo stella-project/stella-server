@@ -12,6 +12,11 @@ The `stella-server` provides the following services:
 
 ## Setup
 
+#### Local development
+1. Build `docker compose -f docker-compose-dev.yml build --no-cache`
+2. Run `docker compose -f docker-compose-dev.yml up -d`
+
+#### Production
 1. Build app with Docker:  `docker compose up -d`
 2. Add toy data with the help of `util/simulate.py`
 
