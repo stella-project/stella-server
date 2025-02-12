@@ -183,3 +183,5 @@ trecos/*
 web/uploads/*
 eval/plots/*
 eval/results/*
+
+data/

@@ -1,4 +1,4 @@
-name: stella-server-dev
+name: stella-dev
 
 networks:
   stella-shared:
@@ -24,19 +24,24 @@ services:
         aliases:
           - stella-server
     environment:
-      - FLASK_APP=app/app
-      - FLASK_CONFIG=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PW=change-me
-      - POSTGRES_DB=postgres
-      - POSTGRES_URL=db-server:5432
-      - SECRET_KEY=change-me
-      - ADMIN_MAIL=admin@stella-project.org
-      - ADMIN_PASS=pass
-      - SITE_MAIL=site@stella-project.org
-      - SITE_PASS=pass
-      - EXPERIMENTER_MAIL=experimenter@stella-project.org
-      - EXPERIMENTER_PASS=pass
+      # Config
+      FLASK_APP: app/app
+      FLASK_CONFIG: postgres
+      SECRET_KEY: change-me
+ 
+      ADMIN_MAIL: admin@stella-project.org
+      ADMIN_PASS: pass
+      SITE_MAIL: site@stella-project.org
+      SITE_PASS: pass
+      EXPERIMENTER_MAIL: experimenter@stella-project.org
+      EXPERIMENTER_PASS: pass
+
+      # Database
+      POSTGRES_USER: postgres
+      POSTGRES_PW: change-me
+      POSTGRES_DB: postgres
+      POSTGRES_URL: db-server:5432
+
 
     command: flask run --host=0.0.0.0 --port=8000 --reload --debug
     depends_on:

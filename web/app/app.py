@@ -11,14 +11,13 @@ from config import config
 from flask import Flask
 
 
-
 def create_app():
     """Create application factory, as explained here: http://flask.pocoo.org/docs/patterns/appfactories/.
 
     :param config_object: The configuration object to use.
     """
-    
-    config_name = os.getenv("FLASK_CONFIG") or "default"
+
+    config_name = os.getenv("FLASK_CONFIG", "test")
     print("Create app from:", __name__)
     app = Flask(__name__.split(".")[0])
     app.config.from_object(config[config_name])
@@ -31,9 +30,9 @@ def create_app():
 
 def configure_logger(app):
     """Configure loggers."""
-    handler = logging.StreamHandler(sys.stdout)
     if not app.logger.handlers:
-        app.logger.addHandler(handler)
+        app.logger.addHandler(logging.StreamHandler(sys.stdout))
+        app.logger.setLevel(logging.INFO)
 
 
 def register_extensions(app):
