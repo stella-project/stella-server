@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db, login_manager
-
+import re
 
 class Role(db.Model):
     """
@@ -282,6 +282,7 @@ class Result(db.Model):
         if q_date_raw is None:
             q_date = None
         else:
+            q_date_raw = re.match(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}", q_date_raw).group()
             q_date = datetime.strptime(q_date_raw, "%Y-%m-%d %H:%M:%S")
 
         q_time = json_result.get("q_time", None)
