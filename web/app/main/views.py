@@ -73,7 +73,8 @@ def index():
 @main.route("/dashboard", methods=["GET", "POST"])
 def dashboard():
     if current_user.is_anonymous:
-        return render_template("index.html")
+        form = LoginForm()
+        return render_template("index.html", form=form)
     else:
         if request.method == "POST" and request.form.get("system") is not None:
             system_id = request.form.get("system")
