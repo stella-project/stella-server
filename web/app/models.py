@@ -2,12 +2,11 @@ import json
 from datetime import datetime, timedelta, timezone
 
 import jwt
+from app.extensions import db, login_manager
 from flask import current_app
 from flask_login import UserMixin
 from sqlalchemy.orm import Session
 from werkzeug.security import check_password_hash, generate_password_hash
-
-from app.extensions import db, login_manager
 
 
 class Role(db.Model):
@@ -127,24 +126,24 @@ class Session(db.Model):
 
     @staticmethod
     def from_json(json_session):
-        # site_name = json_session.get('site_name', None)
+        # site_name = json_session.get('site_name')
         # site_id = User.query.filter_by(username=site_name).first().id
-        site_user = json_session.get("site_user", None)
-        start_raw = json_session.get("start", None)
+        site_user = json_session.get("site_user")
+        start_raw = json_session.get("start")
 
         if start_raw is None:
             start = None
         else:
             start = datetime.strptime(start_raw, "%Y-%m-%d %H:%M:%S")
 
-        end_raw = json_session.get("end", None)
+        end_raw = json_session.get("end")
 
         if end_raw is None:
             end = None
         else:
             end = datetime.strptime(end_raw, "%Y-%m-%d %H:%M:%S")
 
-        system_ranking = json_session.get("system_ranking", None)
+        system_ranking = json_session.get("system_ranking")
         if system_ranking is not None and system_ranking not in [
             "dummy_rank",
             "dummy_rec",
@@ -157,7 +156,7 @@ class Session(db.Model):
         else:
             system_ranking_id = None
 
-        system_recommendation = json_session.get("system_recommendation", None)
+        system_recommendation = json_session.get("system_recommendation")
         if system_recommendation is not None and system_recommendation not in [
             "dummy_rank",
             "dummy_rec",
@@ -214,19 +213,19 @@ class Result(db.Model):
         }
 
     def update(self, data):
-        session_id = data.get("session_id", None)
-        system_id = data.get("system_id", None)
-        feedback_id = data.get("feedback_id", None)
-        site_id = data.get("site_id", None)
-        participant_id = data.get("participant_id", None)
-        type = data.get("type", None)
-        q = data.get("q", None)
-        q_time = data.get("q_time", None)
-        q_date = data.get("q_date", None)
-        num_found = data.get("num_found", None)
-        rpp = data.get("rpp", None)
-        page = data.get("page", None)
-        items = data.get("items", None)
+        session_id = data.get("session_id")
+        system_id = data.get("system_id")
+        feedback_id = data.get("feedback_id")
+        site_id = data.get("site_id")
+        participant_id = data.get("participant_id")
+        type = data.get("type")
+        q = data.get("q")
+        q_time = data.get("q_time")
+        q_date = data.get("q_date")
+        num_found = data.get("num_found")
+        rpp = data.get("rpp")
+        page = data.get("page")
+        items = data.get("items")
 
         if session_id is not None:
             self.session_id = session_id
@@ -276,19 +275,19 @@ class Result(db.Model):
 
     @staticmethod
     def from_json(json_result):
-        q = json_result.get("q", None)
-        q_date_raw = json_result.get("q_date", None)
+        q = json_result.get("q")
+        q_date_raw = json_result.get("q_date")
 
-        if q_date_raw is None:
-            q_date = None
+        if q_date_raw:
+            q_date = datetime.fromisoformat(q_date_raw)
         else:
-            q_date = datetime.strptime(q_date_raw, "%Y-%m-%d %H:%M:%S")
+            q_date = None
 
-        q_time = json_result.get("q_time", None)
-        num_found = json_result.get("num_found", None)
-        page = json_result.get("page", None)
-        rpp = json_result.get("rpp", None)
-        items_raw = json_result.get("items", None)
+        q_time = json_result.get("q_time")
+        num_found = json_result.get("num_found")
+        page = json_result.get("page")
+        rpp = json_result.get("rpp")
+        items_raw = json_result.get("items")
         items = json.loads(items_raw)
 
         result = Result(
@@ -328,12 +327,12 @@ class Feedback(db.Model):
         }
 
     def update(self, data):
-        start = data.get("start", None)
-        end = data.get("end", None)
-        session_id = data.get("session_id", None)
-        site_id = data.get("site_id", None)
-        interleave = data.get("interleave", None)
-        clicks = data.get("clicks", None)
+        start = data.get("start")
+        end = data.get("end")
+        session_id = data.get("session_id")
+        site_id = data.get("site_id")
+        interleave = data.get("interleave")
+        clicks = data.get("clicks")
 
         if start is not None:
             self.start = datetime.strptime(start, "%Y-%m-%d %H:%M:%S")
@@ -350,8 +349,8 @@ class Feedback(db.Model):
 
     @staticmethod
     def from_json(json_feedback):
-        start_raw = json_feedback.get("start", None)
-        end_raw = json_feedback.get("end", None)
+        start_raw = json_feedback.get("start")
+        end_raw = json_feedback.get("end")
 
         if start_raw is None:
             start = None
