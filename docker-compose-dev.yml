@@ -3,6 +3,7 @@ name: stella-dev
 networks:
   stella-shared:
     name: stella-shared
+    external : true
     driver: bridge
     ipam:
       config:

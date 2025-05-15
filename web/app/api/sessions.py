@@ -35,7 +35,7 @@ def get_session_systems(id):
     @return: JSON/Dictionary with the names of the experimental ranking and recommendation systems corresponding to
              the specified session.
     """
-    session = db.session.query(Session).filter_by(id=id).first()
+    session = db.session.query(Feedback).filter_by(id=id).first()
     json_session = session.to_json()
 
     ranker_name = (

@@ -19,10 +19,16 @@ def post_recommendation(id):
         return jsonify({"message": "Unauthorized"}), 401
 
     elif request.method == "POST":
+        print("THIS IS TESTSTING AND PASSSED IT !!!111",flush=True)
         feedback = db.get_or_404(Feedback, id)
+        session = feedback
         site = feedback.site_id
-        session = db.get_or_404(Session, feedback.session_id)
-        json_recommendation = request.values
+        print("THIS IS TESTSTING AND PASSSED IT !!!1222",flush=True)
+        
+        # session = db.get_or_404(Session, feedback.session_id)
+        print("THIS IS TESTSTING AND PASSSED IT !!!13333322",flush=True)
+        
+        json_recommendation = request.get_json(force=True)
         recommendation = Result.from_json(json_recommendation)
         recommendation.site_id = site
         recommendation.session_id = session.id
@@ -30,11 +36,11 @@ def post_recommendation(id):
         
         recommendation.system_id = (
             json_recommendation.get("system_id")
-            if json_recommendation.get("system_id")
-            else session.system_recommendation
+            if json_recommendation.get("system_id") is None
+            else 2
         )
         recommendation.participant_id = db.get_or_404(
-            System, session.system_recommendation
+            System, 2
         ).participant_id
         
         recommendation.type = "REC"

@@ -5,7 +5,6 @@ from ..models import Feedback, Session
 from . import api
 from .authentication import auth
 
-
 @api.route("/sessions/<int:id>/feedbacks", methods=["POST"])
 @auth.login_required
 def post_feedback(id):
@@ -16,23 +15,28 @@ def post_feedback(id):
     @param id: Identifier of the session.
     @return: JSON/Dictionary with identifier of the feedback.
     """
-    if g.current_user.role_id != 3:  # Site
+    if g.current_user.role_id != 3:
         return jsonify({"message": "Unauthorized"}), 401
 
-    elif request.method == "POST":
-
-        session = db.get_or_404(Session, id)
-        json_feedback = request.values
+    if request.method == "POST":
+        print("WE ENTERED THE API", flush=True)
+        session = db.get_or_404(Feedback, id)
+        json_feedback = request.get_json()
+        if not json_feedback:
+                raise ValueError("Empty or invalid JSON body")
+            
         feedback = Feedback.from_json(json_feedback)
         feedback.session_id = id
-        site = session.site_id
-        feedback.site_id = site
+        feedback.site_id = session.site_id
 
         db.session.add(feedback)
         db.session.commit()
 
-    return jsonify({"feedback_id": feedback.id})
+        return jsonify({"feedback_id": feedback.id})
 
+    
+
+    
 
 @api.route("/feedbacks")
 def get_feedbacks():

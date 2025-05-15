@@ -15,7 +15,12 @@ def get_site_info_by_name(name):
     @return: JSON/Dictionary containing information (also the identifier) about the site specified by 'name'.
     """
     site = db.session.query(User).filter_by(username=name).first()
+    
+    if site is None:
+        return jsonify({"error": f"Site/user '{name}' not found"}), 404
+
     return jsonify(site.serialize)
+
 
 
 @api.route("/sites/<int:id>/sessions", methods=["POST"])
@@ -28,17 +33,26 @@ def post_session(id):
     @param id: Identifier of the site.
     @return: JSON/Dictionary with the identifier of the session that was created.
     """
+    print(">>> post_session route called")
+
     if g.current_user.role_id != 3:  # Site
         return jsonify({"message": "Unauthorized"}), 401
     else:
-        json_session = request.values
+        json_session = request.get_json()
         session = Session.from_json(json_session)
-        session.site_id = id
+        print("!!!!!!!!!!!!!!",session,flush=True)
+        
+        
         db.session.add(session)
+        session.site_id = id
         db.session.commit()
+        
+        print("Adding session:", session.id, flush=True)
+        print("After commit session:", session.site_id,flush=True)
+
         return jsonify({"session_id": session.id})
 
-
+#
 @api.route("/sites/<int:id>/sessions")
 def get_site_sessions(id):
     """Get all sessions from a site by its user ID
