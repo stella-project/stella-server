@@ -87,7 +87,6 @@ def dataset_recommendations(number_of_sessions=NUM_SESSION, print_feedback=False
             API + "/sites/" + str(site_id) + "/sessions", data=payload, auth=(token, "")
         )
         r_json = json.loads(r.text)
-        print("WHATS INSIDE THE SESSION",r.text)
         session_id = r_json["session_id"]
 
         # POST feedback
@@ -196,7 +195,6 @@ def dataset_recommendations(number_of_sessions=NUM_SESSION, print_feedback=False
 
 def rankings(number_of_sessions=NUM_SESSION, print_feedback=False):
     r = req.post(API + "/tokens", auth=("site@stella-project.org", "pass"))
-    print("THIS IS THE TEST I WANNA CHECK ",r.text)
     r_json = json.loads(r.text)
     
     token = r_json.get("token")
