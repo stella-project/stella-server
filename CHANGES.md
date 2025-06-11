@@ -1,6 +1,10 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 
+## Update in commands.py 
+Initially,there was an inconsistency between the system names in database for stella-server and their order in both the Stella App and the Stella Server. Update made to the commands.py are reordering and renaming of the system names in commands.
+
+
 ## Update to Python 3.9 and Flask 3.0
 - Update minimal Python version to 3.9
     - Update the `python` version in the `Dockerfile` to `3.9`
