@@ -1,6 +1,9 @@
 # Release notes
 All notable changes to this project will be documented in this file.
 
+## Update in Simulate.py 
+Initially, there was issue in the naming of the system, URL and correct auth parameters in the script. Changed the URL port to 8000 and also renamed the systems in the script, this fixed the issue with the simulation script
+
 ## Update to Python 3.9 and Flask 3.0
 - Update minimal Python version to 3.9
     - Update the `python` version in the `Dockerfile` to `3.9`

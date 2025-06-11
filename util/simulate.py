@@ -2,7 +2,7 @@ import requests as req
 import json
 
 NUM_SESSION = 100
-PORT = "5000"
+PORT = "8000"
 # API = 'http://0.0.0.0:' + PORT + '/stella/api/v1'
 API = "http://127.0.0.1:" + PORT + "/stella/api/v1"
 
@@ -35,7 +35,7 @@ def random_date(start, end, prop):
 
 def dataset_recommendations(number_of_sessions=NUM_SESSION, print_feedback=False):
     # r = req.post(API + "/tokens", auth=("gesis@stella.org", "pass"))
-    r = req.post(API + "/tokens", auth=("livivo@stella-project.org", "pass"))
+    r = req.post(API + "/tokens", auth=("site@stella-project.org", "pass"))
     r_json = json.loads(r.text)
 
     token = r_json.get("token")
@@ -52,7 +52,7 @@ def dataset_recommendations(number_of_sessions=NUM_SESSION, print_feedback=False
         "912.912.912.912",
     ]
 
-    rankers = ["livivo_rank_pyserini", "livivo_rank_pysterrier"]
+    rankers = ["gesis_rank_pyserini_base","gesis_rank_pyserini"]
     recommenders = ["gesis_rec_pyserini", "gesis_rec_pyterrier"]
 
     for s in range(0, number_of_sessions):
@@ -194,11 +194,12 @@ def dataset_recommendations(number_of_sessions=NUM_SESSION, print_feedback=False
 
 
 def rankings(number_of_sessions=NUM_SESSION, print_feedback=False):
-    r = req.post(API + "/tokens", auth=("livivo@stella-project.org", "pass"))
+    r = req.post(API + "/tokens", auth=("site@stella-project.org", "pass"))
     r_json = json.loads(r.text)
+    
     token = r_json.get("token")
 
-    sites = ["LIVIVO"]
+    sites = ["GESIS"]
     site_users = [
         "123.123.123.123",
         "234.234.234.234",
@@ -210,7 +211,7 @@ def rankings(number_of_sessions=NUM_SESSION, print_feedback=False):
         "912.912.912.912",
     ]
 
-    rankers = ["livivo_rank_pyserini", "livivo_rank_pyterrier", "livivo_rank_precom"]
+    rankers = ["gesis_rank_pyserini",  "gesis_rank_pyserini_base"]
     recommenders = ["gesis_rec_pyserini", "gesis_rec_pyterrier"]
 
     for s in range(0, number_of_sessions):
