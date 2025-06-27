@@ -1,5 +1,6 @@
-import os
 import datetime
+import os
+
 import click
 from app.extensions import db
 from app.models import Role, System, User
@@ -36,7 +37,8 @@ def seed_db():
 
     user_part_b = User(
         username="GESIS",
-        email=os.environ.get("EXPERIMENTER_MAIL_REC") or "experimenter_rec@stella-project.org",
+        email=os.environ.get("EXPERIMENTER_MAIL_REC")
+        or "experimenter_rec@stella-project.org",
         role=participant_role,
         password=os.environ.get("EXPERIMENTER_PASS") or "pass",
     )
@@ -248,7 +250,7 @@ def seed_db():
     gesis_rec_pyterrier = System(
         status="running",
         name="gesis_rec_pyterrier",
-        participant_id=user_site_a.id,
+        participant_id=user_part_a.id,
         type="REC",
         submitted="DOCKER",
         url="https://github.com/stella-project/gesis_rec_pyterrier",
@@ -289,10 +291,10 @@ def seed_db():
             # rec_pyserini,
             # gesis_rank_precom_base,
             # gesis_rank_precom,
-            gesis_rank_pyserini_base,
             gesis_rank_pyserini,
-            gesis_rec_pyterrier,
+            gesis_rank_pyserini_base,
             gesis_rec_pyserini,
+            gesis_rec_pyterrier,
             # livivo_rank_base,
             # livivo_rank_precom,
             # livivo_rank_pyserini,
