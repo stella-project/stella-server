@@ -12,7 +12,7 @@ from wtforms import (
     ValidationError,
 )
 from wtforms.fields import SelectField
-from wtforms.validators import URL, DataRequired, Email, EqualTo, Length, Regexp
+from wtforms.validators import URL, DataRequired, Email, EqualTo, Length, Regexp, Optional
 
 from ..models import System, User
 from app.extensions import db
@@ -71,37 +71,47 @@ class SubmitSystem(FlaskForm):
             DataRequired(),
             Length(1, 64),
             Regexp(
-                "^[A-Za-z][A-Za-z0-9_.]*$",
+                "^[A-Za-z][A-Za-z0-9_.-]*$",
                 0,
-                "Systemname must have only letters, numbers, dots or underscores",
+                "Systemname must start with a letter, and can only include letters, numbers, underscores (_), hyphens (-), or dots (.)",
             ),
         ],
     )
-    site_type = SelectField(
-        "Site & System type",
+    type = SelectField(
+        "System type",
         choices=["Recommender", " Ranker"],
+    )
+    site = SelectField(
+        "Site",
     )
     GitHubUrl = URLField(
         "URL",
         validators=[
-            DataRequired(message="Enter URL Please"),
+            #DataRequired(message="Enter URL Please"),
+            Optional(),
             URL(message="Enter Valid URL Please."),
         ],
     )
 
     def validate_systemname(self, field):
-        if re.match("^[A-Za-z][A-Za-z0-9_.]*$", field.data):
+        if re.match("^[A-Za-z][A-Za-z0-9_.-]*$", field.data):
             if db.session.query(System).filter_by(name=field.data).first():
                 flash("System name already in use.", "danger")
                 raise ValidationError("System name already in use.")
         else:
             flash(
-                "Systemname must have only letters, numbers, dots or underscores",
+                "Systemname must start with a letter, and can only include letters, numbers, underscores (_), hyphens (-), or dots (.)",
                 "danger",
             )
 
     submit = SubmitField("Submit")
 
+    def __init__(self, sites=None, user_role_name=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.site.choices = sites or []
+
+        if user_role_name == "Site":
+            self.site.render_kw = {"disabled": "disabled"}
 
 class SubmitRanking(FlaskForm):
     systemname = StringField(
@@ -110,9 +120,9 @@ class SubmitRanking(FlaskForm):
             DataRequired(),
             Length(1, 64),
             Regexp(
-                "^[A-Za-z][A-Za-z0-9_.]*$",
+                "^[A-Za-z][A-Za-z0-9_.-]*$",
                 0,
-                "Systemname must have only letters, numbers, dots or " "underscores",
+                "Systemname must start with a letter, and can only include letters, numbers, underscores (_), hyphens (-), or dots (.)",
             ),
         ],
     )
@@ -132,13 +142,13 @@ class SubmitRanking(FlaskForm):
     )
 
     def validate_systemname(self, field):
-        if re.match("^[A-Za-z][A-Za-z0-9_.]*$", field.data):
+        if re.match("^[A-Za-z][A-Za-z0-9_.-]*$", field.data):
             if db.session.query(System).filter_by(name=field.data).first():
                 flash("System name already in use.", "danger")
                 raise ValidationError("System name already in use.")
         else:
             flash(
-                "Systemname must have only letters, numbers, dots or underscores",
+                "Systemname must start with a letter, and can only include letters, numbers, underscores (_), hyphens (-), or dots (.)",
                 "danger",
             )
 

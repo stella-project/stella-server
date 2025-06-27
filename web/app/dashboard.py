@@ -1,27 +1,32 @@
 from app.extensions import db
 from .main.forms import Dropdown
-from .models import Feedback, Result, Session, System, User
+from .models import Feedback, Result, Session, System, User, Role
 
 
 class Dashboard:
 
     def __init__(self, user_id, system_id=None, site_id=None):
 
-        user_role_id = db.session.query(User).filter_by(id=user_id).first().role_id
+        user_role_id = db.session.get(User, user_id).role_id
+         
+        admin_role = db.session.query(Role).filter_by(name='Admin').first()
+        participant_role = db.session.query(Role).filter_by(name='Participant').first()
+        site_role = db.session.query(Role).filter_by(name='Site').first()
+
 
         self.system_id = system_id
         self.site_id = site_id
 
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.site_id = user_id
 
-        if user_role_id == 1:  # user is admin
+        if user_role_id == admin_role.id:  # user is admin
             self.systems = db.session.query(System).filter().distinct().all()
-        if user_role_id == 2:  # user is participant
+        if user_role_id == participant_role.id:  # user is participant
             self.systems = (
                 db.session.query(System).filter_by(participant_id=user_id).all()
             )
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.systems = db.session.query(System).filter(System.site == user_id).all()
 
         site_ids = (
@@ -37,15 +42,15 @@ class Dashboard:
             .all()
         )
 
-        if user_role_id == 1:  # user is admin
-            self.sites = db.session.query(User).filter_by(role_id=3).distinct().all()
-        if user_role_id == 2:  # user is participant
+        if user_role_id == admin_role.id:  # user is admin
+            self.sites = db.session.query(User).filter_by(role_id=site_role.id).distinct().all()
+        if user_role_id == participant_role.id:  # user is participant
             self.sites = (
                 db.session.query(User)
                 .filter(User.id.in_([s[0] for s in site_ids]))
                 .all()
             )
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.sites = [db.session.query(User).filter_by(id=user_id).first()]
 
         self.form = Dropdown()

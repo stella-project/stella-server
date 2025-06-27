@@ -40,15 +40,9 @@
                     <td scope="row"><span class="badge badge-danger">running</span></td>
                 {% endif %}
 
-                <td>{{ i.name  | replace("_"," ") }}</td>
+                <td>{{ i.name }}</td>
                 <td>{% if i.submission_date %}{{ i.submission_date }} {% else %} - {% endif %}</td>
-                <td>
-                    {% if i.type == 'RANK' %}
-                        Ranker
-                    {% elif i.type == 'REC' %}
-                        Reccomender
-                    {% endif %}
-                </td>
+                <td>{{ i.sitename }}</td>
                 <td>
                     {% if i.type == 'RANK' %}
                         Ranking
