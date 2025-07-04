@@ -1,5 +1,6 @@
-import os
 import datetime
+import os
+
 import click
 from app.extensions import db
 from app.models import Role, System, User
@@ -36,7 +37,8 @@ def seed_db():
 
     user_part_b = User(
         username="GESIS",
-        email=os.environ.get("EXPERIMENTER_MAIL_REC") or "experimenter_rec@stella-project.org",
+        email=os.environ.get("EXPERIMENTER_MAIL_REC")
+        or "experimenter_rec@stella-project.org",
         role=participant_role,
         password=os.environ.get("EXPERIMENTER_PASS") or "pass",
     )
@@ -77,17 +79,17 @@ def seed_db():
 
     db.session.commit()
 
-    # # gesis demo systems:
-    # gesis_rank_pyserini = System(
-    #     status="running",
-    #     name="gesis_rank_pyserini",
-    #     participant_id=user_part_a.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/gesis_rank_pyserini",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
+    # gesis demo systems:
+    gesis_rank_pyserini = System(
+        status="running",
+        name="gesis_rank_pyserini",
+        participant_id=user_part_a.id,
+        type="RANK",
+        submitted="DOCKER",
+        url="https://github.com/stella-project/gesis_rank_pyserini",
+        site=user_site_a.id,
+        submission_date=datetime.date(2019, 6, 10),
+    )
 
     # gesis_rank_precom_base = System(
     #     status="running",
@@ -245,16 +247,16 @@ def seed_db():
     #     submission_date=datetime.date(2019, 6, 10),
     # )
 
-    # rec_pyterrier = System(
-    #     status="running",
-    #     name="gesis_rec_pyterrier",
-    #     participant_id=user_site_a.id,
-    #     type="REC",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/gesis_rec_pyterrier",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
+    gesis_rec_pyterrier = System(
+        status="running",
+        name="gesis_rec_pyterrier",
+        participant_id=user_part_a.id,
+        type="REC",
+        submitted="DOCKER",
+        url="https://github.com/stella-project/gesis_rec_pyterrier",
+        site=user_site_a.id,
+        submission_date=datetime.date(2019, 6, 10),
+    )
 
     # rec_pyserini = System(
     #     status="running",
@@ -287,11 +289,12 @@ def seed_db():
             # recommender_base_a,
             # rec_pyterrier,
             # rec_pyserini,
-            # gesis_rank_pyserini,
             # gesis_rank_precom_base,
             # gesis_rank_precom,
+            gesis_rank_pyserini,
             gesis_rank_pyserini_base,
             gesis_rec_pyserini,
+            gesis_rec_pyterrier,
             # livivo_rank_base,
             # livivo_rank_precom,
             # livivo_rank_pyserini,
