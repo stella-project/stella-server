@@ -77,6 +77,30 @@ def seed_db():
 
     db.session.commit()
 
+    # # mlentory systems:
+    mlentory_base = System(
+        status="running",
+        name="mlentory_base",
+        participant_id=user_part_a.id,
+        type="RANK",
+        submitted="DOCKER",
+        url="",
+        site=user_site_a.id,
+        submission_date=datetime.date(2025, 8, 31)
+    )
+
+    mlentory_experiment = System(
+        status="running",
+        name="mlentory_experiment",
+        participant_id=user_part_a.id,
+        type="RANK",
+        submitted="DOCKER",
+        url="",
+        site=user_site_a.id,
+        submission_date=datetime.date(2025, 8, 31)
+    )
+
+
     # # gesis demo systems:
     # gesis_rank_pyserini = System(
     #     status="running",
@@ -111,27 +135,27 @@ def seed_db():
     #     submission_date=datetime.date(2019, 6, 10),
     # )
 
-    gesis_rank_pyserini_base = System(
-        status="running",
-        name="gesis_rank_pyserini_base",
-        participant_id=user_part_a.id,
-        type="RANK",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rank_pyserini_base",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
+    # gesis_rank_pyserini_base = System(
+    #     status="running",
+    #     name="gesis_rank_pyserini_base",
+    #     participant_id=user_part_a.id,
+    #     type="RANK",
+    #     submitted="DOCKER",
+    #     url="https://github.com/stella-project/gesis_rank_pyserini_base",
+    #     site=user_site_a.id,
+    #     submission_date=datetime.date(2019, 6, 10),
+    # )
 
-    gesis_rec_pyserini = System(
-        status="running",
-        name="gesis_rec_pyserini",
-        participant_id=user_part_a.id,
-        type="REC",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rec_pyserini",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
+    # gesis_rec_pyserini = System(
+    #     status="running",
+    #     name="gesis_rec_pyserini",
+    #     participant_id=user_part_a.id,
+    #     type="REC",
+    #     submitted="DOCKER",
+    #     url="https://github.com/stella-project/gesis_rec_pyserini",
+    #     site=user_site_a.id,
+    #     submission_date=datetime.date(2019, 6, 10),
+    # )
 
     # # livivo demo systems:
     # livivo_rank_base = System(
@@ -245,10 +269,10 @@ def seed_db():
     #     submission_date=datetime.date(2019, 6, 10),
     # )
 
-    # rec_pyterrier = System(
+    # gesis_rec_pyterrier = System(
     #     status="running",
     #     name="gesis_rec_pyterrier",
-    #     participant_id=user_site_a.id,
+    #     participant_id=user_part_a.id,
     #     type="REC",
     #     submitted="DOCKER",
     #     url="https://github.com/stella-project/gesis_rec_pyterrier",
@@ -280,6 +304,8 @@ def seed_db():
 
     db.session.add_all(
         [
+            mlentory_base,
+            mlentory_experiment,
             # livivo_base,
             # livivo_precom,
             # rank_pyserini,
@@ -290,8 +316,8 @@ def seed_db():
             # gesis_rank_pyserini,
             # gesis_rank_precom_base,
             # gesis_rank_precom,
-            gesis_rank_pyserini_base,
-            gesis_rec_pyserini,
+            # gesis_rank_pyserini_base,
+            # gesis_rec_pyserini,
             # livivo_rank_base,
             # livivo_rank_precom,
             # livivo_rank_pyserini,

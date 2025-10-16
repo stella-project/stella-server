@@ -1,15 +1,12 @@
 name: stella-dev
 
 networks:
-  stella-shared:
-    name: stella-shared
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 192.168.100.0/24
-
+  mlentory_network:
+    external: true
+    
 services:
   server:
+    container_name: stella-dev-server
     build: 
       context: ./web
       dockerfile: Dockerfile.dev
@@ -18,11 +15,9 @@ services:
     expose:
       - "8000"
     ports:
-      - "8000:8000"
+      - "8004:8000"
     networks:
-      stella-shared:
-        aliases:
-          - stella-server
+      - mlentory_network
     environment:
       # Config
       FLASK_APP: app/app
@@ -48,6 +43,7 @@ services:
       - db-server
 
   db-server:
+    container_name: stella-dev-db-server
     image: postgres
     restart: unless-stopped
     volumes:
@@ -55,9 +51,9 @@ services:
     expose:
       - "5432"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
-      - stella-shared
+      - mlentory_network
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=change-me
@@ -74,6 +70,6 @@ services:
     #   - /etc/letsencrypt/live:/etc/letsencrypt/live
     #   - /etc/letsencrypt/archive:/etc/letsencrypt/archive
     networks:
-      - stella-shared
+      - mlentory_network
     depends_on:
       - server
