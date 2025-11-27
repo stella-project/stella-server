@@ -8,65 +8,178 @@ from .authentication import auth
 
 @api.route("/sites/<string:name>")
 def get_site_info_by_name(name):
-    """Get the user ID of a user by its username
-    Tested: True
-
-    @param name: Name of the site.
-    @return: JSON/Dictionary containing information (also the identifier) about the site specified by 'name'.
     """
-    site = db.session.query(User).filter_by(username=name).first()
-    return jsonify(site.serialize)
+    Retrieve site information by name
+    ---
+    tags:
+        - Sites
+    description: |
+        Returns the sites identified by the site name.
+
+        **Internal endpoint used only by the Stella App.**
+
+    parameters:
+      - in: path
+        name: name
+        schema:
+          type: string
+        required: true
+        description: Name of the site.
+
+    responses:
+      200:
+        description: Site information retrieved successfully.
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Serialized site object, including identifier and metadata.
+      404:
+        description: Site not found.
+    """
+    try:
+        site = db.session.query(User).filter_by(username=name).first()
+        return jsonify(site.serialize)
+    except:
+         return jsonify({"message": "Site not found"}), 404
 
 
 @api.route("/sites/<int:id>/sessions", methods=["POST"])
 @auth.login_required
 def post_session(id):
     """
-    Use this endpoint to make a new database entry for a new session.
-    Tested: True
+    Create a new session for a site
+    ---
+    tags:
+        - Sites
+    description: |
+        Adds a new session entry in the database for the specified site.
 
-    @param id: Identifier of the site.
-    @return: JSON/Dictionary with the identifier of the session that was created.
+        Only users with `role_id = 3` (Site users) are authorized.
+
+        **Internal endpoint used only by the Stella App.**
+
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Identifier of the site.
+
+      - in: formData
+        name: session_fields
+        schema:
+          type: object
+        required: true
+        description: Key/value fields required to create a session.
+
+    responses:
+      200:
+        description: Session successfully created.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                session_id:
+                  type: integer
+                  description: ID of the newly created session.
+      401:
+        description: Unauthorized — only Site users may create sessions.
+      404:
+        description: Site not found.
     """
-    if g.current_user.role_id != 3:  # Site
-        return jsonify({"message": "Unauthorized"}), 401
-    else:
-        json_session = request.values
-        session = Session.from_json(json_session)
-        session.site_id = id
-        db.session.add(session)
-        db.session.commit()
-        return jsonify({"session_id": session.id})
+    try:
+        if g.current_user.role_id != 3:  # Site
+            return jsonify({"message": "Unauthorized"}), 401
+        else:
+            json_session = request.values
+            session = Session.from_json(json_session)
+            session.site_id = id
+            db.session.add(session)
+            db.session.commit()
+            return jsonify({"session_id": session.id})
+    except:
+        return jsonify({"message": "Site not found."}), 404
 
 
 @api.route("/sites/<int:id>/sessions")
 def get_site_sessions(id):
-    """Get all sessions from a site by its user ID
-
-    tested: True
-    TODO: This uses a different authentication as the above. Why?
-    @param id: Identifier of the site.
-    @return: JSON/Dictionary with information about all sessions from the site specified by the identifier.
     """
-    sessions = db.session.query(Session).filter_by(site_id=id)
-    return jsonify([s.to_json() for s in sessions])
+    Retrieve all sessions for a site
+    ---
+    tags:
+        - Sites
+    description: |
+        Returns all sessions created under a specific site.
+
+        **Internal endpoint used only by the Stella App.**
+
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Identifier of the site.
+
+    responses:
+      200:
+        description: List of session objects.
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                description: Serialized session object.
+      404:
+        description: Site not found or no sessions associated.
+    """
+    try:
+        sessions = db.session.query(Session).filter_by(site_id=id)
+        return jsonify([s.to_json() for s in sessions])
+    except:
+        return jsonify({"message": "Site not found or no sessions associated."}), 404
 
 
 @api.route("/sites/<int:id>/systems")
 def get_site_systems(id):
     """
-    TODO: test this function
-    @param id: Identifier of the site.
-    @return: JSON/Dictionary with information about all the systems that are deployed at the site.
+    Retrieve all systems deployed at a site
+    ---
+    tags:
+        - Sites
+    description: |
+        Returns all experimental systems (ranking and recommendation) that are deployed
+        at a specific site, identified by its ID.
+
+        **Internal endpoint used only by the Stella App.**
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Identifier of the site.
+
+    responses:
+      200:
+        description: Dictionary of system IDs and their names deployed at the site.
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+                description: System name
+      404:
+        description: System or session not found.
     """
-    system_dict = {}
-    systems = (
-        db.session.query(Session)
-        .with_entities(Session.system_ranking)
-        .distinct()
-        .filter_by(site_id=id)
-        .all()
-    )
-    for s in systems:
-        system_dict.update({s.system_ranking: db.get_or_404(System, s).name})
-    return jsonify(system_dict)
+    try:
+        systems = db.session.query(System).filter_by(site=id).all()
+        system_dict = {s.id: s.name for s in systems}
+        return jsonify(system_dict)
+    except:
+        return jsonify({"message": "System or session not found."}), 404
