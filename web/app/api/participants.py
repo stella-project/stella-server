@@ -10,10 +10,35 @@ from . import api
 
 @api.route("/participants/<int:id>/systems")
 def get_participant_systems(id):
-    """Get all ids of the systems a user submitted
-    tested: True
-    @param id: Identifier of the participant.
-    @return: JSON/Dictionary with information about the systems by the participant identified by 'id'.
+    """
+    Get all systems submitted by a participant
+    ---
+    tags:
+        - Participants
+    description: |
+        Returns all systems associated with a participant (identified by `id`).
+
+        **Internal endpoint used only by the Stella App.**
+
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Identifier of the participant.
+
+    responses:
+      200:
+        description: List of systems submitted by the participant.
+        schema:
+          type: array
+          items:
+            type: object
+            description: Serialized system object.
+
+      404:
+        description: Participant not found or no systems associated.
     """
     systems = db.session.query(System).filter_by(participant_id=id)
     return jsonify([sys.serialize for sys in systems])
@@ -21,12 +46,38 @@ def get_participant_systems(id):
 
 @api.route("/participants/<int:id>/sessions")
 def get_participant_sessions(id):
-    """Get all sessions for all systems of a participant
+    """
+    Get all sessions associated with a participant's systems
+    ---
+    tags:
+        - Participants
+    description: |
+        Retrieves all sessions in which any system created by the participant took part.
+        This includes:
+          - Ranking sessions (matching `system_ranking`)
+          - Recommendation sessions (matching `system_recommendation`)
 
-    tested: True
+        **Internal endpoint used only by the Stella App.**
 
-    @param id: Identifier of the participant.
-    @return: JSON/Dictionary with all sessions in which systems of the participant identified by 'id' took part.
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+        description: Identifier of the participant.
+
+    responses:
+      200:
+        description: List of session objects associated with the participant.
+        schema:
+          type: array
+          items:
+            type: object
+            description: Serialized session object.
+
+      404:
+        description: Participant not found or no sessions associated.
     """
     systems = db.session.query(System).filter_by(participant_id=id)
     systems_id = tuple([sys.id for sys in systems])

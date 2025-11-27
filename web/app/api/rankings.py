@@ -8,10 +8,48 @@ from . import api
 @api.route("/feedbacks/<int:id>/rankings", methods=["POST"])
 def post_ranking(id):
     """
-    Use this endpoint to add a ranking for a specific feedback and the corresponding session.
+    Create a ranking for a specific feedback
+    ---
+    tags:
+        - Rankings
+    description: |
+        Adds a new ranking associated with the given feedback ID and its parent session.
+        Only users with role_id = 3 (Site) are authorized to create rankings.
 
-    @param id: Identifier of the feedback.
-    @return: JSON/Dictionary with id of the ranking.
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Identifier of the feedback.
+
+      - in: formData
+        name: system_id
+        type: integer
+        required: false
+        description: Optional system identifier. Defaults to the session's system_ranking value.
+
+      - in: formData
+        name: other_fields
+        type: string
+        required: false
+        description: Any additional fields required to construct a ranking object.
+
+    responses:
+      200:
+        description: Ranking successfully created.
+        schema:
+          type: object
+          properties:
+            ranking_id:
+              type: integer
+              description: Identifier of the newly created ranking.
+
+      401:
+        description: Unauthorized. Only Site users may create rankings.
+
+      404:
+        description: Feedback or Session not found.
     """
 
     if g.current_user.role_id != 3:  # Site
@@ -45,11 +83,52 @@ def post_ranking(id):
 @api.route("/rankings/<int:id>", methods=["GET", "PUT"])
 def ranking(id):
     """
-    Use this endpoint either to get information about a specific ranking (GET) or to update the information (PUT).
+    Retrieve or update a specific ranking
+    ---
+    tags:
+        - Rankings
+    description: |
+        GET returns the ranking and its associated fields.
+        PUT updates the ranking with new values supplied in the request.
 
-    @param id: Identifier of the ranking.
-    @return: GET - JSON/Dictionary with ranking and corresponding items.
-             PUT - Update ranking with specified identifier 'id'.
+    parameters:
+      - in: path
+        name: id
+        type: integer
+        required: true
+        description: Identifier of the ranking.
+
+      - in: formData
+        name: fields
+        type: string
+        required: false
+        description: Fields to update (only used for PUT requests).
+
+    responses:
+      200:
+        description: |
+          GET – Returns the ranking as JSON.  
+          PUT – Ranking updated successfully.
+        schema:
+          type: object
+          properties:
+            id:
+              type: integer
+            site_id:
+              type: integer
+            session_id:
+              type: integer
+            feedback_id:
+              type: integer
+            system_id:
+              type: integer
+            participant_id:
+              type: integer
+            type:
+              type: string
+
+      404:
+        description: Ranking not found.
     """
     if request.method == "GET":
         ranking = db.get_or_404(Result, id)
@@ -65,8 +144,22 @@ def ranking(id):
 @api.route("/rankings")
 def get_rankings():
     """
-
-    @return: JSON/Dictionary with identifiers of all rankings in database.
+    List all ranking identifiers
+    ---
+    tags:
+        - Rankings
+    description: Returns the list of all ranking IDs stored in the database.
+    responses:
+      200:
+        description: A list of ranking identifiers.
+        schema:
+          type: object
+          properties:
+            rids:
+              type: array
+              items:
+                type: integer
+              description: Ranking IDs.
     """
     results = db.session.query(Result).filter_by(type="RANK")
     return jsonify({"rids": [r.id for r in results]})
