@@ -221,14 +221,16 @@ class Dashboard:
             pass
 
     def dropdown(self):
+        sorted_systems = sorted(self.systems, key=lambda x: (x.type != 'RANK', x.name))
         self.form.system.choices = [
             (
                 r.id,
                 r.name
                 + "@"
-                + db.session.query(User).filter_by(id=r.site).first().username,
+                + db.session.query(User).filter_by(id=r.site).first().username
+                + " (" +r.type+") ",
             )
-            for r in self.systems
+            for r in sorted_systems
         ]
         if len(self.form.system.choices) != 0:
             self.form.system.default = self.form.system.choices[0]
