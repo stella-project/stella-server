@@ -74,30 +74,28 @@ def index():
 
 
 @main.route("/dashboard", methods=["GET", "POST"])
+@login_required
 def dashboard():
-    if current_user.is_anonymous:
-        return render_template("index.html")
+    if request.method == "POST" and request.form.get("system") is not None:
+        system_id = request.form.get("system")
+        site_id = db.session.query(System).filter_by(id=system_id).first().site
+        dashboard = Dashboard(current_user.id, system_id, site_id)
     else:
-        if request.method == "POST" and request.form.get("system") is not None:
-            system_id = request.form.get("system")
-            site_id = db.session.query(System).filter_by(id=system_id).first().site
-            dashboard = Dashboard(current_user.id, system_id, site_id)
-        else:
-            dashboard = Dashboard(current_user.id)
+        dashboard = Dashboard(current_user.id)
 
-        graphs = [
-            dashboard.get_impressions(),
-            dashboard.get_pie_chart(),
-            dashboard.get_clicks(),
-            dashboard.get_table(),
-        ]
+    graphs = [
+        dashboard.get_impressions(),
+        dashboard.get_pie_chart(),
+        dashboard.get_clicks(),
+        dashboard.get_table(),
+    ]
 
-        return render_template(
-            "dashboard.html",
-            ids=["graph-{}".format(i) for i, _ in enumerate(graphs)],
-            graphJSON=json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder),
-            form=dashboard.dropdown(),
-        )
+    return render_template(
+        "dashboard.html",
+        ids=["graph-{}".format(i) for i, _ in enumerate(graphs)],
+        graphJSON=json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder),
+        form=dashboard.dropdown(),
+    )
 
 
 @main.route("/systems", methods=["GET", "POST"])
