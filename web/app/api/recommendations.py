@@ -1,4 +1,4 @@
-from flask import g, jsonify, request
+from flask import g, jsonify, request, current_app
 from flask_login import current_user, login_required, login_user
 
 from app.extensions import db
@@ -9,11 +9,53 @@ from . import api
 @api.route("/feedbacks/<int:id>/recommendations", methods=["POST"])
 def post_recommendation(id):
     """
-    Use this endpoint to add a recommendation for a specific feedback and the corresponding session.
-    tested: true
+    Create a recommendation for a specific feedback
+    --- 
+    tags:
+        - Recommendations
+    description: |
+        Creates a new recommendation entry associated with a feedback record and its session.
 
-    @param id: Identifier of the feedback.
-    @return: JSON/Dictionary with id of the recommendation.
+        **Internal endpoint used only by the Stella App.**
+        Only users with `role_id = 3` (Site users) are authorized.
+
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: Identifier of the feedback.
+
+      - in: formData
+        name: system_id
+        required: false
+        schema:
+          type: integer
+        description: Optional system ID. If omitted, defaults to `session.system_recommendation`.
+
+      - in: formData
+        name: recommendation_fields
+        required: false
+        schema:
+          type: object
+        description: Additional fields used to construct the recommendation.
+
+    responses:
+      200:
+        description: Recommendation successfully created.
+        schema:
+          type: object
+          properties:
+            recommendation_id:
+              type: integer
+              description: ID of the created recommendation.
+
+      401:
+        description: Unauthorized — only Site users may submit recommendations.
+
+      404:
+        description: Feedback or Session not found.
     """
     if g.current_user.role_id != 3:  # Site
         return jsonify({"message": "Unauthorized"}), 401
@@ -47,14 +89,45 @@ def post_recommendation(id):
 @api.route("/recommendations/<int:id>", methods=["GET", "PUT"])
 def recommendation(id):
     """
-    Use this endpoint either to get information about a specific recommendation (GET) or to update the information (PUT)
+    Retrieve or update a specific recommendation
+    ---
+    tags:
+        - Recommendations
+    description: |
+        GET returns the full recommendation object.  
+        PUT updates the recommendation using the provided form fields.
 
-    @param id: Identifier of the recommendation.
-    @return: GET - JSON/Dictionary with recommendation and corresponding items.
-             PUT - Update recommendation with specified identifier 'id'.
+        **Internal endpoint used only by the Stella App.**
+
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        description: Identifier of the recommendation.
+
+      - in: formData
+        name: recommendation_fields
+        required: false
+        schema:
+          type: object
+        description: Fields to update (only for PUT requests).
+
+    responses:
+      200:
+        description: |
+          GET – Recommendation retrieved.  
+          PUT – Recommendation updated successfully.
+        schema:
+          type: object
+          description: Serialized recommendation object.
+
+      404:
+        description: Recommendation not found.
     """
     if request.method == "GET":
-        recommendation = db.get_or_404(Session, id)
+        recommendation = db.get_or_404(Result, id)
         return jsonify(recommendation.to_json())
     if request.method == "PUT":
         json_recommendation = request.values
@@ -66,6 +139,31 @@ def recommendation(id):
 
 @api.route("/recommendations")
 def get_recommendations():
+    """
+    Retrieve all recommendation IDs
+    ---
+    tags:
+        - Recommendations
+    description: |
+        Returns all recommendation identifiers stored in the database.
+
+        **Internal endpoint used only by the Stella App.**
+
+        Note: This endpoint is **not currently protected**, even though it should be.
+        Consider adding authentication.
+
+    responses:
+      200:
+        description: List of recommendation IDs.
+        schema:
+          type: object
+          properties:
+            rids:
+              type: array
+              items:
+                type: integer
+              description: Recommendation IDs.
+    """
     """
     TODO: This endpoint is protected. But where?
     Tested: True

@@ -44,19 +44,19 @@ def test_post_recommendation_unauthorized(client, users, sessions, feedback):
     assert 401 == rv.status_code
 
 
-def test_recommendation_get(client, users, sessions):
+def test_recommendation_get(client, users, result):
     credentials = b64encode(
         str.encode(":".join([users["participant"].email, "pass"]))
     ).decode("utf-8")
 
     r = client.get(
-        "/stella/api/v1/recommendations/" + str(sessions["recommender"].id),
+        "/stella/api/v1/recommendations/" + str(result["recommender"].id),
         headers={"Authorization": f"Basic {credentials}"},
     )
-    print(sessions["recommender"].id)
+    print(result["recommender"].id)
     print(r.json)
     assert 200 == r.status_code
-    assert r.json["id"] == sessions["recommender"].id
+    assert r.json["feedback_id"] == result["recommender"].feedback_id
 
 
 def test_recommendation_get_not_found(client, users, sessions):

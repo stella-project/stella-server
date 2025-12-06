@@ -125,7 +125,7 @@ class Dashboard:
                     ]
             sids = [s.id for s in self.sessions]
             self.feedbacks = (
-                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).all()
+                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).order_by(Feedback.session_id).all()
             )
 
             for s in self.sessions:
@@ -145,8 +145,24 @@ class Dashboard:
                     self.impressions_results[date] = self.impressions_results[date] + 1
                     _rid_date.append((r.session_id, r.q_date))
 
-            for f in self.feedbacks:
+            prev_session_id = None
+            prev_clicks = None
+            for i, f in enumerate(self.feedbacks):
                 clicks = f.clicks
+                if f.session_id == prev_session_id:
+                    for c in clicks:
+                        if clicks[c].get('clicked'):
+                            continue
+                        elif prev_clicks[c].get('clicked'):
+                            clicks[c]['clicked'] = True
+                            clicks[c]['date'] = prev_clicks[c].get('date')
+                
+                prev_clicks = clicks
+                prev_session_id = f.session_id
+
+                if i + 1 < len(self.feedbacks) and f.session_id == self.feedbacks[i + 1].session_id:
+                    continue
+
                 cnt_base = 0
                 cnt_exp = 0
                 for c in clicks.values():
@@ -205,14 +221,16 @@ class Dashboard:
             pass
 
     def dropdown(self):
+        sorted_systems = sorted(self.systems, key=lambda x: (x.type != 'RANK', x.name))
         self.form.system.choices = [
             (
                 r.id,
                 r.name
                 + "@"
-                + db.session.query(User).filter_by(id=r.site).first().username,
+                + db.session.query(User).filter_by(id=r.site).first().username
+                + " (" +r.type+") ",
             )
-            for r in self.systems
+            for r in sorted_systems
         ]
         if len(self.form.system.choices) != 0:
             self.form.system.default = self.form.system.choices[0]
