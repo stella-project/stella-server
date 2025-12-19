@@ -3,6 +3,7 @@ import json
 import os
 import re
 import shutil
+import requests as req
 
 import plotly.offline
 from app.extensions import db
@@ -453,7 +454,6 @@ def build():
         flash('New "docker-compose.yaml" file created!')
     return render_template("index.html")
 
-
 @main.route("/stella-app/update")
 def update_stella_app():
     create_stella_app_yaml(type="all", token=current_app.config["AUTOMATOR_GH_KEY"])
@@ -504,9 +504,13 @@ def delete(id):
     if system.status == "submitted":
         #db.session.query.filter_by(system_ranking=id).delete()
         #db.session.query(Session).filter(or_(Session.system_ranking == id, Session.system_recommendation == id)).delete()
-        db.session.delete(system)
-        db.session.commit()
-        flash("Deleted system")
+        try:
+            db.session.delete(system)
+            db.session.commit()
+            flash("Deleted system")
+        except Exception as e:
+            flash(f"Error deleting system: {str(e)}", "danger")
+
     else:
         flash("Can only delete stopped systems", "danger")
 
@@ -517,6 +521,31 @@ def delete(id):
     #                        formRanking=SubmitRanking(),
     #                        current_user=current_user)
 
+
+@main.route("/system/update_stella_app")
+def system_update_stella_app():
+
+    systems = db.session.query(System).all()
+
+    systems_serialized = {
+        system.name: {'type': system.type, 'status': 'LIVE' if system.status == 'running' else 'STOPPED'} for system in systems
+    }
+
+    payload = {
+        "systems": systems_serialized,
+    }
+
+    for stella_app_address in current_app.config["STELLA_APP_ADDRESS"]:
+        current_app.logger.info(f'Updating STELLA App at {stella_app_address} with payload: {payload}')
+
+        r = req.post(
+            f"{stella_app_address}/stella/api/v1"
+            + "/systems/update",
+            json=payload,
+        )
+
+    return redirect(url_for("main.systems"))
+    
 
 @main.route("/statistics")
 @login_required
