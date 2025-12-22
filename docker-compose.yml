@@ -10,7 +10,7 @@ networks:
 
 services:
   server:
-    build: ./web
+    build: thestellaproject/stella-server:latest
     expose:
       - "8000"
     ports:
