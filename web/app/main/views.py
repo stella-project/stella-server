@@ -41,6 +41,8 @@ from .forms import (
     SubmitRanking,
     SubmitSystem,
 )
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import ForeignKeyViolation
 
 def get_systems(current_user):
     user_role = current_user.role_id
@@ -508,6 +510,11 @@ def delete(id):
             db.session.delete(system)
             db.session.commit()
             flash("Deleted system")
+        except IntegrityError as e:
+            db.session.rollback()
+            if isinstance(e.orig, ForeignKeyViolation):
+                # show a helpful message / return 409 Conflict
+                flash(f'Error deleting system: it is referenced by one of the existing sessions.', "danger")
         except Exception as e:
             flash(f"Error deleting system: {str(e)}", "danger")
 
