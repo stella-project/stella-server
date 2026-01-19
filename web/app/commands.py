@@ -1,5 +1,6 @@
-import os
 import datetime
+import os
+
 import click
 from app.extensions import db
 from app.models import Role, System, User
@@ -36,7 +37,8 @@ def seed_db():
 
     user_part_b = User(
         username="GESIS",
-        email=os.environ.get("EXPERIMENTER_MAIL_REC") or "experimenter_rec@stella-project.org",
+        email=os.environ.get("EXPERIMENTER_MAIL_REC")
+        or "experimenter_rec@stella-project.org",
         role=participant_role,
         password=os.environ.get("EXPERIMENTER_PASS") or "pass",
     )
@@ -76,6 +78,30 @@ def seed_db():
     )
 
     db.session.commit()
+
+    # # mlentory systems:
+    mlentory_base = System(
+        status="running",
+        name="mlentory_base",
+        participant_id=user_part_a.id,
+        type="RANK",
+        submitted="DOCKER",
+        url="",
+        site=user_site_a.id,
+        submission_date=datetime.date(2025, 8, 31)
+    )
+
+    mlentory_experiment = System(
+        status="running",
+        name="mlentory_experiment",
+        participant_id=user_part_a.id,
+        type="RANK",
+        submitted="DOCKER",
+        url="",
+        site=user_site_a.id,
+        submission_date=datetime.date(2025, 8, 31)
+    )
+
 
     # # mlentory systems:
     mlentory_base = System(
@@ -313,7 +339,6 @@ def seed_db():
             # recommender_base_a,
             # rec_pyterrier,
             # rec_pyserini,
-            # gesis_rank_pyserini,
             # gesis_rank_precom_base,
             # gesis_rank_precom,
             # gesis_rank_pyserini_base,

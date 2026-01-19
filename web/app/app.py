@@ -9,6 +9,7 @@ from app.extensions import bootstrap, db, login_manager, migrate
 from app.main import main as main_blueprint
 from config import config
 from flask import Flask
+from flasgger import Swagger
 
 
 def create_app():
@@ -25,6 +26,44 @@ def create_app():
     register_extensions(app)
     register_blueprints(app)
     register_commands(app)
+
+    swagger_config = {
+        "headers": [],
+        "specs": [
+            {
+                "endpoint": "apispec",
+                "route": "/apispec.json",
+                "rule_filter": lambda rule: True,
+                "model_filter": lambda tag: True,
+            }
+        ],
+        "static_url_path": "/flasgger_static",
+        "swagger_ui": True,
+        "specs_route": "/docs/",
+    }
+
+    Swagger(app, config=swagger_config, template={
+        "info": {
+            "title": "STELLA SERVER - Internal API",
+            "description": """Internal API documentation for STELLA SERVER endpoints.
+                    **Note:**  
+                    This API is *not publicly exposed* and does **not** use a versioned base path like `/stella/api/v1/`.  
+                    These endpoints are consumed exclusively by the Stella App.
+                    """,
+            "version": "1.0.0",
+        },
+        "servers": [
+        {"url": "/", "description": "Internal Stella Server (no public API prefix)"}
+        ],
+        "schemes": ["http"],
+        "securityDefinitions": {
+            "basicAuth": {
+                "type": "basic"
+            }
+        },
+        "security": [{"basicAuth": []}],
+    })
+
     return app
 
 
@@ -41,6 +80,7 @@ def register_extensions(app):
     migrate.init_app(app, db)
     bootstrap.init_app(app)
 
+    login_manager.session_protection = None 
     login_manager.login_view = "auth.login"
     login_manager.init_app(app)
 

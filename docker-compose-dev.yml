@@ -44,7 +44,7 @@ services:
 
   db-server:
     container_name: stella-dev-db-server
-    image: postgres
+    image: postgres:16
     restart: unless-stopped
     volumes:
       - ./data/db-server-data:/var/lib/postgresql/data

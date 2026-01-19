@@ -41,19 +41,22 @@ from .forms import (
     SubmitSystem,
 )
 
-
 def get_systems(current_user):
     user_role = current_user.role_id
 
     if user_role == db.session.query(Role).filter_by(name="Admin").first().id:
-        return db.session.query(System).filter_by().all()
-
+        results = db.session.query(System, User.username).join(User, System.site == User.id).all()
+        
     if user_role == db.session.query(Role).filter_by(name="Participant").first().id:
-        return db.session.query(System).filter_by(participant_id=current_user.id).all()
+        results = db.session.query(System, User.username).join(User, System.site == User.id).filter(System.participant_id == current_user.id).all()
 
     if user_role == db.session.query(Role).filter_by(name="Site").first().id:
-        return db.session.query(System).filter_by(site=current_user.id).all()
+        results = db.session.query(System, User.username).join(User, System.site == User.id).filter(System.site == current_user.id).all()
 
+    for system, username in results:
+            system.sitename = username
+
+    return [s[0] for s in results]
 
 @main.route("/", methods=["GET", "POST"])
 def index():
@@ -71,37 +74,44 @@ def index():
 
 
 @main.route("/dashboard", methods=["GET", "POST"])
+@login_required
 def dashboard():
-    if current_user.is_anonymous:
-        return render_template("index.html")
+    if request.method == "POST" and request.form.get("system") is not None:
+        system_id = request.form.get("system")
+        site_id = db.session.query(System).filter_by(id=system_id).first().site
+        dashboard = Dashboard(current_user.id, system_id, site_id)
     else:
-        if request.method == "POST" and request.form.get("system") is not None:
-            system_id = request.form.get("system")
-            site_id = db.session.query(System).filter_by(id=system_id).first().site
-            dashboard = Dashboard(current_user.id, system_id, site_id)
-        else:
-            dashboard = Dashboard(current_user.id)
+        dashboard = Dashboard(current_user.id)
 
-        graphs = [
-            dashboard.get_impressions(),
-            dashboard.get_pie_chart(),
-            dashboard.get_clicks(),
-            dashboard.get_table(),
-        ]
+    graphs = [
+        dashboard.get_impressions(),
+        dashboard.get_pie_chart(),
+        dashboard.get_clicks(),
+        dashboard.get_table(),
+    ]
 
-        return render_template(
-            "dashboard.html",
-            ids=["graph-{}".format(i) for i, _ in enumerate(graphs)],
-            graphJSON=json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder),
-            form=dashboard.dropdown(),
-        )
+    return render_template(
+        "dashboard.html",
+        ids=["graph-{}".format(i) for i, _ in enumerate(graphs)],
+        graphJSON=json.dumps(graphs, cls=plotly.utils.PlotlyJSONEncoder),
+        form=dashboard.dropdown(),
+    )
 
 
 @main.route("/systems", methods=["GET", "POST"])
 @login_required
 def systems():
     systems = get_systems(current_user)
-    formContainer = SubmitSystem()
+    user_role = current_user.role_id
+    user_role_name = db.session.get(Role, user_role).name
+
+    site_names = []
+    if user_role_name == 'Admin' or user_role_name == 'Participant':
+        site_names = db.session.query(User.username, User.id).join(Role).filter(Role.name == "Site").all()
+    elif user_role_name == 'Site':
+        site_names = [(current_user.username, user_role)]
+
+    formContainer = SubmitSystem(sites=[s[0] for s in site_names], user_role_name=user_role_name)
     formRanking = SubmitRanking()
 
     if formRanking.submit2.data and formRanking.validate():
@@ -179,14 +189,10 @@ def systems():
         systemUrl = formContainer.GitHubUrl.data
         type = (
             "REC"
-            if formContainer.site_type.data == "GESIS (Dataset recommender)"
+            if formContainer.type.data == "Recommender"
             else "RANK"
         )
-        site = (
-            db.session.query(User).filter_by(username="GESIS").first().id
-            if type == "REC"
-            else db.session.query(User).filter_by(username="LIVIVO").first().id
-        )
+        site = dict(site_names).get(formContainer.site.data)
         system = System(
             status="submitted",
             name=systemName,
@@ -496,6 +502,8 @@ def delete(id):
     system = db.session.query(System).filter_by(id=id).first()
 
     if system.status == "submitted":
+        #db.session.query.filter_by(system_ranking=id).delete()
+        #db.session.query(Session).filter(or_(Session.system_ranking == id, Session.system_recommendation == id)).delete()
         db.session.delete(system)
         db.session.commit()
         flash("Deleted system")

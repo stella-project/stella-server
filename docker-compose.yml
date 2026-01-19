@@ -6,8 +6,7 @@ networks:
 
 services:
   server:
-    container_name: stella-server
-    build: ./web
+    image: thestellaproject/stella-server:latest
     expose:
       - "8000"
     ports:
@@ -36,7 +35,7 @@ services:
 
   db-server:
     container_name: stella-db-server
-    image: postgres
+    image: postgres:16
     expose:
       - "5432"
     ports:

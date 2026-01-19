@@ -1,27 +1,32 @@
 from app.extensions import db
 from .main.forms import Dropdown
-from .models import Feedback, Result, Session, System, User
+from .models import Feedback, Result, Session, System, User, Role
 
 
 class Dashboard:
 
     def __init__(self, user_id, system_id=None, site_id=None):
 
-        user_role_id = db.session.query(User).filter_by(id=user_id).first().role_id
+        user_role_id = db.session.get(User, user_id).role_id
+         
+        admin_role = db.session.query(Role).filter_by(name='Admin').first()
+        participant_role = db.session.query(Role).filter_by(name='Participant').first()
+        site_role = db.session.query(Role).filter_by(name='Site').first()
+
 
         self.system_id = system_id
         self.site_id = site_id
 
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.site_id = user_id
 
-        if user_role_id == 1:  # user is admin
+        if user_role_id == admin_role.id:  # user is admin
             self.systems = db.session.query(System).filter().distinct().all()
-        if user_role_id == 2:  # user is participant
+        if user_role_id == participant_role.id:  # user is participant
             self.systems = (
                 db.session.query(System).filter_by(participant_id=user_id).all()
             )
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.systems = db.session.query(System).filter(System.site == user_id).all()
 
         site_ids = (
@@ -37,15 +42,15 @@ class Dashboard:
             .all()
         )
 
-        if user_role_id == 1:  # user is admin
-            self.sites = db.session.query(User).filter_by(role_id=3).distinct().all()
-        if user_role_id == 2:  # user is participant
+        if user_role_id == admin_role.id:  # user is admin
+            self.sites = db.session.query(User).filter_by(role_id=site_role.id).distinct().all()
+        if user_role_id == participant_role.id:  # user is participant
             self.sites = (
                 db.session.query(User)
                 .filter(User.id.in_([s[0] for s in site_ids]))
                 .all()
             )
-        if user_role_id == 3:  # user is site
+        if user_role_id == site_role.id:  # user is site
             self.sites = [db.session.query(User).filter_by(id=user_id).first()]
 
         self.form = Dropdown()
@@ -120,7 +125,7 @@ class Dashboard:
                     ]
             sids = [s.id for s in self.sessions]
             self.feedbacks = (
-                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).all()
+                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).order_by(Feedback.session_id).all()
             )
 
             for s in self.sessions:
@@ -140,8 +145,24 @@ class Dashboard:
                     self.impressions_results[date] = self.impressions_results[date] + 1
                     _rid_date.append((r.session_id, r.q_date))
 
-            for f in self.feedbacks:
+            prev_session_id = None
+            prev_clicks = None
+            for i, f in enumerate(self.feedbacks):
                 clicks = f.clicks
+                if f.session_id == prev_session_id:
+                    for c in clicks:
+                        if clicks[c].get('clicked'):
+                            continue
+                        elif prev_clicks[c].get('clicked'):
+                            clicks[c]['clicked'] = True
+                            clicks[c]['date'] = prev_clicks[c].get('date')
+                
+                prev_clicks = clicks
+                prev_session_id = f.session_id
+
+                if i + 1 < len(self.feedbacks) and f.session_id == self.feedbacks[i + 1].session_id:
+                    continue
+
                 cnt_base = 0
                 cnt_exp = 0
                 for c in clicks.values():
@@ -200,14 +221,16 @@ class Dashboard:
             pass
 
     def dropdown(self):
+        sorted_systems = sorted(self.systems, key=lambda x: (x.type != 'RANK', x.name))
         self.form.system.choices = [
             (
                 r.id,
                 r.name
                 + "@"
-                + db.session.query(User).filter_by(id=r.site).first().username,
+                + db.session.query(User).filter_by(id=r.site).first().username
+                + " (" +r.type+") ",
             )
-            for r in self.systems
+            for r in sorted_systems
         ]
         if len(self.form.system.choices) != 0:
             self.form.system.default = self.form.system.choices[0]
