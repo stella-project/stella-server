@@ -42,6 +42,12 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_URL: db-server:5432
 
+      STELLA_APP_ADDRESS: |
+        [
+          "http://stella-app:8000"
+        ]
+
+
 
     command: flask run --host=0.0.0.0 --port=8000 --reload --debug
     depends_on:

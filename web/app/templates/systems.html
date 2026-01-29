@@ -78,6 +78,7 @@
                 {% endif %}
                 <td>
                     <a href="{{ url_for('main.delete', id=i.id) }}" class="btnTable" role="button"
+                       onclick="return confirm('Are you sure you want to delete this system?');"
                        aria-disabled="true"><i class="fa fa-trash"></i></a>
                 </td>
                 <td>
@@ -91,20 +92,24 @@
 
     </table>
 
-    <div class="row border">
-        <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalContainer">
+    <div class="row border justify-content-center">
+        <div class="col-md-5 text-center mb-50">
+            <button type="button" class="btn btn-primary btn-lg  btn-block" data-toggle="modal" data-target="#ModalContainer">
                 <i class="fa fa-edit"></i> register docker system
             </button>
         </div>
-        <div class="col-md-4 text-center">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#ModalTREC">
+        <div class="col-md-5 text-center mb-50">
+            <button type="button" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#ModalTREC">
                 <i class="fa fa-upload"></i> upload run file
             </button>
         </div>
-        <div class="col-md-4 text-center">
-             <a href="{{ url_for('main.downloadAll') }}" class="btn btn-primary btn-lg" role="button"
+        <div class="col-md-5 text-center mb-50">
+             <a href="{{ url_for('main.downloadAll') }}" class="btn btn-primary btn-lg btn-block" role="button"
                aria-disabled="true"><i class="fa fa-save"></i> Feedback Data (Bulk)</a>
+        </div>
+        <div class="col-md-5 text-center mb-50">
+             <a href="{{ url_for('main.system_update_stella_app') }}" class="btn btn-primary btn-lg btn-block" role="button"
+               aria-disabled="true"><i class="fa fa-refresh"></i> Update Stella-App Systems</a>
         </div>
     </div>
 
@@ -112,7 +117,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h2 class="modal-title">How to submit a new containerd system:</h2>
+                    <h2 class="modal-title">How to submit a new containered system:</h2>
                 </div>
                 <div class="modal-body">
                     <ol>
@@ -225,9 +230,11 @@
             transition: .3s ease;
             background: #525e8b;
             border-color: #525e8b;
-            margin-right: 15px;
             border: 2px;
             font-family: "Roboto", "Helvetica Neue", Helvetica, sans-serif;
+            margin-bottom: 20px;
+            margin-right: 15px;
+            margin-left: 25px;
         }
 
         .btn:hover {

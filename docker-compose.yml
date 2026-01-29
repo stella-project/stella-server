@@ -20,20 +20,25 @@ services:
         aliases:
           - stella-server
     environment:
-      - FLASK_APP=app/app
-      - FLASK_CONFIG=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PW=change-me
-      - POSTGRES_DB=postgres
-      - POSTGRES_URL=db-server:5432
-      - SECRET_KEY=change-me
-      - AUTOMATOR_GH_KEY=
-      - ADMIN_MAIL=admin@stella-project.org
-      - ADMIN_PASS=pass
-      - SITE_MAIL=site@stella-project.org
-      - SITE_PASS=pass
-      - EXPERIMENTER_MAIL=experimenter@stella-project.org
-      - EXPERIMENTER_PASS=pass
+      FLASK_APP: app/app
+      FLASK_CONFIG: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PW: change-me
+      POSTGRES_DB: postgres
+      POSTGRES_URL: db-server:5432
+      SECRET_KEY: change-me
+      AUTOMATOR_GH_KEY:
+      ADMIN_MAIL: admin@stella-project.org
+      ADMIN_PASS: pass
+      SITE_MAIL: site@stella-project.org
+      SITE_PASS: pass
+      EXPERIMENTER_MAIL: experimenter@stella-project.org
+      EXPERIMENTER_PASS: pass
+      STELLA_APP_ADDRESS: |
+        [
+          "http://stella-app:8000"
+        ]
+
 
     command: gunicorn -w 2 --timeout 60 -b :8000 'app.app:create_app()'
     depends_on:
@@ -48,10 +53,10 @@ services:
     networks:
       - stella-shared
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=change-me
-      - POSTGRES_DB=postgres
-  
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: postgres
+
   nginx:
     restart: always
     build: ./nginx
