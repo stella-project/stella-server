@@ -1,3 +1,6 @@
+import copy
+from collections import defaultdict
+
 from app.extensions import db
 from .main.forms import Dropdown
 from .models import Feedback, Result, Session, System, User, Role
@@ -145,41 +148,59 @@ class Dashboard:
                     self.impressions_results[date] = self.impressions_results[date] + 1
                     _rid_date.append((r.session_id, r.q_date))
 
-            prev_session_id = None
-            prev_clicks = None
-            for i, f in enumerate(self.feedbacks):
-                clicks = f.clicks
-                if f.session_id == prev_session_id:
-                    for c in clicks:
-                        if clicks[c].get('clicked'):
-                            continue
-                        elif prev_clicks[c].get('clicked'):
-                            clicks[c]['clicked'] = True
-                            clicks[c]['date'] = prev_clicks[c].get('date')
+            # Group feedbacks by session_id and merge clicks from all feedbacks per session
+            feedbacks_by_session = defaultdict(list)
+            for f in self.feedbacks:
+                feedbacks_by_session[f.session_id].append(f)
+            
+            # Process each session once, with merged clicks from all its feedbacks
+            for session_id, session_feedbacks in feedbacks_by_session.items():
+                # Start with the first feedback's clicks as base
+                merged_clicks = {}
+                if session_feedbacks[0].clicks:
+                    # Deep copy to avoid modifying original
+                    merged_clicks = copy.deepcopy(session_feedbacks[0].clicks)
                 
-                prev_clicks = clicks
-                prev_session_id = f.session_id
-
-                if i + 1 < len(self.feedbacks) and f.session_id == self.feedbacks[i + 1].session_id:
-                    continue
-
+                # Merge clicks from all other feedbacks for this session
+                for f in session_feedbacks[1:]:
+                    if not f.clicks:
+                        continue
+                    for key, click_data in f.clicks.items():
+                        # If this click is marked as clicked and not already in merged, add it
+                        if click_data.get('clicked') and key in merged_clicks:
+                            # Only update if merged doesn't already have this click marked
+                            if not merged_clicks[key].get('clicked'):
+                                merged_clicks[key]['clicked'] = True
+                                merged_clicks[key]['date'] = click_data.get('date')
+                        elif click_data.get('clicked'):
+                            # New click entry not in merged yet
+                            merged_clicks[key] = copy.deepcopy(click_data)
+                
+                # Process merged clicks for this session
                 cnt_base = 0
                 cnt_exp = 0
-                for c in clicks.values():
-                    if c.get("clicked") and c.get("type") == "EXP":
-                        date = c.get("date")[:10]
-                        if self.clicks_exp.get(date) is None:
-                            self.clicks_exp.update({date: 1})
-                        else:
-                            self.clicks_exp[date] = self.clicks_exp[date] + 1
-                        cnt_exp += 1
-                    if c.get("clicked") and c.get("type") == "BASE":
-                        date = c.get("date")[:10]
-                        if self.clicks_base.get(date) is None:
-                            self.clicks_base.update({date: 1})
-                        else:
-                            self.clicks_base[date] = self.clicks_base[date] + 1
-                        cnt_base += 1
+                for c in merged_clicks.values():
+                    if c.get("clicked"):
+                        click_date = c.get("date")
+                        # Safely handle date - check if it exists and is a string
+                        if not click_date or not isinstance(click_date, str):
+                            # Skip clicks without valid date
+                            continue
+                        
+                        date = click_date[:10] if len(click_date) >= 10 else click_date
+                        
+                        if c.get("type") == "EXP":
+                            if self.clicks_exp.get(date) is None:
+                                self.clicks_exp.update({date: 1})
+                            else:
+                                self.clicks_exp[date] = self.clicks_exp[date] + 1
+                            cnt_exp += 1
+                        elif c.get("type") == "BASE":
+                            if self.clicks_base.get(date) is None:
+                                self.clicks_base.update({date: 1})
+                            else:
+                                self.clicks_base[date] = self.clicks_base[date] + 1
+                            cnt_base += 1
 
                 if cnt_base == 0 and cnt_exp == 0:
                     continue
