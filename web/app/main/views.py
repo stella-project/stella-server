@@ -1,9 +1,9 @@
-import datetime
 import json
 import os
 import re
 import shutil
 import requests as req
+from datetime import datetime
 
 import plotly.offline
 from app.extensions import db
@@ -81,11 +81,17 @@ def index():
 def dashboard():
     if request.method == "POST" and request.form.get("system") is not None:
         system_id = request.form.get("system")
+        date_from_raw = request.form.get("start_date")
+        date_to_raw = request.form.get("end_date")
+
+        date_from = datetime.strptime(date_from_raw, "%Y-%m-%d").date() if date_from_raw else None
+        date_to = datetime.strptime(date_to_raw, "%Y-%m-%d").date() if date_to_raw else None
+
         site_id = db.session.query(System).filter_by(id=system_id).first().site
-        dashboard = Dashboard(current_user.id, system_id, site_id)
+        dashboard = Dashboard(current_user.id, system_id, site_id, date_from, date_to)
     else:
         dashboard = Dashboard(current_user.id)
-
+    
     graphs = [
         dashboard.get_impressions(),
         dashboard.get_pie_chart(),
@@ -160,7 +166,7 @@ def systems():
                 submitted="TREC",
                 url=gh_url,
                 site=site,
-                submission_date=datetime.datetime.now().date(),
+                submission_date=datetime.now().date(),
             )
             db.session.add_all([system])
             db.session.commit()
@@ -204,7 +210,7 @@ def systems():
             submitted="DOCKER",
             url=systemUrl,
             site=site,
-            submission_date=datetime.datetime.now().date(),
+            submission_date=datetime.now().date(),
         )
         db.session.add_all([system])
         db.session.commit()

@@ -10,6 +10,7 @@ from wtforms import (
     SubmitField,
     URLField,
     ValidationError,
+    DateField
 )
 from wtforms.fields import SelectField
 from wtforms.validators import URL, DataRequired, Email, EqualTo, Length, Regexp, Optional
@@ -20,6 +21,8 @@ from app.extensions import db
 
 class Dropdown(FlaskForm):
     system = SelectField("", choices=[])
+    start_date = DateField("From", format="%Y-%m-%d", validators=[Optional()])
+    end_date = DateField("To", format="%Y-%m-%d", validators=[Optional()])
     submit = SubmitField("Show results")
 
 
