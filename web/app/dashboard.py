@@ -1,14 +1,12 @@
-import copy
-from collections import defaultdict
+from datetime import datetime, timedelta
 
 from app.extensions import db
 from .main.forms import Dropdown
 from .models import Feedback, Result, Session, System, User, Role
 
-
 class Dashboard:
 
-    def __init__(self, user_id, system_id=None, site_id=None):
+    def __init__(self, user_id, system_id=None, site_id=None, start_datetime=None, end_datetime=None):
 
         user_role_id = db.session.get(User, user_id).role_id
          
@@ -19,6 +17,8 @@ class Dashboard:
 
         self.system_id = system_id
         self.site_id = site_id
+        self.start_datetime = start_datetime
+        self.end_datetime = end_datetime
 
         if user_role_id == site_role.id:  # user is site
             self.site_id = user_id
@@ -92,43 +92,38 @@ class Dashboard:
                 self.site = [
                     db.session.query(User).filter_by(id=self.site_id).first().id
                 ]
-
             if self.site is not None:
-                if self.ranker.type == "RANK":
-                    results = (
-                        db.session.query(Result)
-                        .filter_by(
-                            system_id=self.ranker.id, site_id=self.site_id, type="RANK"
-                        )
-                        .all()
+                results_query = (
+                    db.session.query(Result)
+                    .filter(
+                        Result.system_id == self.ranker.id,
+                        Result.site_id == self.site_id,
+                        Result.type == self.ranker.type,
                     )
-                    session_ids = []
-                    for r in results:
-                        if r.session_id not in session_ids:
-                            session_ids.append(r.session_id)
-                    self.sessions = [
-                        db.session.query(Session).filter_by(id=sid).first()
-                        for sid in session_ids
-                    ]
-                if self.ranker.type == "REC":
-                    results = (
-                        db.session.query(Result)
-                        .filter_by(
-                            system_id=self.ranker.id, site_id=self.site_id, type="REC"
-                        )
-                        .all()
-                    )
-                    session_ids = []
-                    for r in results:
-                        if r.session_id not in session_ids:
-                            session_ids.append(r.session_id)
-                    self.sessions = [
-                        db.session.query(Session).filter_by(id=sid).first()
-                        for sid in session_ids
-                    ]
-            sids = [s.id for s in self.sessions]
+                )
+                if self.start_datetime is not None:
+                    start_dt = datetime.combine(self.start_datetime, datetime.min.time())
+                    results_query = results_query.filter(Result.q_date >= start_dt)
+
+                if self.end_datetime is not None:
+                    # inclusive end-of-day
+                    end_dt = datetime.combine(self.end_datetime, datetime.min.time()) + timedelta(days=1)
+                    results_query = results_query.filter(Result.q_date < end_dt)
+
+                results = results_query.all()
+
+                session_ids = []
+                for r in results:
+                    if r.session_id not in session_ids:
+                        session_ids.append(r.session_id)
+                self.sessions = (
+                    db.session.query(Session)
+                    .filter(Session.id.in_(session_ids))
+                    .all()
+                )
+
             self.feedbacks = (
-                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).order_by(Feedback.session_id).all()
+                db.session.query(Feedback).filter(Feedback.session_id.in_(session_ids)).order_by(Feedback.session_id).all()
             )
 
             for s in self.sessions:
