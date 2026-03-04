@@ -1,12 +1,11 @@
-from datetime import datetime, timedelta
-
 from app.extensions import db
 from .main.forms import Dropdown
 from .models import Feedback, Result, Session, System, User, Role
 
+
 class Dashboard:
 
-    def __init__(self, user_id, system_id=None, site_id=None, start_datetime=None, end_datetime=None):
+    def __init__(self, user_id, system_id=None, site_id=None):
 
         user_role_id = db.session.get(User, user_id).role_id
          
@@ -17,8 +16,6 @@ class Dashboard:
 
         self.system_id = system_id
         self.site_id = site_id
-        self.start_datetime = start_datetime
-        self.end_datetime = end_datetime
 
         if user_role_id == site_role.id:  # user is site
             self.site_id = user_id
@@ -69,6 +66,7 @@ class Dashboard:
         self.loss = 0
         self.tie = 0
         self.outcome = 0
+        self.is_interleaved = True # By default assume we are in interleaved mode; will be updated below.
         self.num_clicks = 0
         self.CTR = 0
 
@@ -92,39 +90,51 @@ class Dashboard:
                 self.site = [
                     db.session.query(User).filter_by(id=self.site_id).first().id
                 ]
+
             if self.site is not None:
-                results_query = (
-                    db.session.query(Result)
-                    .filter(
-                        Result.system_id == self.ranker.id,
-                        Result.site_id == self.site_id,
-                        Result.type == self.ranker.type,
+                if self.ranker.type == "RANK":
+                    results = (
+                        db.session.query(Result)
+                        .filter_by(
+                            system_id=self.ranker.id, site_id=self.site_id, type="RANK"
+                        )
+                        .all()
                     )
-                )
-                if self.start_datetime is not None:
-                    start_dt = datetime.combine(self.start_datetime, datetime.min.time())
-                    results_query = results_query.filter(Result.q_date >= start_dt)
-
-                if self.end_datetime is not None:
-                    # inclusive end-of-day
-                    end_dt = datetime.combine(self.end_datetime, datetime.min.time()) + timedelta(days=1)
-                    results_query = results_query.filter(Result.q_date < end_dt)
-
-                results = results_query.all()
-
-                session_ids = []
-                for r in results:
-                    if r.session_id not in session_ids:
-                        session_ids.append(r.session_id)
-                self.sessions = (
-                    db.session.query(Session)
-                    .filter(Session.id.in_(session_ids))
-                    .all()
-                )
-
+                    session_ids = []
+                    for r in results:
+                        if r.session_id not in session_ids:
+                            session_ids.append(r.session_id)
+                    self.sessions = [
+                        db.session.query(Session).filter_by(id=sid).first()
+                        for sid in session_ids
+                    ]
+                if self.ranker.type == "REC":
+                    results = (
+                        db.session.query(Result)
+                        .filter_by(
+                            system_id=self.ranker.id, site_id=self.site_id, type="REC"
+                        )
+                        .all()
+                    )
+                    session_ids = []
+                    for r in results:
+                        if r.session_id not in session_ids:
+                            session_ids.append(r.session_id)
+                    self.sessions = [
+                        db.session.query(Session).filter_by(id=sid).first()
+                        for sid in session_ids
+                    ]
+            sids = [s.id for s in self.sessions]
             self.feedbacks = (
-                db.session.query(Feedback).filter(Feedback.session_id.in_(session_ids)).order_by(Feedback.session_id).all()
+                db.session.query(Feedback)
+                .filter(Feedback.session_id.in_(sids))
+                .order_by(Feedback.session_id)
+                .all()
             )
+
+            # Marks the dashboard as non-interleaved if feedback data was collected in non-interleaved mode 
+            if self.feedbacks and not any(f.interleave for f in self.feedbacks):
+                self.is_interleaved = False
 
             for s in self.sessions:
                 date = s.start.strftime("%Y-%m-%d")
@@ -143,54 +153,51 @@ class Dashboard:
                     self.impressions_results[date] = self.impressions_results[date] + 1
                     _rid_date.append((r.session_id, r.q_date))
 
-            # Group feedbacks by session_id and merge clicks from all feedbacks per session
-            feedbacks_by_session = defaultdict(list)
-            for f in self.feedbacks:
-                feedbacks_by_session[f.session_id].append(f)
-            
-            # Process each session once, with merged clicks from all its feedbacks
-            for session_id, session_feedbacks in feedbacks_by_session.items():
-                # Start with the first feedback's clicks as base
-                merged_clicks = {}
-                if session_feedbacks[0].clicks:
-                    # Deep copy to avoid modifying original
-                    merged_clicks = copy.deepcopy(session_feedbacks[0].clicks)
+            prev_session_id = None
+            prev_clicks = None
+            for i, f in enumerate(self.feedbacks):
+                clicks = f.clicks
                 
-                # Merge clicks from all other feedbacks for this session
-                for f in session_feedbacks[1:]:
-                    if not f.clicks:
-                        continue
-                    for key, click_data in f.clicks.items():
-                        # If this click is marked as clicked and not already in merged, add it
-                        if click_data.get('clicked') and key in merged_clicks:
-                            # Only update if merged doesn't already have this click marked
-                            if not merged_clicks[key].get('clicked'):
-                                merged_clicks[key]['clicked'] = True
-                                merged_clicks[key]['date'] = click_data.get('date')
-                        elif click_data.get('clicked'):
-                            # New click entry not in merged yet
-                            merged_clicks[key] = copy.deepcopy(click_data)
+                # Skip if clicks is None or not a dictionary
+                if not clicks or not isinstance(clicks, dict):
+                    continue
                 
-                # Process merged clicks for this session
+                if f.session_id == prev_session_id and prev_clicks:
+                    for c in clicks:
+                        if clicks[c].get('clicked'):
+                            continue
+                        elif prev_clicks.get(c) and prev_clicks[c].get('clicked'):
+                            clicks[c]['clicked'] = True
+                            clicks[c]['date'] = prev_clicks[c].get('date')
+                
+                prev_clicks = clicks
+                prev_session_id = f.session_id
+
+                if i + 1 < len(self.feedbacks) and f.session_id == self.feedbacks[i + 1].session_id:
+                    continue
+
                 cnt_base = 0
                 cnt_exp = 0
-                for c in merged_clicks.values():
+                for c in clicks.values():
                     if c.get("clicked"):
-                        click_date = c.get("date")
-                        # Safely handle date - check if it exists and is a string
-                        if not click_date or not isinstance(click_date, str):
-                            # Skip clicks without valid date
-                            continue
+                        click_type = c.get("type")
+                        date = c.get("date")
+                        if date:
+                            date = date[:10]
+                        else:
+                            continue  # Skip clicks without date
                         
-                        date = click_date[:10] if len(click_date) >= 10 else click_date
+                        # For non-interleaved systems, treat all clicks as EXP if type is missing or invalid
+                        if not self.is_interleaved and click_type not in ("EXP", "BASE"):
+                            click_type = "EXP"
                         
-                        if c.get("type") == "EXP":
+                        if click_type == "EXP":
                             if self.clicks_exp.get(date) is None:
                                 self.clicks_exp.update({date: 1})
                             else:
                                 self.clicks_exp[date] = self.clicks_exp[date] + 1
                             cnt_exp += 1
-                        elif c.get("type") == "BASE":
+                        elif click_type == "BASE":
                             if self.clicks_base.get(date) is None:
                                 self.clicks_base.update({date: 1})
                             else:
@@ -208,23 +215,30 @@ class Dashboard:
                     self.tie += 1
 
             # if displayed results are from the baseline system, flip wins and losses
-            exp_sys = [
-                db.session.query(Session)
-                .filter(Session.id == self.feedbacks[0].session_id)
-                .first()
-                .system_ranking,
-                db.session.query(Session)
-                .filter(Session.id == self.feedbacks[0].session_id)
-                .first()
-                .system_recommendation,
-            ]
-            if not (int(self.system_id) in exp_sys):
-                tmp = self.win
-                self.win = self.loss
-                self.loss = tmp
-                self.num_clicks = sum(self.clicks_base.values())
+            # For non-interleaved systems, all clicks are marked as EXP, so we need to
+            # count clicks from both EXP and BASE types if the system is non-interleaved
+            if not self.is_interleaved:
+                # For non-interleaved systems, count all clicks regardless of type
+                self.num_clicks = sum(self.clicks_exp.values()) + sum(self.clicks_base.values())
             else:
-                self.num_clicks = sum(self.clicks_exp.values())
+                # For interleaved systems, determine which system was experimental
+                exp_sys = [
+                    db.session.query(Session)
+                    .filter(Session.id == self.feedbacks[0].session_id)
+                    .first()
+                    .system_ranking,
+                    db.session.query(Session)
+                    .filter(Session.id == self.feedbacks[0].session_id)
+                    .first()
+                    .system_recommendation,
+                ]
+                if not (int(self.system_id) in exp_sys):
+                    tmp = self.win
+                    self.win = self.loss
+                    self.loss = tmp
+                    self.num_clicks = sum(self.clicks_base.values())
+                else:
+                    self.num_clicks = sum(self.clicks_exp.values())
 
             if len(self.impressions) > 0:
                 self.CTR = round(
@@ -382,10 +396,10 @@ class Dashboard:
                                 self.CTR,
                             ],
                             [
-                                "A system 'wins' if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
-                                "Opposite of 'Win'. Number of times when the system has less clicks on results than the baseline system.",
+                                "A system 'wins' (when interleaving is enabled) if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
+                                "Opposite of 'Win'. Number of times (when interleaving is enabled) when the system has less clicks on results than the baseline system.",
                                 "Equal number of clicks for your system and the baseline. Only results having at least two clicks are included.",
-                                "#Wins / (#Wins + #Loss)",
+                                "#Wins / (#Wins + #Loss) (only meaningful when interleaving is enabled).",
                                 "Total number of sessions for which your system was used.",
                                 "Total number of results for which your system was used.",
                                 "Total number of clicks your system received.",
