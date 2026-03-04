@@ -66,6 +66,7 @@ class Dashboard:
         self.loss = 0
         self.tie = 0
         self.outcome = 0
+        self.is_interleaved = True # By default assume we are in interleaved mode; will be updated below.
         self.num_clicks = 0
         self.CTR = 0
 
@@ -125,8 +126,15 @@ class Dashboard:
                     ]
             sids = [s.id for s in self.sessions]
             self.feedbacks = (
-                db.session.query(Feedback).filter(Feedback.session_id.in_(sids)).order_by(Feedback.session_id).all()
+                db.session.query(Feedback)
+                .filter(Feedback.session_id.in_(sids))
+                .order_by(Feedback.session_id)
+                .all()
             )
+
+            # Marks the dashboard as non-interleaved if feedback data was collected in non-interleaved mode 
+            if self.feedbacks and not any(f.interleave for f in self.feedbacks):
+                self.is_interleaved = False
 
             for s in self.sessions:
                 date = s.start.strftime("%Y-%m-%d")
@@ -149,11 +157,16 @@ class Dashboard:
             prev_clicks = None
             for i, f in enumerate(self.feedbacks):
                 clicks = f.clicks
-                if f.session_id == prev_session_id:
+                
+                # Skip if clicks is None or not a dictionary
+                if not clicks or not isinstance(clicks, dict):
+                    continue
+                
+                if f.session_id == prev_session_id and prev_clicks:
                     for c in clicks:
                         if clicks[c].get('clicked'):
                             continue
-                        elif prev_clicks[c].get('clicked'):
+                        elif prev_clicks.get(c) and prev_clicks[c].get('clicked'):
                             clicks[c]['clicked'] = True
                             clicks[c]['date'] = prev_clicks[c].get('date')
                 
@@ -166,20 +179,30 @@ class Dashboard:
                 cnt_base = 0
                 cnt_exp = 0
                 for c in clicks.values():
-                    if c.get("clicked") and c.get("type") == "EXP":
-                        date = c.get("date")[:10]
-                        if self.clicks_exp.get(date) is None:
-                            self.clicks_exp.update({date: 1})
+                    if c.get("clicked"):
+                        click_type = c.get("type")
+                        date = c.get("date")
+                        if date:
+                            date = date[:10]
                         else:
-                            self.clicks_exp[date] = self.clicks_exp[date] + 1
-                        cnt_exp += 1
-                    if c.get("clicked") and c.get("type") == "BASE":
-                        date = c.get("date")[:10]
-                        if self.clicks_base.get(date) is None:
-                            self.clicks_base.update({date: 1})
-                        else:
-                            self.clicks_base[date] = self.clicks_base[date] + 1
-                        cnt_base += 1
+                            continue  # Skip clicks without date
+                        
+                        # For non-interleaved systems, treat all clicks as EXP if type is missing or invalid
+                        if not self.is_interleaved and click_type not in ("EXP", "BASE"):
+                            click_type = "EXP"
+                        
+                        if click_type == "EXP":
+                            if self.clicks_exp.get(date) is None:
+                                self.clicks_exp.update({date: 1})
+                            else:
+                                self.clicks_exp[date] = self.clicks_exp[date] + 1
+                            cnt_exp += 1
+                        elif click_type == "BASE":
+                            if self.clicks_base.get(date) is None:
+                                self.clicks_base.update({date: 1})
+                            else:
+                                self.clicks_base[date] = self.clicks_base[date] + 1
+                            cnt_base += 1
 
                 if cnt_base == 0 and cnt_exp == 0:
                     continue
@@ -192,23 +215,30 @@ class Dashboard:
                     self.tie += 1
 
             # if displayed results are from the baseline system, flip wins and losses
-            exp_sys = [
-                db.session.query(Session)
-                .filter(Session.id == self.feedbacks[0].session_id)
-                .first()
-                .system_ranking,
-                db.session.query(Session)
-                .filter(Session.id == self.feedbacks[0].session_id)
-                .first()
-                .system_recommendation,
-            ]
-            if not (int(self.system_id) in exp_sys):
-                tmp = self.win
-                self.win = self.loss
-                self.loss = tmp
-                self.num_clicks = sum(self.clicks_base.values())
+            # For non-interleaved systems, all clicks are marked as EXP, so we need to
+            # count clicks from both EXP and BASE types if the system is non-interleaved
+            if not self.is_interleaved:
+                # For non-interleaved systems, count all clicks regardless of type
+                self.num_clicks = sum(self.clicks_exp.values()) + sum(self.clicks_base.values())
             else:
-                self.num_clicks = sum(self.clicks_exp.values())
+                # For interleaved systems, determine which system was experimental
+                exp_sys = [
+                    db.session.query(Session)
+                    .filter(Session.id == self.feedbacks[0].session_id)
+                    .first()
+                    .system_ranking,
+                    db.session.query(Session)
+                    .filter(Session.id == self.feedbacks[0].session_id)
+                    .first()
+                    .system_recommendation,
+                ]
+                if not (int(self.system_id) in exp_sys):
+                    tmp = self.win
+                    self.win = self.loss
+                    self.loss = tmp
+                    self.num_clicks = sum(self.clicks_base.values())
+                else:
+                    self.num_clicks = sum(self.clicks_exp.values())
 
             if len(self.impressions) > 0:
                 self.CTR = round(
@@ -366,10 +396,10 @@ class Dashboard:
                                 self.CTR,
                             ],
                             [
-                                "A system 'wins' if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
-                                "Opposite of 'Win'. Number of times when the system has less clicks on results than the baseline system.",
+                                "A system 'wins' (when interleaving is enabled) if it has more clicks on results assigned to it by the interleaving than clicks on results by the baseline system.",
+                                "Opposite of 'Win'. Number of times (when interleaving is enabled) when the system has less clicks on results than the baseline system.",
                                 "Equal number of clicks for your system and the baseline. Only results having at least two clicks are included.",
-                                "#Wins / (#Wins + #Loss)",
+                                "#Wins / (#Wins + #Loss) (only meaningful when interleaving is enabled).",
                                 "Total number of sessions for which your system was used.",
                                 "Total number of results for which your system was used.",
                                 "Total number of clicks your system received.",
