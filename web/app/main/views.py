@@ -91,13 +91,19 @@ def dashboard():
         dashboard = Dashboard(current_user.id, system_id, site_id, date_from, date_to)
     else:
         dashboard = Dashboard(current_user.id)
-    
-    graphs = [
-        dashboard.get_impressions(),
-        dashboard.get_pie_chart(),
-        dashboard.get_clicks(),
-        dashboard.get_table(),
-    ]
+
+    graphs = [dashboard.get_impressions()]
+
+    # Only shows the wins/losses/ties pie chart when interleaving is enabled
+    if getattr(dashboard, "is_interleaved", False):
+        graphs.append(dashboard.get_pie_chart())
+
+    graphs.extend(
+        [
+            dashboard.get_clicks(),
+            dashboard.get_table(),
+        ]
+    )
 
     return render_template(
         "dashboard.html",
