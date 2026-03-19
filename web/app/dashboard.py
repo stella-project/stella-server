@@ -125,7 +125,7 @@ class Dashboard:
 
             self.feedbacks = (
                 db.session.query(Feedback)
-                .filter(Feedback.session_id.in_(sids))
+                .filter(Feedback.session_id.in_(session_ids))
                 .order_by(Feedback.session_id)
                 .all()
             )
