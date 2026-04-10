@@ -83,12 +83,13 @@ def dashboard():
         system_id = request.form.get("system")
         date_from_raw = request.form.get("start_date")
         date_to_raw = request.form.get("end_date")
+        exclude_failed_interleavings = request.form.get("exclude_failed_interleavings") == "y"
 
         date_from = datetime.strptime(date_from_raw, "%Y-%m-%d").date() if date_from_raw else None
         date_to = datetime.strptime(date_to_raw, "%Y-%m-%d").date() if date_to_raw else None
 
         site_id = db.session.query(System).filter_by(id=system_id).first().site
-        dashboard = Dashboard(current_user.id, system_id, site_id, date_from, date_to)
+        dashboard = Dashboard(current_user.id, system_id, site_id, date_from, date_to, exclude_failed_interleavings)
     else:
         dashboard = Dashboard(current_user.id)
 
