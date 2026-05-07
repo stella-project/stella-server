@@ -6,7 +6,7 @@ from .models import Feedback, Result, Session, System, User, Role
 
 class Dashboard:
 
-    def __init__(self, user_id, system_id=None, site_id=None, start_datetime=None, end_datetime=None):
+    def __init__(self, user_id, system_id=None, site_id=None, start_datetime=None, end_datetime=None, exclude_failed_interleavings=False):
 
         user_role_id = db.session.get(User, user_id).role_id
          
@@ -156,6 +156,11 @@ class Dashboard:
             for i, f in enumerate(self.feedbacks):
                 clicks = f.clicks
                 
+                click_types = set([c['type'] for c in clicks.values()])
+
+                if exclude_failed_interleavings and ('EXP' not in click_types or 'BASE' not in click_types):
+                    continue
+
                 # Skip if clicks is None or not a dictionary
                 if not clicks or not isinstance(clicks, dict):
                     continue

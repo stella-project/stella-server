@@ -15,21 +15,49 @@
 
         <div style=margin-bottom:80px;>
             <form method="POST" action="/dashboard">
-                <div class="col-md-4">
-                    {{ wtf.form_field(form.system, form_type="horizontal") }}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div style="width: 300px; margin-left: auto;">   
+                            {{ form.system(class="form-control-dashboard", style="width: 300px;") }}
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 text-center">
+                        <div class="switch-box" style="width: 300px; margin-right: auto;"> 
+                            <span title="Filters out comparisons where only one system returned results">
+                                <strong>Exclude failed interleavings</strong>
+                            </span>
+                            <label class="switch">
+                                {{ form.exclude_failed_interleavings(style="width: 300px;") }}
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                    </div>
+                    <div class="col-md-3">
+                        <div style="width: 100px; margin-left: auto; margin-right: auto;">
+                            {{ form.submit(class="btn btn-primary form-control-dashboard", style="width: 120px; box-shadow:none") }}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    {{ wtf.form_field(form.start_date, form_type="horizontal") }}
+
+                <div class="row" style="margin-top: 35px;">
+                    <div class="col-md-6">
+                        <div style="width: 300px; margin-left: auto;">
+                            <label class="form-label-dashboard">Start Date</label>
+                            {{ form.start_date(class="form-control-dashboard", style="width: 300px;") }}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="width: 300px; margin-right: auto;">
+                            <label class="form-label-dashboard">End Date</label>
+                            {{ form.end_date(class="form-control-dashboard", style="width: 300px;") }}
+                        </div>
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    {{ wtf.form_field(form.end_date, form_type="horizontal") }}
-                </div>
-                <div class="col-md-2">
-                    {{ wtf.form_field(form.submit) }}
-                </div>
+                
             </form>
         </div>
-
 
         <div class="row row-no-gutters">
 
