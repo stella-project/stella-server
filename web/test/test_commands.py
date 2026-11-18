@@ -1,3 +1,5 @@
+import requests
+
 from app.app import db
 from app.commands import system_cli, user_cli
 from app.models import System, User
@@ -153,3 +155,60 @@ def test_register_user_invalid_username(runner, roles):
     )
     assert result.exit_code != 0
     assert get_user("1bad") is None
+
+
+# system sync
+
+
+class FakeResponse:
+    def __init__(self, status_code=200):
+        self.status_code = status_code
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(f"{self.status_code} Error")
+
+
+def test_sync_pushes_all_systems(app, runner, systems, monkeypatch):
+    app.config["STELLA_APP_ADDRESS"] = ["http://app-a", "http://app-b"]
+    calls = []
+
+    def fake_post(url, json, timeout):
+        calls.append((url, json))
+        return FakeResponse()
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    result = runner.invoke(system_cli, ["sync"])
+
+    assert result.exit_code == 0, result.output
+    assert [url for url, _ in calls] == [
+        "http://app-a/stella/api/v1/systems/update",
+        "http://app-b/stella/api/v1/systems/update",
+    ]
+    pushed = calls[0][1]["systems"]
+    assert pushed["ranker"] == {"type": "RANK", "status": "LIVE"}
+    assert pushed["recommender"]["type"] == "REC"
+
+
+def test_sync_reports_failures(app, runner, systems, monkeypatch):
+    app.config["STELLA_APP_ADDRESS"] = ["http://down", "http://error", "http://ok"]
+
+    def fake_post(url, json, timeout):
+        if "down" in url:
+            raise requests.ConnectionError("connection refused")
+        return FakeResponse(500 if "error" in url else 200)
+
+    monkeypatch.setattr(requests, "post", fake_post)
+    result = runner.invoke(system_cli, ["sync"])
+
+    assert result.exit_code == 1
+    assert "Failed http://down: connection refused" in result.output
+    assert "Failed http://error: 500 Error" in result.output
+    assert "Updated http://ok" in result.output
+
+
+def test_sync_without_address_configured(app, runner):
+    app.config["STELLA_APP_ADDRESS"] = []
+    result = runner.invoke(system_cli, ["sync"])
+    assert result.exit_code != 0
+    assert "STELLA_APP_ADDRESS" in result.output

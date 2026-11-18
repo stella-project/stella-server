@@ -2,7 +2,6 @@ import json
 import os
 import re
 import shutil
-import requests as req
 from datetime import datetime
 
 import plotly.offline
@@ -21,7 +20,7 @@ from flask_login import current_user, login_required, login_user
 from werkzeug.utils import secure_filename
 
 from ..auth.forms import LoginForm
-from ..commands import register_system
+from ..commands import push_systems_to_stella_app, register_system
 from ..dashboard import Dashboard
 from ..models import Feedback, Result, Role, Session, System, User, load_user
 
@@ -540,26 +539,14 @@ def delete(id):
 
 @main.route("/system/update_stella_app")
 def system_update_stella_app():
-
-    systems = db.session.query(System).all()
-
-    systems_serialized = {
-        system.name: {'type': system.type, 'status': 'LIVE' if system.status == 'running' else 'STOPPED'} for system in systems
-    }
-
-    payload = {
-        "systems": systems_serialized,
-    }
-
-    for stella_app_address in current_app.config["STELLA_APP_ADDRESS"]:
-        current_app.logger.info(f'Updating STELLA App at {stella_app_address} with payload: {payload}')
-
-        r = req.post(
-            f"{stella_app_address}/stella/api/v1"
-            + "/systems/update",
-            json=payload,
-        )
-
+    results = push_systems_to_stella_app()
+    if not results:
+        flash("No STELLA app address configured (STELLA_APP_ADDRESS).", "danger")
+    for address, error in results.items():
+        if error:
+            flash(f"Updating STELLA app at {address} failed: {error}", "danger")
+        else:
+            flash(f"Updated STELLA app at {address}.")
     return redirect(url_for("main.systems"))
     
 

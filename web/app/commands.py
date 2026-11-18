@@ -1,11 +1,14 @@
 import datetime
+import json
 import os
 import re
 
 import click
+import requests
 from app.extensions import db
 from app.models import Role, System, User
 from sqlalchemy import or_
+from flask import current_app
 from flask.cli import AppGroup, with_appcontext
 
 
@@ -14,311 +17,10 @@ def init_db():
     db.create_all()
 
 
-def seed_db():
-    """Use this function to setup a database with set of pre-registered users."""
-    # TODO: Make this more verbose and configurable
-    # add ranking systems to database
-
-    admin_role = Role(name="Admin")
-    participant_role = Role(name="Participant")
-    site_role = Role(name="Site")
-
-    user_admin = User(
-        username="stella-admin",
-        email=os.environ.get("ADMIN_MAIL") or "admin@stella-project.org",
-        role=admin_role,
-        password=os.environ.get("ADMIN_PASS") or "pass",
-    )
-
-    user_part_a = User(
-        username="LIVIVO",
-        email=os.environ.get("EXPERIMENTER_MAIL") or "experimenter@stella-project.org",
-        role=participant_role,
-        password=os.environ.get("EXPERIMENTER_PASS") or "pass",
-    )
-
-    user_part_b = User(
-        username="GESIS",
-        email=os.environ.get("EXPERIMENTER_MAIL_REC")
-        or "experimenter_rec@stella-project.org",
-        role=participant_role,
-        password=os.environ.get("EXPERIMENTER_PASS") or "pass",
-    )
-
-    # user_part_b = User(
-    #     username="participant_b",
-    #     email=os.environ.get("PARTB_MAIL") or "participant_b@stella-project.org",
-    #     role=participant_role,
-    #     password=os.environ.get("PARTB_PASS") or "pass",
-    # )
-
-    user_site_a = User(
-        username="site",
-        email=os.environ.get("SITE_MAIL") or "site@stella-project.org",
-        role=site_role,
-        password=os.environ.get("SITE_PASS") or "pass",
-    )
-
-    # user_site_b = User(
-    #     username="LIVIVO",
-    #     email=os.environ.get("LIVIVO_MAIL") or "livivo@stella-project.org",
-    #     role=site_role,
-    #     password=os.environ.get("LIVIVO_PASS") or "pass",
-    # )
-
-    db.session.add_all(
-        [
-            admin_role,
-            participant_role,
-            site_role,
-            user_admin,
-            user_part_a,
-            user_part_b,
-            user_site_a,
-            # user_site_b,
-        ]
-    )
-
-    db.session.commit()
-
-    # gesis demo systems:
-    gesis_rank_pyserini = System(
-        status="running",
-        name="gesis_rank_pyserini",
-        participant_id=user_part_a.id,
-        type="RANK",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rank_pyserini",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
-
-    # gesis_rank_precom_base = System(
-    #     status="running",
-    #     name="gesis_rank_precom_base",
-    #     participant_id=user_site_a.id,
-    #     type="RANK",
-    #     submitted="TREC",
-    #     url="https://github.com/stella-project/gesis_rank_precom_base",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # gesis_rank_precom = System(
-    #     status="running",
-    #     name="gesis_rank_precom",
-    #     participant_id=user_part_b.id,
-    #     type="RANK",
-    #     submitted="TREC",
-    #     url="https://github.com/stella-project/gesis_rank_precom",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    gesis_rank_pyserini_base = System(
-        status="running",
-        name="gesis_rank_pyserini_base",
-        participant_id=user_part_a.id,
-        type="RANK",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rank_pyserini_base",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
-
-    gesis_rec_pyserini = System(
-        status="running",
-        name="gesis_rec_pyserini",
-        participant_id=user_part_a.id,
-        type="REC",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rec_pyserini",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
-
-    # # livivo demo systems:
-    # livivo_rank_base = System(
-    #     status="running",
-    #     name="livivo_rank_base",
-    #     participant_id=user_part_a.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_base",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_rank_precom = System(
-    #     status="running",
-    #     name="livivo_rank_precom",
-    #     participant_id=user_part_b.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_precom",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_rank_pyserini = System(
-    #     status="running",
-    #     name="livivo_rank_pyserini",
-    #     participant_id=user_part_a.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_pyserini",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_rec_pyserini = System(
-    #     status="running",
-    #     name="livivo_rec_pyserini",
-    #     participant_id=user_part_a.id,
-    #     type="REC",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rec_pyserini",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_rec_pyterrier = System(
-    #     status="running",
-    #     name="livivo_rec_pyterrier",
-    #     participant_id=user_part_b.id,
-    #     type="REC",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rec_pyterrier",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_rec_precom = System(
-    #     status="running",
-    #     name="livivo_rec_precom",
-    #     participant_id=user_part_b.id,
-    #     type="REC",
-    #     submitted="TREC",
-    #     url="https://github.com/stella-project/livivo_rec_precom",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # # dev systems
-    # livivo_precom = System(
-    #     status="running",
-    #     name="livivo_rank_precom",
-    #     participant_id=user_part_b.id,
-    #     type="RANK",
-    #     submitted="TREC",
-    #     url="https://github.com/stella-project/livivo_rank_precom",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # livivo_base = System(
-    #     status="running",
-    #     name="livivo_base",
-    #     participant_id=user_site_b.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_base",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # rank_pyterrier = System(
-    #     status="running",
-    #     name="livivo_rank_pyterrier",
-    #     participant_id=user_part_b.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_pyterrier",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # rank_pyserini = System(
-    #     status="running",
-    #     name="livivo_rank_pyserini",
-    #     participant_id=user_part_b.id,
-    #     type="RANK",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/livivo_rank_pyserini",
-    #     site=user_site_b.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    gesis_rec_pyterrier = System(
-        status="running",
-        name="gesis_rec_pyterrier",
-        participant_id=user_part_a.id,
-        type="REC",
-        submitted="DOCKER",
-        url="https://github.com/stella-project/gesis_rec_pyterrier",
-        site=user_site_a.id,
-        submission_date=datetime.date(2019, 6, 10),
-    )
-
-    # rec_pyserini = System(
-    #     status="running",
-    #     name="gesis_rec_pyserini",
-    #     participant_id=user_part_a.id,
-    #     type="REC",
-    #     submitted="DOCKER",
-    #     url="https://github.com/stella-project/gesis_rec_pyserini",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    # recommender_base_a = System(
-    #     status="running",
-    #     name="gesis_rec_precom",
-    #     participant_id=user_part_a.id,
-    #     type="REC",
-    #     submitted="TREC",
-    #     url="https://github.com/stella-project/gesis_rec_precom",
-    #     site=user_site_a.id,
-    #     submission_date=datetime.date(2019, 6, 10),
-    # )
-
-    db.session.add_all(
-        [
-            # livivo_base,
-            # livivo_precom,
-            # rank_pyserini,
-            # rank_pyterrier,
-            # recommender_base_a,
-            # rec_pyterrier,
-            # rec_pyserini,
-            # gesis_rank_precom_base,
-            # gesis_rank_precom,
-            gesis_rank_pyserini,
-            gesis_rank_pyserini_base,
-            gesis_rec_pyserini,
-            gesis_rec_pyterrier,
-            # livivo_rank_base,
-            # livivo_rank_precom,
-            # livivo_rank_pyserini,
-            # livivo_rec_pyserini,
-            # livivo_rec_pyterrier,
-            # livivo_rec_precom,
-        ]
-    )
-
-    db.session.commit()
-
-
 @click.command("init-db")
 @with_appcontext
 def init_db_command():
     init_db()
-
-
-@click.command("seed-db")
-@with_appcontext
-def seed_db_command():
-    seed_db()
 
 
 SYSTEM_NAME_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]*$")
@@ -370,8 +72,54 @@ def register_system(
     return system
 
 
+def push_systems_to_stella_app(timeout=10):
+    """Send all systems and their status to every STELLA app in STELLA_APP_ADDRESS.
+
+    Returns a dict mapping each address to None on success or an error message.
+    """
+    systems = db.session.query(System).all()
+    payload = {
+        "systems": {
+            system.name: {
+                "type": system.type,
+                "status": "LIVE" if system.status == "running" else "STOPPED",
+            }
+            for system in systems
+        }
+    }
+
+    results = {}
+    for address in current_app.config["STELLA_APP_ADDRESS"]:
+        current_app.logger.info(f"Updating STELLA App at {address} with payload: {payload}")
+        try:
+            response = requests.post(
+                f"{address}/stella/api/v1/systems/update", json=payload, timeout=timeout
+            )
+            response.raise_for_status()
+            results[address] = None
+        except requests.RequestException as e:
+            current_app.logger.error(f"Updating STELLA App at {address} failed: {e}")
+            results[address] = str(e)
+    return results
+
+
 # Subcommands of an AppGroup run inside the app context automatically.
 system_cli = AppGroup("system", help="Manage systems.")
+
+
+@system_cli.command("sync")
+def sync_systems_command():
+    """Push all systems and their status to the STELLA app(s)."""
+    results = push_systems_to_stella_app()
+    if not results:
+        raise click.ClickException("No STELLA app address configured (STELLA_APP_ADDRESS).")
+    for address, error in results.items():
+        if error:
+            click.echo(f"Failed {address}: {error}", err=True)
+        else:
+            click.echo(f"Updated {address}")
+    if any(results.values()):
+        raise click.exceptions.Exit(1)
 
 
 @system_cli.command("register")
@@ -482,3 +230,161 @@ def register_user_command(username, email, role, password):
     except ValueError as e:
         raise click.ClickException(str(e))
     click.echo(f"Registered {user.role.name} '{user.username}' (id {user.id}).")
+
+
+# seed-db
+
+# A user is created when <PREFIX>_USERNAME, <PREFIX>_MAIL and <PREFIX>_PASS are all set.
+SEED_USERS = (
+    # (env var prefix, role)
+    ("ADMIN", "Admin"),
+    ("SITE", "Site"),
+    ("EXPERIMENTER", "Participant"),
+)
+SEED_USER_FIELDS = ("USERNAME", "MAIL", "PASS")
+SYSTEM_TYPES = {"ranker": "RANK", "recommender": "REC"}
+
+
+def parse_systems_config(raw):
+    """Parse a SYSTEMS_CONFIG JSON string in the stella-app format, e.g.
+
+    {"gesis_rank_pyserini": {"type": "ranker", "base": true, "url": "https://..."}}
+
+    Keys used here: `type` (ranker/recommender, required), `base`, `precomputed` and `url`.
+    Other keys (e.g. `hits_path`) are only relevant for stella-app and are ignored.
+    """
+    try:
+        config = json.loads(raw or "{}")
+    except json.JSONDecodeError as e:
+        raise ValueError(f"SYSTEMS_CONFIG is not valid JSON: {e}")
+    if not isinstance(config, dict):
+        raise ValueError("SYSTEMS_CONFIG must be a JSON object mapping system names to settings.")
+    for name, settings in config.items():
+        if not SYSTEM_NAME_PATTERN.match(name):
+            raise ValueError(f"Invalid system name '{name}' in SYSTEMS_CONFIG.")
+        if not isinstance(settings, dict) or settings.get("type") not in SYSTEM_TYPES:
+            raise ValueError(
+                f"System '{name}' in SYSTEMS_CONFIG needs a type of 'ranker' or 'recommender'."
+            )
+    return config
+
+
+def _seed_users_from_env(env):
+    """Return {prefix: {field: value}} for every user whose variables are all set.
+
+    Users without any variables are left out; partially configured users raise ValueError.
+    """
+    configured, incomplete = {}, []
+    for prefix, _ in SEED_USERS:
+        values = {field: env.get(f"{prefix}_{field}") for field in SEED_USER_FIELDS}
+        if all(values.values()):
+            configured[prefix] = values
+        elif any(values.values()):
+            incomplete += [f"{prefix}_{f}" for f, v in values.items() if not v]
+    if incomplete:
+        raise ValueError(f"Incomplete user configuration, missing: {', '.join(incomplete)}")
+    return configured
+
+
+def _find_owner(prefix, role, env_users):
+    """Username of the user that owns seeded systems for `role`.
+
+    Taken from the environment if configured, otherwise the single existing user with that role.
+    """
+    if prefix in env_users:
+        return env_users[prefix]["USERNAME"]
+    users = db.session.query(User).join(Role).filter(Role.name == role).all()
+    if len(users) == 1:
+        return users[0].username
+    reason = "no user" if not users else f"{len(users)} users"
+    raise ValueError(
+        f"SYSTEMS_CONFIG needs a {role} user, but there is {reason} with that role. "
+        f"Set {prefix}_USERNAME, {prefix}_MAIL and {prefix}_PASS, "
+        f"or create exactly one with `flask user register`."
+    )
+
+
+def seed_db(environ=None):
+    """Create the users defined in the environment and the systems in SYSTEMS_CONFIG.
+
+    A user (ADMIN, SITE, EXPERIMENTER) is created only if its _USERNAME, _MAIL and _PASS
+    variables are all set. Baseline systems (`"base": true`) belong to the site user, all
+    others to the experimenter; if those are not configured in the environment, the single
+    existing user with that role is used.
+    Existing users and systems are skipped, so this is safe to run repeatedly.
+    Returns a list of log lines.
+    """
+    env = os.environ if environ is None else environ
+    log = []
+
+    # Validate everything first so invalid input fails before anything is written.
+    env_users = _seed_users_from_env(env)
+    systems_config = parse_systems_config(env.get("SYSTEMS_CONFIG"))
+    new_systems = {
+        name: settings
+        for name, settings in systems_config.items()
+        if not db.session.query(System).filter_by(name=name.lower()).first()
+    }
+    site = experimenter = None
+    if new_systems:
+        site = _find_owner("SITE", "Site", env_users)
+    if any(not settings.get("base") for settings in new_systems.values()):
+        experimenter = _find_owner("EXPERIMENTER", "Participant", env_users)
+
+    for role in ROLES:
+        if not db.session.query(Role).filter_by(name=role).first():
+            db.session.add(Role(name=role))
+    db.session.commit()
+
+    for prefix, role in SEED_USERS:
+        if prefix not in env_users:
+            log.append(f"No {prefix}_* variables set, no {role} user created.")
+            continue
+        username = env_users[prefix]["USERNAME"]
+        email = env_users[prefix]["MAIL"].lower()
+        existing = (
+            db.session.query(User)
+            .filter(or_(User.username == username, User.email == email))
+            .first()
+        )
+        if existing:
+            log.append(f"User '{existing.username}' already exists, skipped.")
+            if prefix == "SITE" and site:
+                site = existing.username
+            if prefix == "EXPERIMENTER" and experimenter:
+                experimenter = existing.username
+            continue
+        register_user(
+            username=username, email=email, password=env_users[prefix]["PASS"], role=role
+        )
+        log.append(f"Registered {role} '{username}'.")
+
+    for name in systems_config:
+        if name not in new_systems:
+            log.append(f"System '{name}' already exists, skipped.")
+            continue
+        settings = new_systems[name]
+        base = bool(settings.get("base"))
+        register_system(
+            name=name,
+            site=site,
+            participant=site if base else experimenter,
+            type=SYSTEM_TYPES[settings["type"]],
+            url=settings.get("url"),
+            submitted="TREC" if settings.get("precomputed") else "DOCKER",
+            status="running",
+        )
+        log.append(f"Registered {'baseline ' if base else ''}{settings['type']} '{name}'.")
+
+    return log
+
+
+@click.command("seed-db")
+@with_appcontext
+def seed_db_command():
+    """Create users from ADMIN_*/SITE_*/EXPERIMENTER_* and systems from SYSTEMS_CONFIG."""
+    try:
+        for line in seed_db():
+            click.echo(line)
+    except ValueError as e:
+        raise click.ClickException(str(e))

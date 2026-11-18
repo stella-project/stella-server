@@ -29,10 +29,13 @@ services:
       FLASK_CONFIG: postgres
       SECRET_KEY: change-me
  
+      ADMIN_USERNAME: admin
       ADMIN_MAIL: admin@stella-project.org
       ADMIN_PASS: pass
+      SITE_USERNAME: site
       SITE_MAIL: site@stella-project.org
       SITE_PASS: pass
+      EXPERIMENTER_USERNAME: experimenter
       EXPERIMENTER_MAIL: experimenter@stella-project.org
       EXPERIMENTER_PASS: pass
 
@@ -42,6 +45,15 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_URL: db-server:5432
 
+      # Systems (same format as SYSTEMS_CONFIG in stella-app), registered by `flask seed-db`.
+      # Optional keys: "base", "precomputed", "url" (systems without a URL are built from ./systems/<name>).
+      SYSTEMS_CONFIG: |
+        {
+          "gesis_rec_pyserini": {"type": "recommender", "url": "https://github.com/stella-project/gesis_rec_pyserini"},
+          "gesis_rec_pyterrier": {"type": "recommender", "base": true, "url": "https://github.com/stella-project/gesis_rec_pyterrier"},
+          "gesis_rank_pyserini": {"type": "ranker", "url": "https://github.com/stella-project/gesis_rank_pyserini"},
+          "gesis_rank_pyserini_base": {"type": "ranker", "base": true, "url": "https://github.com/stella-project/gesis_rank_pyserini_base"}
+        }
       STELLA_APP_ADDRESS: |
         [
           "http://stella-app:8000"
