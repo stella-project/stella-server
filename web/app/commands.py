@@ -1,10 +1,12 @@
 import datetime
 import os
+import re
 
 import click
 from app.extensions import db
 from app.models import Role, System, User
-from flask.cli import with_appcontext
+from sqlalchemy import or_
+from flask.cli import AppGroup, with_appcontext
 
 
 def init_db():
@@ -317,3 +319,100 @@ def init_db_command():
 @with_appcontext
 def seed_db_command():
     seed_db()
+
+
+SYSTEM_NAME_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]*$")
+
+
+def register_system(
+    name, site, participant, type="RANK", url=None, submitted="DOCKER", status="submitted"
+):
+    """Register a new system, applying the same rules as the web form.
+
+    `site` and `participant` are usernames or emails. Raises ValueError on invalid input.
+    """
+    if not SYSTEM_NAME_PATTERN.match(name):
+        raise ValueError(
+            "System name must start with a letter, and can only include letters, "
+            "numbers, underscores (_), hyphens (-), or dots (.)"
+        )
+    name = name.lower()
+    if db.session.query(System).filter_by(name=name).first():
+        raise ValueError(f"System name '{name}' already in use.")
+
+    def find_user(identifier):
+        return (
+            db.session.query(User)
+            .filter(or_(User.username == identifier, User.email == identifier.lower()))
+            .first()
+        )
+
+    site_user = find_user(site)
+    if site_user is None or site_user.role is None or site_user.role.name != "Site":
+        raise ValueError(f"No user with the Site role found for '{site}'.")
+
+    participant_user = find_user(participant)
+    if participant_user is None:
+        raise ValueError(f"No user found for participant '{participant}'.")
+
+    system = System(
+        status=status,
+        name=name,
+        participant_id=participant_user.id,
+        type=type,
+        submitted=submitted,
+        url=url or None,
+        site=site_user.id,
+        submission_date=datetime.date.today(),
+    )
+    db.session.add(system)
+    db.session.commit()
+    return system
+
+
+# Subcommands of an AppGroup run inside the app context automatically.
+system_cli = AppGroup("system", help="Manage systems.")
+
+
+@system_cli.command("register")
+@click.argument("name")
+@click.option("--site", required=True, help="Username or email of the site hosting the system.")
+@click.option(
+    "--participant", required=True, help="Username or email of the user submitting the system."
+)
+@click.option(
+    "--type",
+    "system_type",
+    type=click.Choice(["ranker", "recommender"], case_sensitive=False),
+    default="ranker",
+    show_default=True,
+)
+@click.option("--url", default=None, help="Optional URL of the system (e.g. GitHub repository).")
+@click.option(
+    "--submitted",
+    type=click.Choice(["docker", "trec"], case_sensitive=False),
+    default="docker",
+    show_default=True,
+    help="How the system is submitted.",
+)
+@click.option(
+    "--status",
+    type=click.Choice(["submitted", "running"], case_sensitive=False),
+    default="submitted",
+    show_default=True,
+)
+def register_system_command(name, site, participant, system_type, url, submitted, status):
+    """Register a new system called NAME."""
+    try:
+        system = register_system(
+            name=name,
+            site=site,
+            participant=participant,
+            type="REC" if system_type.lower() == "recommender" else "RANK",
+            url=url,
+            submitted=submitted.upper(),
+            status=status.lower(),
+        )
+    except ValueError as e:
+        raise click.ClickException(str(e))
+    click.echo(f"Registered system '{system.name}' (id {system.id}).")

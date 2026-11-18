@@ -1,0 +1,81 @@
+from app.app import db
+from app.commands import system_cli
+from app.models import System
+
+
+def get_system(name):
+    return db.session.query(System).filter_by(name=name).first()
+
+
+def test_register_system_defaults(runner, users):
+    result = runner.invoke(
+        system_cli,
+        ["register", "My_System", "--site", "site", "--participant", "participant"],
+    )
+    assert result.exit_code == 0, result.output
+    system = get_system("my_system")
+    assert system is not None
+    assert system.type == "RANK"
+    assert system.submitted == "DOCKER"
+    assert system.status == "submitted"
+    assert system.url is None
+    assert system.site == users["site"].id
+    assert system.participant_id == users["participant"].id
+
+
+def test_register_system_all_options(runner, users):
+    result = runner.invoke(
+        system_cli,
+        [
+            "register",
+            "rec_sys",
+            "--site", "site@stella-project.org",
+            "--participant", "participant@stella-project.org",
+            "--type", "recommender",
+            "--url", "https://github.com/stella-project/rec_sys",
+            "--submitted", "trec",
+            "--status", "running",
+        ],
+    )
+    assert result.exit_code == 0, result.output
+    system = get_system("rec_sys")
+    assert system.type == "REC"
+    assert system.submitted == "TREC"
+    assert system.status == "running"
+    assert system.url == "https://github.com/stella-project/rec_sys"
+
+
+def test_register_system_duplicate_name(runner, users, systems):
+    result = runner.invoke(
+        system_cli,
+        ["register", "ranker", "--site", "site", "--participant", "participant"],
+    )
+    assert result.exit_code != 0
+    assert "already in use" in result.output
+
+
+def test_register_system_invalid_name(runner, users):
+    result = runner.invoke(
+        system_cli,
+        ["register", "1bad", "--site", "site", "--participant", "participant"],
+    )
+    assert result.exit_code != 0
+    assert get_system("1bad") is None
+
+
+def test_register_system_site_must_have_site_role(runner, users):
+    result = runner.invoke(
+        system_cli,
+        ["register", "sys", "--site", "participant", "--participant", "participant"],
+    )
+    assert result.exit_code != 0
+    assert "Site role" in result.output
+
+
+def test_register_system_unknown_participant(runner, users):
+    result = runner.invoke(
+        system_cli,
+        ["register", "sys", "--site", "site", "--participant", "nobody"],
+    )
+    assert result.exit_code != 0
+    assert "nobody" in result.output
