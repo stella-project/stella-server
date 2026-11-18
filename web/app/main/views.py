@@ -202,7 +202,7 @@ def systems():
 
     if formContainer.submit.data and formContainer.validate():
         systemName = formContainer.systemname.data.lower()
-        systemUrl = formContainer.GitHubUrl.data
+        systemUrl = formContainer.GitHubUrl.data or None
         type = (
             "REC"
             if formContainer.type.data == "Recommender"

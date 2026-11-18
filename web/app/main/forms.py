@@ -84,15 +84,14 @@ class SubmitSystem(FlaskForm):
     )
     type = SelectField(
         "System type",
-        choices=["Recommender", " Ranker"],
+        choices=["Ranker", "Recommender"],
     )
     site = SelectField(
         "Site",
     )
     GitHubUrl = URLField(
-        "URL",
+        "URL (optional)",
         validators=[
-            #DataRequired(message="Enter URL Please"),
             Optional(),
             URL(message="Enter Valid URL Please."),
         ],
