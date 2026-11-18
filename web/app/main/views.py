@@ -2,7 +2,6 @@ import json
 import os
 import re
 import shutil
-import requests as req
 from datetime import datetime
 
 import plotly.offline
@@ -21,6 +20,7 @@ from flask_login import current_user, login_required, login_user
 from werkzeug.utils import secure_filename
 
 from ..auth.forms import LoginForm
+from ..commands import push_systems_to_stella_app, register_system
 from ..dashboard import Dashboard
 from ..models import Feedback, Result, Role, Session, System, User, load_user
 
@@ -200,28 +200,23 @@ def systems():
             )
             return redirect(url_for("main.systems"))
 
+    if user_role_name == "Site":
+        # The site field is disabled for Site users, so browsers don't submit it.
+        formContainer.site.data = current_user.username
+
     if formContainer.submit.data and formContainer.validate():
-        systemName = formContainer.systemname.data.lower()
-        systemUrl = formContainer.GitHubUrl.data
-        type = (
-            "REC"
-            if formContainer.type.data == "Recommender"
-            else "RANK"
-        )
-        site = dict(site_names).get(formContainer.site.data)
-        system = System(
-            status="submitted",
-            name=systemName,
-            participant_id=current_user.id,
-            type=type,
-            submitted="DOCKER",
-            url=systemUrl,
-            site=site,
-            submission_date=datetime.now().date(),
-        )
-        db.session.add_all([system])
-        db.session.commit()
-        flash("Container submitted")
+        try:
+            register_system(
+                name=formContainer.systemname.data,
+                site=formContainer.site.data,
+                participant=current_user.username,
+                type="REC" if formContainer.type.data == "Recommender" else "RANK",
+                url=formContainer.GitHubUrl.data,
+            )
+        except ValueError as e:
+            flash(str(e), "danger")
+        else:
+            flash("Container submitted")
         return redirect(url_for("main.systems"))
 
     return render_template(
@@ -544,26 +539,14 @@ def delete(id):
 
 @main.route("/system/update_stella_app")
 def system_update_stella_app():
-
-    systems = db.session.query(System).all()
-
-    systems_serialized = {
-        system.name: {'type': system.type, 'status': 'LIVE' if system.status == 'running' else 'STOPPED'} for system in systems
-    }
-
-    payload = {
-        "systems": systems_serialized,
-    }
-
-    for stella_app_address in current_app.config["STELLA_APP_ADDRESS"]:
-        current_app.logger.info(f'Updating STELLA App at {stella_app_address} with payload: {payload}')
-
-        r = req.post(
-            f"{stella_app_address}/stella/api/v1"
-            + "/systems/update",
-            json=payload,
-        )
-
+    results = push_systems_to_stella_app()
+    if not results:
+        flash("No STELLA app address configured (STELLA_APP_ADDRESS).", "danger")
+    for address, error in results.items():
+        if error:
+            flash(f"Updating STELLA app at {address} failed: {error}", "danger")
+        else:
+            flash(f"Updated STELLA app at {address}.")
     return redirect(url_for("main.systems"))
     
 

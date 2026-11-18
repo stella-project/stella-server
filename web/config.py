@@ -5,6 +5,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY") or "change-me"
     AUTOMATOR_GH_KEY = os.environ.get("AUTOMATOR_GH_KEY") or None
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    STELLA_APP_ADDRESS = json.loads(os.environ.get("STELLA_APP_ADDRESS") or "[]")
 
 
 class PostgresConfig(Config):
@@ -16,7 +17,6 @@ class PostgresConfig(Config):
     SQLALCHEMY_DATABASE_URI = "postgresql://{user}:{pw}@{url}/{db}".format(
         user=POSTGRES_USER, pw=POSTGRES_PW, url=POSTGRES_URL, db=POSTGRES_DB
     )
-    STELLA_APP_ADDRESS = json.loads(os.environ.get("STELLA_APP_ADDRESS") or "[]")
 
 
 class TestConfig(Config):

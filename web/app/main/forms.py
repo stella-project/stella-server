@@ -84,15 +84,14 @@ class SubmitSystem(FlaskForm):
     )
     type = SelectField(
         "System type",
-        choices=["Recommender", " Ranker"],
+        choices=["Ranker", "Recommender"],
     )
     site = SelectField(
         "Site",
     )
     GitHubUrl = URLField(
-        "URL",
+        "URL (optional)",
         validators=[
-            #DataRequired(message="Enter URL Please"),
             Optional(),
             URL(message="Enter Valid URL Please."),
         ],
@@ -100,7 +99,7 @@ class SubmitSystem(FlaskForm):
 
     def validate_systemname(self, field):
         if re.match("^[A-Za-z][A-Za-z0-9_.-]*$", field.data):
-            if db.session.query(System).filter_by(name=field.data).first():
+            if db.session.query(System).filter_by(name=field.data.lower()).first():
                 flash("System name already in use.", "danger")
                 raise ValidationError("System name already in use.")
         else:

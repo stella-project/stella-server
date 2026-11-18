@@ -2,7 +2,8 @@ from flask import flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required, login_user, logout_user
 
 from app.extensions import db
-from ..models import Role, User
+from ..commands import register_user
+from ..models import User
 from . import auth
 from .forms import LoginForm, RegistrationForm
 
@@ -34,14 +35,16 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(
-            email=form.email.data.lower(),
-            username=form.username.data,
-            role_id=Role.query.filter_by(name="Participant").first().id,
-            password=form.password.data,
-        )
-        db.session.add(user)
-        db.session.commit()
-        flash("You can now login.")
-        return redirect(url_for("auth.login"))
+        try:
+            register_user(
+                username=form.username.data,
+                email=form.email.data,
+                password=form.password.data,
+                role="Participant",
+            )
+        except ValueError as e:
+            flash(str(e), "danger")
+        else:
+            flash("You can now login.")
+            return redirect(url_for("auth.login"))
     return render_template("auth/register.html", form=form)

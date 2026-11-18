@@ -59,8 +59,8 @@
                        aria-disabled="true"><i class="fa fa-eye"></i></a></td>
                 {% elif i.submitted == 'DOCKER' %}
                     <td>Docker Container</td>
-                    <td><a href="{{ i.url }}"  class="btnTable" role="button"
-                       aria-disabled="true"><i class="fa fa-eye"></i></a></td>
+                    <td>{% if i.url %}<a href="{{ i.url }}"  class="btnTable" role="button"
+                       aria-disabled="true"><i class="fa fa-eye"></i></a>{% else %}-{% endif %}</td>
                 {% else %}
                     <td>unknown</td>
                     <td>unknown</td>
