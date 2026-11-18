@@ -1,6 +1,6 @@
 from app.app import db
-from app.commands import system_cli
-from app.models import System
+from app.commands import system_cli, user_cli
+from app.models import System, User
 
 
 def get_system(name):
@@ -79,3 +79,77 @@ def test_register_system_unknown_participant(runner, users):
     )
     assert result.exit_code != 0
     assert "nobody" in result.output
+
+
+# user register
+
+
+def get_user(username):
+    return db.session.query(User).filter_by(username=username).first()
+
+
+def test_register_user_defaults_to_participant(runner, roles):
+    result = runner.invoke(
+        user_cli,
+        ["register", "alice", "--email", "Alice@Example.org", "--password", "secret"],
+    )
+    assert result.exit_code == 0, result.output
+    user = get_user("alice")
+    assert user.email == "alice@example.org"
+    assert user.role.name == "Participant"
+    assert user.verify_password("secret")
+
+
+def test_register_user_with_role(runner, roles):
+    result = runner.invoke(
+        user_cli,
+        ["register", "gesis", "--email", "gesis@example.org", "--role", "site", "--password", "pw"],
+    )
+    assert result.exit_code == 0, result.output
+    assert get_user("gesis").role.name == "Site"
+
+
+def test_register_user_prompts_for_password(runner, roles):
+    result = runner.invoke(
+        user_cli,
+        ["register", "bob", "--email", "bob@example.org"],
+        input="pw\npw\n",
+    )
+    assert result.exit_code == 0, result.output
+    assert get_user("bob").verify_password("pw")
+
+
+def test_register_user_creates_missing_role(runner):
+    result = runner.invoke(
+        user_cli,
+        ["register", "root", "--email", "root@example.org", "--role", "admin", "--password", "pw"],
+    )
+    assert result.exit_code == 0, result.output
+    assert get_user("root").role.name == "Admin"
+
+
+def test_register_user_duplicate_email(runner, users):
+    result = runner.invoke(
+        user_cli,
+        ["register", "other", "--email", "SITE@stella-project.org", "--password", "pw"],
+    )
+    assert result.exit_code != 0
+    assert "already registered" in result.output
+
+
+def test_register_user_duplicate_username(runner, users):
+    result = runner.invoke(
+        user_cli,
+        ["register", "site", "--email", "new@example.org", "--password", "pw"],
+    )
+    assert result.exit_code != 0
+    assert "already in use" in result.output
+
+
+def test_register_user_invalid_username(runner, roles):
+    result = runner.invoke(
+        user_cli,
+        ["register", "1bad", "--email", "x@example.org", "--password", "pw"],
+    )
+    assert result.exit_code != 0
+    assert get_user("1bad") is None

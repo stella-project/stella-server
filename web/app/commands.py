@@ -416,3 +416,69 @@ def register_system_command(name, site, participant, system_type, url, submitted
     except ValueError as e:
         raise click.ClickException(str(e))
     click.echo(f"Registered system '{system.name}' (id {system.id}).")
+
+
+USERNAME_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9_.]*$")
+ROLES = ("Admin", "Participant", "Site")
+
+
+def register_user(username, email, password, role="Participant"):
+    """Register a new user, applying the same rules as the registration form.
+
+    The role is created if it does not exist yet. Raises ValueError on invalid input.
+    """
+    if not USERNAME_PATTERN.match(username) or len(username) > 64:
+        raise ValueError(
+            "Usernames must start with a letter and have only letters, numbers, dots or underscores."
+        )
+    email = email.lower()
+    if "@" not in email or len(email) > 64:
+        raise ValueError(f"Invalid email address '{email}'.")
+    if not password:
+        raise ValueError("Password must not be empty.")
+    if role not in ROLES:
+        raise ValueError(f"Role must be one of {', '.join(ROLES)}.")
+    if db.session.query(User).filter_by(email=email).first():
+        raise ValueError(f"Email '{email}' already registered.")
+    if db.session.query(User).filter_by(username=username).first():
+        raise ValueError(f"Username '{username}' already in use.")
+
+    role_obj = db.session.query(Role).filter_by(name=role).first()
+    if role_obj is None:
+        role_obj = Role(name=role)
+        db.session.add(role_obj)
+
+    user = User(username=username, email=email, role=role_obj, password=password)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
+user_cli = AppGroup("user", help="Manage users.")
+
+
+@user_cli.command("register")
+@click.argument("username")
+@click.option("--email", required=True)
+@click.option(
+    "--role",
+    type=click.Choice([r.lower() for r in ROLES], case_sensitive=False),
+    default="participant",
+    show_default=True,
+)
+@click.option(
+    "--password",
+    prompt=True,
+    hide_input=True,
+    confirmation_prompt=True,
+    help="Prompted for if not given.",
+)
+def register_user_command(username, email, role, password):
+    """Register a new user called USERNAME."""
+    try:
+        user = register_user(
+            username=username, email=email, password=password, role=role.capitalize()
+        )
+    except ValueError as e:
+        raise click.ClickException(str(e))
+    click.echo(f"Registered {user.role.name} '{user.username}' (id {user.id}).")
