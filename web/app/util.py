@@ -374,6 +374,34 @@ def create_precom_repo(token, repo_name, run_tar_in, type):
     return repo.html_url
 
 
+# Systems registered without a URL are expected to live in a sub directory
+# (containing a Dockerfile) next to the stella-app compose file.
+LOCAL_SYSTEMS_DIR = "./systems"
+
+
+def system_build_source(system, token=None):
+    """Return the docker-compose `build` value for a system.
+
+    Systems with a URL are built from their GitHub repository; systems without
+    one are built from local source in `LOCAL_SYSTEMS_DIR/<system name>`.
+    """
+    if not system.url:
+        return f"{LOCAL_SYSTEMS_DIR}/{system.name}"
+
+    # Please note: if you do not provide a GitHub token,
+    # the docker-compose file will not differentiate between main and master branches!
+    # This will make the build process of the stella-app fail in some cases with newer repositories.
+    if token:
+        g = Github(token)
+        repo_id = "/".join(system.url.split("/")[-2:])
+        repo = g.get_repo(repo_id)
+        branches_names = [branch.name for branch in repo.get_branches()]
+        if "main" in branches_names:
+            return "".join([system.url, ".git#main"])
+        return "".join([system.url, ".git#master"])
+    return "".join([system.url, ".git"])
+
+
 def create_stella_app_yaml(type="all", token=None):
     """Create a new docker-compose.yaml file for the STELLA app and push it to the STELLA app repository.
     All systems specified by type get included.
@@ -523,23 +551,8 @@ def create_stella_app_yaml(type="all", token=None):
     ]
 
     for system in systems:
-        # Please note: if you do not provide a GitHub token,
-        # the docker-compose file will not differentiate between main and master branches!
-        # This will make the build process of the stella-app fail in some cases with newer repositories.
-        if token:
-            g = Github(token)
-            repo_id = "/".join(system.url.split("/")[-2:])
-            repo = g.get_repo(repo_id)
-            branches_names = [branch.name for branch in repo.get_branches()]
-            if "main" in branches_names:
-                gh_url = "".join([system.url, ".git#main"])
-            else:
-                gh_url = "".join([system.url, ".git#master"])
-        else:
-            gh_url = "".join([system.url, ".git"])
-
         compose["services"][str(system.name)] = {
-            "build": gh_url,
+            "build": system_build_source(system, token),
             "container_name": system.name,
             "volumes": [
                 "./data/:/data/",
